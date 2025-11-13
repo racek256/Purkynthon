@@ -46,29 +46,6 @@ export default function Editor() { // Default Entry
   );
 
 
-  const onDrop = useCallback(
-    (event) => {
-      console.log("dropping")
-
-      // check if the dropped element is valid
-
-
-      // project was renamed to screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-      const newNode = {
-        id: getId(),
-        position,
-        data: { label: ` node` },
-      };
-
-      setNodes((nds) => nds.concat(newNode));
-    },
-  );
   function drop(e) {
     console.log("big drop ahhh")
 
@@ -79,11 +56,27 @@ export default function Editor() { // Default Entry
       x: event.clientX,
       y: event.clientY,
     });
+    let inputs = 2;
+    let outputs = 1;
+
+    nodesList.forEach(element => {
+      console.log("Testing _____")
+        console.log(element)
+
+      if (element.label == data ){
+        
+        inputs = element.inputs;
+         
+        if (element.outputs != undefined){
+            outputs = element?.outputs
+        }
+        }
+    });
     const newNode = {
       id: `n${Math.floor(Math.random() * 9999)}`,
       type: "custom",
       position,
-      data: { label: data },
+      data: { label: data, inputs:inputs, outputs:outputs },
       ...nodeDefaults
     };
 
@@ -98,7 +91,6 @@ export default function Editor() { // Default Entry
       <Sidebar nodes={nodesList} addNode={addNode} />
       <ReactFlow
         onDrop={drop}
-        onDragEnter={() => { console.log("Something is above me ") }}
         className="w-full"
         onDragOver={e => {
           let event = e;
