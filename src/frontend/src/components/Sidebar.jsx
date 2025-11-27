@@ -1,34 +1,25 @@
-import {useState} from 'react'
-export default function Sidebar(Props){
-  const [sidebarWidth, setSidebarWidth] = useState(false);
-  console.log(Props)
 
+export default function Sidebar({selectTheme}){
+	return (
+		<div className="w-5/32 min-w-42 h-dvh  border-r border-ctp-rosewater-900 bg-ctp-mantle flex flex-col justify-between"> 
+			<div className=""></div>
+			<div className="bg-ctp-lavender-900 h-24 w-full rounded-t-lg p-2">
+			<div className="flex">
+				<p>Uživatel: </p>
+				<span className="text-bold text-xl truncate">František Pátek</span>
+			</div>
 
+				<div className="flex">
+				<p className="w-full ">Lekce1</p>
+				<select className="bg-ctp-mauve-300 shadow-xl border border-ctp-mauve-900 p-2 rounded-lg" onChange={e=>{console.log("setting theme: " + e.target.value); selectTheme(e.target.value)}}>
+					<option>mocha</option>
+					<option>macchiato</option>
+					<option>frappe</option>
+					<option>latte</option>
+				</select>
+				</div>
+			</div>
+		</div>
+	)
 
-
-  return(
-    <div  className={`flex absolute relative  max-w-124 ${sidebarWidth ? "w-6" : "w-3/7"}  transition-all  bg-white rounded-r-xl overflow-hidden `}>
-        <div className={`h-screen bg-stone-300 ${sidebarWidth ? "w-0" : "w-full"} transition-all  `}>
-            <div className={`flex-col p-4 w-full h-screen ${sidebarWidth ? "opacity-0 pointer-events-none cursor-normal" : "opacity-100"} transition-all`}>
-              {Props.nodes.map((element,i) => {
-               return(<div key={i} onDragStart={e=>{e.dataTransfer.setData("text/plain", element.label) }} className="w-full h-12 my-2 rounded-xl cursor-pointer flex  items-center bg-stone-500" draggable="true" onClick={()=>Props.addNode(element.label)}>
-              <div className="ps-3 text-2xl text-black select-none ">
-               {element.label}
-              </div>
-
-            </div>)
-               })}
-            </div>
-        </div>
-        <div className=" h-24 w-6 rounded-r-xl bg-slate-300 m-auto cursor-pointer" onClick={()=>{
-
-          if (sidebarWidth) {
-            setSidebarWidth(false)
-          }else{
-            setSidebarWidth(true)
-          }
-        }}></div>
-
-      </div>
-  )
 }
