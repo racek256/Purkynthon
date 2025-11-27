@@ -1,22 +1,18 @@
-import { useState, useCallback } from 'react';
-import { ReactFlow, ReactFlowProvider, applyNodeChanges, applyEdgeChanges, addEdge, Position, useReactFlow } from '@xyflow/react';
-import nodesList from './nodes.js' 
-import Sidebar from './components/Sidebar.jsx'
-import Editor from './Editor.jsx'
-
-
-
-export default function App() { // Default Entry
-
-
-  
-
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home.jsx'
+import Login from './pages/Login.jsx'
+import { CookiesProvider } from 'react-cookie'
+function App() {
   return (
-    <div className="flex" style={{ width: '100vw', height: '100vh' }}>
-      <ReactFlowProvider>      
-        <Editor/>
-      </ReactFlowProvider>
-
-    </div>
-  );
+	  <CookiesProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+	  </CookiesProvider>
+  )
 }
+
+export default App
