@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar.jsx'
 import { ReactFlow,Position, Background,applyEdgeChanges, applyNodeChanges, addEdge, useOnSelectionChange } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import Editor from '@monaco-editor/react';
+import StupidAI from '../components/StupidAI.jsx'
 
 import { initialEdges, initialNodes } from '../components/lessons/lesson1.js';
 
@@ -75,14 +76,17 @@ const proOptions = {hideAttribution:true}
 					</div>
 
   			<div className="h-full w-1/2 border-l border-white">
-  				{selectedNodes.length == 1 ?  <Editor key={selectedNodes[0].id} onChange={e=>{
-					console.log(e)
-					const nodesClone = [...nodes]
-					let index = nodesClone.findIndex(e=> selectedNodes[0].id == e.id)
-					nodesClone[index].code = e
-				}} defaultValue={selectedNodes[0].code}  language="python" theme="vs-dark" />: 
-					<div className="flex items-center justify-center h-full text-4xl text-ctp-mauve-900 ">Select node to display code</div>
-				}
+          <div className="flex-col flex w-full h-full">
+            {selectedNodes.length == 1 ?  <div className="h-full"><Editor key={selectedNodes[0].id} onChange={e=>{
+            console.log(e)
+            const nodesClone = [...nodes]
+            let index = nodesClone.findIndex(e=> selectedNodes[0].id == e.id)
+            nodesClone[index].code = e
+          }} defaultValue={selectedNodes[0].code}  language="python" theme="vs-dark" /></div>: 
+            <div className="flex items-center justify-center h-full text-4xl text-ctp-mauve-900 ">Select node to display code</div>
+          }
+            <StupidAI/> 
+            </div>
   				  	  			</div>
   			</div>
   		</div>
