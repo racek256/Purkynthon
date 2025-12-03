@@ -1,18 +1,22 @@
-
+import { useState } from "react";
 const chat = [{
   role:"user",
-  message:"Hi, Can you explain me how python works?"
+  content:"Hi, Can you explain me how python works?"
 
 },
 {
   role:'assistant',
-  message:"No, I can't."
+  content:"No, I can't."
 }
 ]
 
-export default function StupidAI() {
+export default function StupidAI({expanded, setExpanded}) {
   return (
-    <div className="bg-ctp-base w-full flex flex-col p-4 h-full">
+	<div className={`flex-col flex   h-full  flex-1  items-center`}>
+	  <div className="h-8 min-h-8 rounded-t-xl w-32 bg-ctp-surface1 hover:bg-ctp-surface2 cursor-pointer" onClick={()=>{
+		  setExpanded(!expanded)
+	  }}></div>
+    <div className="bg-ctp-base w-full flex flex-col p-4 pt-0 h-full transition-all overflow-hidden ">
       <div className="w-full border-ctp-mauve-600 bg-ctp-mauve-950 border-2 rounded-full h-12 flex justify-between items-center">
         <h1 className="font-bold text-2xl text-black mx-4">Dumb AI</h1>
         <p className="text-lg mx-4">PS: this AI is probably dumber than you</p>
@@ -23,7 +27,7 @@ export default function StupidAI() {
             if (element.role == 'assistant'){
               return(
               <div className=" w-full h-max   p-1">
-                <div className="p-4 rounded-xl text-lg m-4 my-2 py-2 w-1/2 h-max bg-ctp-green-600">{element.message}</div>
+                <div className="p-4 rounded-xl text-lg m-4 my-2 py-2 w-1/2 h-max bg-ctp-green-600">{element.content}</div>
 
               </div>
               )
@@ -31,7 +35,7 @@ export default function StupidAI() {
               return(
               <div className=" w-full h-max flex   p-1">
                 <div className="w-1/2"></div>
-                <div className="p-4 rounded-xl text-lg m-4 my-2 py-2 w-1/2 h-max bg-ctp-peach-600">{element.message}</div>
+                <div className="p-4 rounded-xl text-lg m-4 my-2 py-2 w-1/2 h-max bg-ctp-peach-600">{element.content}</div>
 
               </div>
               
@@ -41,11 +45,12 @@ export default function StupidAI() {
         </div>
 
         <div className="flex p-2">
-          <textarea className=" p-3 text-white h-12 rounded-xl w-full bg-ctp-base" rows="" cols=""></textarea>
+          <textarea className=" p-3 text-white h-12 rounded-xl w-full bg-ctp-base"></textarea>
           <button className="bg-ctp-lavender-600 rounded-lg mx-2 cursor-pointer h-12 w-12"></button>
         </div>
       </div>
     </div>
+	  </div>
   );
 }
 

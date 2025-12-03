@@ -5,8 +5,8 @@ export default function Sidebar({selectTheme}){
 			<div className=""></div>
 			<div className="bg-ctp-lavender-900 h-24 w-full rounded-t-lg p-2">
 			<div className="flex">
-				<p>Uživatel: </p>
-				<span className="text-bold text-xl truncate">František Pátek</span>
+				<p className="text-xl">Uživatel: </p>
+				<span className="text-bold text-xl truncate"> František Pátek</span>
 			</div>
 
 				<div className="flex">
