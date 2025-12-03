@@ -73,7 +73,12 @@ const proOptions = {hideAttribution:true}
 						<Background />
 					      </ReactFlow>
 					
-	  <button className="absolute rounded-xl p-4 text-xl right-5 bottom-5 z-100 hover:bg-ctp-green-950 transition-all bg-ctp-green-900">Run Code</button>
+	  <button className="absolute rounded-xl p-4 text-xl right-5 bottom-5 z-100 hover:bg-ctp-green-950 transition-all bg-ctp-green-900" onClick={()=>{
+		  console.log("Nodes")
+		  console.log(nodes)
+		  console.log("Edging")
+		  console.log(edges)
+	  }}>Run Code</button>
 					</div>
 	  {/** 
   			<div className="h-full w-1/2 border-l border-white">
