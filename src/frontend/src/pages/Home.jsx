@@ -12,6 +12,7 @@ import StupidAI from '../components/StupidAI.jsx'
 import { initialEdges, initialNodes } from '../components/lessons/lesson1.js';
 
 function Home() {
+	const [expanded, setExpanded] = useState(false)
 	const cookies = useCookies()
 	const [selectedNodes, setSelectedNodes] = useState([]);
 	const [nodes, setNodes] = useState(initialNodes);
@@ -74,25 +75,66 @@ const proOptions = {hideAttribution:true}
 					
 	  <button className="absolute rounded-xl p-4 text-xl right-5 bottom-5 z-100 hover:bg-ctp-green-950 transition-all bg-ctp-green-900">Run Code</button>
 					</div>
-
+	  {/** 
   			<div className="h-full w-1/2 border-l border-white">
-          <div className="flex-col flex w-full h-full">
-            {selectedNodes.length == 1 ?  <div className="h-full"><Editor key={selectedNodes[0].id} onChange={e=>{
+<div className="flex-col flex w-full h-full overflow-hidden">
+            {selectedNodes.length == 1 ?  <div className={`${expanded ? "flex-1 max-h-1/2" : "flex-1"}  overflow-hidden`}><Editor className='h-full' key={selectedNodes[0].id} onChange={e=>{
             console.log(e)
             const nodesClone = [...nodes]
             let index = nodesClone.findIndex(e=> selectedNodes[0].id == e.id)
             nodesClone[index].code = e
           }} defaultValue={selectedNodes[0].code}  language="python" theme="vs-dark" /></div>: 
-            <div className="flex items-center justify-center h-full text-4xl text-ctp-mauve-900 ">Select node to display code</div>
+            <div className="flex items-center justify-center flex-1 text-4xl text-ctp-mauve-900 ">Select node to display code</div>
           }
-            <StupidAI/> 
+	 		<div className={`${expanded ? "h-1/2" : "h-8"} transition-all duration-300 ease-in-out overflow-hidden `}> 
+            <StupidAI expanded={expanded} setExpanded={setExpanded}/>
+	  		</div>
+
+
             </div>
-  				  	  			</div>
+
+            </div>
+  				  	  			
+**/}
+<div className="flex flex-col w-1/2 h-full border-l border-white  overflow-hidden">
+
+  {/* EDITOR */}
+  <div className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "flex-1"} overflow-hidden`}>
+    {selectedNodes.length === 1 ? (
+      <Editor
+        className="h-full"
+        key={selectedNodes[0].id}
+        onChange={e => {
+          const nodesClone = [...nodes]
+          const index = nodesClone.findIndex(n => selectedNodes[0].id === n.id)
+          nodesClone[index].code = e
+        }}
+        defaultValue={selectedNodes[0].code}
+        language="python"
+        theme="vs-dark"
+      />
+    ) : (
+      <div className="flex items-center justify-center h-full text-4xl text-ctp-mauve-900">
+        Select node to display code
+      </div>
+    )}
+  </div>
+
+  {/* AI PANEL */}
+  <div className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "h-8"} overflow-hidden`}>
+    <StupidAI expanded={expanded} setExpanded={setExpanded} />
+  </div>
+
+</div>
+
+
+
+</div>
   			</div>
   		</div>
   	</div>
   	</div>
-    </div>
+    
   )
 }
 

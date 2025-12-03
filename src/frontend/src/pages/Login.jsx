@@ -6,7 +6,7 @@ function Login() {
   return (
 		<div className="h-dvh w-screen mocha bg-gradient-to-br  from-ctp-base to-ctp-mantle">
 
-	  <div className="bg-ctp-surface1 absolute min-h-max -translate-y-1/2 -translate-x-1/2 w-1/4 h-1/2 top-1/2 left-1/2 rounded-xl shadow p-6">
+	  <div className="bg-ctp-surface1 absolute min-h-max -translate-y-1/2 -translate-x-1/2 w-1/4 min-w-max h-1/2 top-1/2 left-1/2 rounded-xl shadow p-6">
 
 	  	<h1 className="text-black text-3xl text-center  text-ctp-text">Login To Purkynthon</h1>
 	  	
