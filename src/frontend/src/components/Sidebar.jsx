@@ -1,12 +1,12 @@
-
+import UserIcon from '../assets/user_icon.svg'
 export default function Sidebar({selectTheme}){
 	return (
 		<div className="w-5/32 min-w-42 h-dvh  border-r border-ctp-rosewater-900 bg-ctp-mantle flex flex-col justify-between"> 
 			<div className=""></div>
 			<div className="bg-ctp-lavender-900 h-24 w-full rounded-t-lg p-2">
-			<div className="flex">
-				<p className="text-xl">Uživatel: </p>
-				<span className="text-bold text-xl truncate"> František Pátek</span>
+			<div className="flex items-center ">
+				<img src={UserIcon}/>
+				<span className="text-bold text-2xl truncate"> František Pátek</span>
 			</div>
 
 				<div className="flex">
