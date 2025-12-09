@@ -1,5 +1,5 @@
+import { useNavigate } from 'react-router-dom'
 
-	import { useNavigate } from 'react-router-dom'
 import { useCookies } from "react-cookie"
 import { useState, useCallback } from 'react'
 import Sidebar from '../components/Sidebar.jsx'
@@ -8,9 +8,12 @@ import { ReactFlow,Position, Background,applyEdgeChanges, applyNodeChanges, addE
 import '@xyflow/react/dist/style.css';
 import Editor from '@monaco-editor/react';
 import StupidAI from '../components/StupidAI.jsx'
+import CustomEdge from "../components/CustomEdge.jsx"
 
 import { initialEdges, initialNodes } from '../components/lessons/lesson1.js';
-
+const edgeTypes = {
+  'default': CustomEdge,
+};
 function Home() {
 	const [expanded, setExpanded] = useState(false)
 	const cookies = useCookies()
@@ -55,7 +58,7 @@ const proOptions = {hideAttribution:true}
 	
 
   return (
-	<div className={`  ${theme}  h-dvh w-screen`}>
+	<div className={`  ${theme}  h-dvh overflow-hidden w-screen`}>
 		<div className="  bg-ctp-base  h-dvh w-screen">
 	  	<div className="flex">
 			<Sidebar selectTheme={setTheme} />		
@@ -69,6 +72,7 @@ const proOptions = {hideAttribution:true}
   						  onConnect={onConnect}
 	  					  onChange={onChange}
 	  					  proOptions={proOptions}
+	  					  edgeTypes={edgeTypes}
 	  					  >
 						<Background />
 					      </ReactFlow>
@@ -80,27 +84,7 @@ const proOptions = {hideAttribution:true}
 		  console.log(edges)
 	  }}>Run Code</button>
 					</div>
-	  {/** 
-  			<div className="h-full w-1/2 border-l border-white">
-<div className="flex-col flex w-full h-full overflow-hidden">
-            {selectedNodes.length == 1 ?  <div className={`${expanded ? "flex-1 max-h-1/2" : "flex-1"}  overflow-hidden`}><Editor className='h-full' key={selectedNodes[0].id} onChange={e=>{
-            console.log(e)
-            const nodesClone = [...nodes]
-            let index = nodesClone.findIndex(e=> selectedNodes[0].id == e.id)
-            nodesClone[index].code = e
-          }} defaultValue={selectedNodes[0].code}  language="python" theme="vs-dark" /></div>: 
-            <div className="flex items-center justify-center flex-1 text-4xl text-ctp-mauve-900 ">Select node to display code</div>
-          }
-	 		<div className={`${expanded ? "h-1/2" : "h-8"} transition-all duration-300 ease-in-out overflow-hidden `}> 
-            <StupidAI expanded={expanded} setExpanded={setExpanded}/>
-	  		</div>
 
-
-            </div>
-
-            </div>
-  				  	  			
-**/}
 <div className="flex flex-col w-1/2 h-full border-l border-white  overflow-hidden">
 
   {/* EDITOR */}
@@ -119,15 +103,15 @@ const proOptions = {hideAttribution:true}
         theme="vs-dark"
       />
     ) : (
-      <div className="flex items-center justify-center h-full text-4xl text-ctp-mauve-900">
+      <div className={`flex items-center justify-center ${expanded ? "h-0 overflow-hidden":"h-full"} text-4xl text-ctp-mauve-900`}>
         Select node to display code
       </div>
     )}
   </div>
 
   {/* AI PANEL */}
-  <div className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "h-8"} overflow-hidden`}>
-    <StupidAI expanded={expanded} setExpanded={setExpanded} />
+  <div className={`transition-all duration-300 ease-in-out ${expanded && selectedNodes.length? "flex-[0.5]" : expanded ? "h-full" : "h-8"} overflow-hidden`}>
+    <StupidAI expanded={expanded} setExpanded={setExpanded} isEditor={selectedNodes.length === 1}/>
   </div>
 
 </div>

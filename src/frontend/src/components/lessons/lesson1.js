@@ -1,5 +1,10 @@
+import { Position } from '@xyflow/react';
 
-import { Position} from '@xyflow/react';
+// Konstanty pro čistší layout
+const Y_CENTER = 200;
+const X_START = 100;
+const GAP = 300;
+
 const nodeDefaults = {
   sourcePosition: Position.Right,
   targetPosition: Position.Left,
@@ -8,80 +13,54 @@ const nodeDefaults = {
 const initialNodes = [
   {
     id: 'n1',
-    position: { x: 100, y: 200 },
-    data: { label: 'Input' },
-    type: 'input', 
-	code:
-`main()`,
-	...nodeDefaults,
+    type: 'input',
+    position: { x: X_START, y: Y_CENTER },
+    data: { label: 'Input Number' },
+    // Kód ukazuje, že zde vzniká hodnota
+    code: `const number = 5;
+
+return number;`,
+    ...nodeDefaults,
   },
   {
     id: 'n2',
-    position: { x: 300, y: 200 },
-    data: { label: 'Main function' },
-    code:
-`if text.contains('+'):
-	add()`,
-	...nodeDefaults
+    position: { x: X_START + GAP, y: Y_CENTER },
+    data: { label: 'Double Processor' },
+    // Kód ukazuje jednoduchou matematiku
+    code: `input = receive();
+
+result = input * 2;
+
+send(result);`,
+    ...nodeDefaults,
   },
   {
     id: 'n3',
-    position: { x: 500, y: 100 },
-    data: { label: 'Add' },
-	code:
-`string = mainInput.string;
+    type: 'output',
+    position: { x: X_START + GAP * 2, y: Y_CENTER },
+    data: { label: 'Console Output' },
+    // Kód ukazuje výsledek
+    code: `final_value = receive();
 
-output(exec(string))
-`,
-	...nodeDefaults
-  },
-  {
-    id: 'n4',
-    position: { x: 500, y: 300 },
-    data: { label: 'Subtract' },
-	code:
-`string = mainInput.string;
-
-output(exec(string))
-`,
-	...nodeDefaults
-  },
-  {
-    id: 'n5',
-    position: { x: 600, y: 200 },
-    data: { label: 'output' },
-	type:"output",
-	...nodeDefaults
+print(final_value);
+// Expected: 10`,
+    ...nodeDefaults,
   }
 ];
- 
+
 const initialEdges = [
   {
-    id: 'n1-n2',
+    id: 'e1-2',
     source: 'n1',
     target: 'n2',
+    animated: true, // Animace pomáhá pochopit směr toku v první lekci
   },
-{
-id:'n2-n3',
-source:'n2',
-target:'n3'
-},
-{
-id:'n2-n4',
-source: 'n2',
-target: 'n4'
-},
-{
-id:'n3-n5',
-source: 'n3',
-target: 'n5'
-},
-{
-id:'n4-n5',
-source: 'n4',
-target: 'n5'
-}
+  {
+    id: 'e2-3',
+    source: 'n2',
+    target: 'n3',
+    animated: true,
+  }
 ];
 
-
-export {initialNodes, initialEdges}
+export { initialNodes, initialEdges };
