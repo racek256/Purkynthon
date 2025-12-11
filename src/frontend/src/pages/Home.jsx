@@ -9,11 +9,18 @@ import '@xyflow/react/dist/style.css';
 import Editor from '@monaco-editor/react';
 import StupidAI from '../components/StupidAI.jsx'
 import CustomEdge from "../components/CustomEdge.jsx"
-
+import  CustomNode  from "../components/CustomNode.jsx"
 import { initialEdges, initialNodes } from '../components/lessons/lesson1.js';
+import NextLevel from '../components/NextLevelScreen.jsx'
+import Terminal from '../components/CodeExecutionScreen.jsx'
 const edgeTypes = {
-  'default': CustomEdge,
+	'default': CustomEdge,
 };
+const nodeTypes ={
+	'default': CustomNode,
+	'input':CustomNode,
+	'output':CustomNode
+}
 function Home() {
 	const [expanded, setExpanded] = useState(false)
 	const cookies = useCookies()
@@ -21,6 +28,8 @@ function Home() {
 	const [nodes, setNodes] = useState(initialNodes);
   	const [edges, setEdges] = useState(initialEdges);
 	const [theme, setTheme] = useState("mocha");
+	const [nextScreen, setNextScren] = useState(false);
+	const [showTerm, setShowTerm] = useState(false);
 
 	const onNodesChange = useCallback(
     (changes) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -34,6 +43,14 @@ const onConnect = useCallback(
     (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
     [],
   );
+
+const onEdgeClick = useCallback(
+    (event, edge) => {
+      console.log('Edge clicked:', edge.id);
+      setEdges((edgesSnapshot) => edgesSnapshot.filter((e) => e.id !== edge.id));
+    },
+    [setEdges],
+  );
 	const navigate = useNavigate();
 		if(cookies[0]?.session?.token == 'tester'){
 		console.log('logged in ')
@@ -43,10 +60,7 @@ const onConnect = useCallback(
 
 
   const onChange = useCallback(({ nodes, edges }) => {
-	  console.log("THERE WAS CHANGE")
-	  console.log(nodes)
     setSelectedNodes(nodes);
-	  console.log(selectedNodes)
   }, []);
  
   useOnSelectionChange({
@@ -66,23 +80,30 @@ const proOptions = {hideAttribution:true}
 				<Navbar />
 	  			<div className=" w-full flex h-full ">
 					<div className='relative h-full w-1/2' >
-					      <ReactFlow nodes={nodes} edges={edges}
-	  					  onNodesChange={onNodesChange}
+<ReactFlow nodes={nodes} edges={edges}
+  					  onNodesChange={onNodesChange}
   						  onEdgesChange={onEdgesChange}
   						  onConnect={onConnect}
-	  					  onChange={onChange}
-	  					  proOptions={proOptions}
-	  					  edgeTypes={edgeTypes}
-	  					  >
+  						  onEdgeClick={onEdgeClick}
+  					  onChange={onChange}
+  					  proOptions={proOptions}
+  					  edgeTypes={edgeTypes}
+	  				  nodeTypes={nodeTypes}
+  					  >
 						<Background />
 					      </ReactFlow>
-					
-	  <button className="absolute rounded-xl p-4 text-xl right-5 bottom-5 z-100 hover:bg-ctp-green-950 transition-all bg-ctp-green-900" onClick={()=>{
+	  <div className='absolute right-5 bottom-5 z-100'>	
+	  <button className=" m-2 rounded-xl p-4 text-xl  hover:bg-ctp-green-950 transition-all bg-ctp-green-900" onClick={()=>{
 		  console.log("Nodes")
 		  console.log(nodes)
 		  console.log("Edging")
 		  console.log(edges)
+		  setShowTerm(true)
 	  }}>Run Code</button>
+	<button className=" m-2 rounded-xl p-4 text-xl  hover:bg-ctp-green-950 transition-all bg-ctp-green-900" onClick={()=>{
+		setNextScren(true)
+	  }}>Submit</button>
+	  </div>
 					</div>
 
 <div className="flex flex-col w-1/2 h-full border-l border-white  overflow-hidden">
@@ -122,6 +143,9 @@ const proOptions = {hideAttribution:true}
   			</div>
   		</div>
   	</div>
+	  {nextScreen ? <NextLevel hide={()=>{setNextScren(false)}} /> : <div></div>}
+	  {showTerm   ? <Terminal hide={()=>{setShowTerm(false)}}/> : <div/> }
+	
   	</div>
     
   )

@@ -53,13 +53,11 @@ const initialEdges = [
     id: 'e1-2',
     source: 'n1',
     target: 'n2',
-    animated: true, // Animace pomáhá pochopit směr toku v první lekci
   },
   {
     id: 'e2-3',
     source: 'n2',
     target: 'n3',
-    animated: true,
   }
 ];
 
