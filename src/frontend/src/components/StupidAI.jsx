@@ -93,6 +93,12 @@ return (
                         onChange={(e) => updateText(e.target.value)}
                         placeholder="Type your message..."
                         rows={1}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey && currentText.length !== 0) {
+                                e.preventDefault();
+                                askAI(currentText);
+                            }
+                        }}
                     />
                     <button 
                         className="bg-ai-send-button rounded-lg mx-2 cursor-pointer h-12 w-12 flex items-center justify-center flex-shrink-0"

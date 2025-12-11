@@ -79,7 +79,7 @@ const proOptions = {hideAttribution:true}
 	  		<div className="flex flex-col h-dvh w-full">
 				<Navbar />
 	  			<div className=" w-full flex h-full ">
-					<div className='relative h-full w-1/2' >
+					<div className='relative flex flex-col h-full w-1/2' >
 <ReactFlow nodes={nodes} edges={edges}
   					  onNodesChange={onNodesChange}
   						  onEdgesChange={onEdgesChange}
@@ -92,6 +92,8 @@ const proOptions = {hideAttribution:true}
   					  >
 						<Background />
 					      </ReactFlow>
+	  {showTerm   ? <Terminal hide={()=>{setShowTerm(false)}}/> : <div/> }
+
 	  <div className='absolute right-5 bottom-5 z-100'>	
 	  <button className=" m-2 rounded-xl p-4 text-xl  hover:bg-button-hover transition-all bg-button" onClick={()=>{
 		  console.log("Nodes")
@@ -144,7 +146,6 @@ const proOptions = {hideAttribution:true}
   		</div>
   	</div>
 	  {nextScreen ? <NextLevel hide={()=>{setNextScren(false)}} /> : <div></div>}
-	  {showTerm   ? <Terminal hide={()=>{setShowTerm(false)}}/> : <div/> }
 	
   	</div>
     
