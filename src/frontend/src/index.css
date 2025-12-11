@@ -83,7 +83,7 @@
   --color-ai-border: var(--color-ctp-mauve-600); /* border of nearly all AI elements */
   --color-ai-bg: var(--color-ctp-mauve-950);  /* background of AI elements */
   --color-ai-assistant-message: var(--color-ctp-green-600); /* message from AI */ 
-  --color-ai-user-message: var(--color-bg-red-500); /*   message from User*/
+  --color-ai-user-message: var(--color-red-300); /*   message from User*/
   --color-ai-input: var(--color-ctp-base);  /* color of the input bar */
   --color-ai-send-button: var(--color-green-600); /* color of the send button */
 }
