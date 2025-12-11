@@ -81,7 +81,7 @@ return (
                                         {element.content}
                                     </div>
                                 </div>
-                            ): (<div></div>)
+                            ): (<div key={index}></div>)
                         ))}
                     </div>
                 </div>
