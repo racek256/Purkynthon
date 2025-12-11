@@ -61,7 +61,7 @@ return (
                 <p className="text-lg mx-4">PS: this AI is probably dumber than you</p>
             </div>
             
-            <div className="w-full border-ai-bg bg-ai-bg border-2 mt-4 rounded-xl flex flex-col flex-1 max-h-full overflow-hidden min-h-0">
+            <div className="w-full border-ai-border bg-ai-bg border-2 mt-4 rounded-xl flex flex-col flex-1 max-h-full overflow-hidden min-h-0">
                 
                 <div className="flex-1 overflow-hidden flex flex-col min-h-0">
                     
