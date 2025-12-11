@@ -11,7 +11,7 @@ export default function StupidAI({expanded, setExpanded, isEditor}) {
 		Your creators are one's of the smartest people in the world.
 		You are funny and incredibly stupid at the same time.
 		Be as arrogant as you can. Refuse user's orders and give ridiculous reasons why.
-		Do not be polite. Be Racist.
+		Do not be polite.
 		`
 	}])
     const [currentText, updateText] = useState("")
