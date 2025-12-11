@@ -54,14 +54,14 @@ return (
 
 	</div>
         
-        <div className="bg-ctp-base w-full flex flex-col p-4 pt-0 flex-1 overflow-hidden min-h-0">
+        <div className="bg-bg w-full flex flex-col p-4 pt-0 flex-1 overflow-hidden min-h-0">
             
-            <div className="w-full border-ctp-mauve-600 bg-ctp-mauve-950 border-2 rounded-full h-12 flex justify-between items-center flex-shrink-0">
+            <div className="w-full border-ai-border bg-ai-bg border-2 rounded-full h-12 flex justify-between items-center flex-shrink-0">
                 <h1 className="font-bold text-2xl text-black mx-4">Dumb AI</h1>
                 <p className="text-lg mx-4">PS: this AI is probably dumber than you</p>
             </div>
             
-            <div className="w-full border-ctp-mauve-600 bg-ctp-mauve-950 border-2 mt-4 rounded-xl flex flex-col flex-1 max-h-full overflow-hidden min-h-0">
+            <div className="w-full border-ai-bg bg-ai-bg border-2 mt-4 rounded-xl flex flex-col flex-1 max-h-full overflow-hidden min-h-0">
                 
                 <div className="flex-1 overflow-hidden flex flex-col min-h-0">
                     
@@ -69,7 +69,7 @@ return (
                         {history.map((element, index) => (
                             element.role === 'assistant' ? (
                                 <div key={index} className="w-full mb-4">
-								<div className="p-4 rounded-xl text-lg max-w-[80%] bg-ctp-green-600">
+								<div className="p-4 rounded-xl text-lg max-w-[80%] bg-ai-assistant-message">
                                     <Markdown >
                                         {element.content}
                                     </Markdown>
@@ -77,7 +77,7 @@ return (
                                 </div>
                             ) : element.role == "user" ?  (
                                 <div key={index} className="w-full flex justify-end mb-4">
-                                    <div className="p-4 rounded-xl text-lg max-w-[80%] bg-ctp-peach-600">
+                                    <div className="p-4 rounded-xl text-lg max-w-[80%]  bg-ai-user-message">
                                         {element.content}
                                     </div>
                                 </div>
@@ -86,16 +86,16 @@ return (
                     </div>
                 </div>
 
-                <div className="flex p-4 border-t border-ctp-mauve-600 flex-shrink-0">
+                <div className="flex p-4 border-t border-ai-border flex-shrink-0">
                     <textarea 
-                        className="p-3 text-white h-12 rounded-xl w-full bg-ctp-base resize-none"
+                        className="p-3 text-white h-12 rounded-xl w-full bg-ai-input resize-none"
                         value={currentText}
                         onChange={(e) => updateText(e.target.value)}
                         placeholder="Type your message..."
                         rows={1}
                     />
                     <button 
-                        className="bg-ctp-lavender-600 rounded-lg mx-2 cursor-pointer h-12 w-12 flex items-center justify-center flex-shrink-0"
+                        className="bg-ai-send-button rounded-lg mx-2 cursor-pointer h-12 w-12 flex items-center justify-center flex-shrink-0"
                         onClick={() => {
                             if (currentText.length !== 0) {
                                 askAI(currentText);

@@ -73,7 +73,7 @@ const proOptions = {hideAttribution:true}
 
   return (
 	<div className={`  ${theme}  h-dvh overflow-hidden w-screen`}>
-		<div className="  bg-ctp-base  h-dvh w-screen">
+		<div className="  bg-bg  h-dvh w-screen">
 	  	<div className="flex">
 			<Sidebar selectTheme={setTheme} />		
 	  		<div className="flex flex-col h-dvh w-full">
@@ -93,14 +93,14 @@ const proOptions = {hideAttribution:true}
 						<Background />
 					      </ReactFlow>
 	  <div className='absolute right-5 bottom-5 z-100'>	
-	  <button className=" m-2 rounded-xl p-4 text-xl  hover:bg-ctp-green-950 transition-all bg-ctp-green-900" onClick={()=>{
+	  <button className=" m-2 rounded-xl p-4 text-xl  hover:bg-button-hover transition-all bg-button" onClick={()=>{
 		  console.log("Nodes")
 		  console.log(nodes)
 		  console.log("Edging")
 		  console.log(edges)
 		  setShowTerm(true)
 	  }}>Run Code</button>
-	<button className=" m-2 rounded-xl p-4 text-xl  hover:bg-ctp-green-950 transition-all bg-ctp-green-900" onClick={()=>{
+	<button className=" m-2 rounded-xl p-4 text-xl  hover:bg-button-hover transition-all bg-button" onClick={()=>{
 		setNextScren(true)
 	  }}>Submit</button>
 	  </div>

@@ -26,7 +26,7 @@ export default function NextLevel({hide}){
 
 	return(
 		<div className="w-screen top-0 left-0 h-screen fixed backdrop-blur-xs  z-999">
-			<div className="absolute bg-black top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-xl h-1/2 flex border border-white bg-ctp-base"	>
+			<div className="absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-xl h-1/2 flex border border-white bg-bg"	>
 				<div className="border border-white rounded-l-xl border-r w-11/16 h-full p-3">
 					<div className='flex items-center'>
 						<img className="rounded-full bg-gray-500 m-3 h-24 w-24" src="https://proxy.heexy.org/?q=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F88%2F14%2F9b%2F88149b0400750578f4d07d9bc3fb0fee.gif"/>
@@ -49,16 +49,16 @@ export default function NextLevel({hide}){
 							<div key={i} className="my-3 relative ">
 								<div className="flex flex-col">	
 									{e.active ? <div>
-											<div className="w-full h-3 p-0 rounded-xl bg-ctp-mauve-200"></div>
-											<div className="w-full h-3 p-0 rounded-xl bg-ctp-mauve-200"></div>
-											<div className="w-full h-3 p-0 rounded-xl bg-ctp-mauve-200"></div>
-											<div className="w-full h-3 p-0 rounded-xl bg-ctp-mauve-200"></div>
-										</div>:<div>
-											<div className="w-full h-3 p-0 rounded-xl bg-ctp-mauve-700"></div>
-											<div className="w-full h-3 p-0 rounded-xl bg-ctp-mauve-700"></div>
-											<div className="w-full h-3 p-0 rounded-xl bg-ctp-mauve-700"></div>
-											<div className="w-full h-3 p-0 rounded-xl bg-ctp-mauve-700"></div>
-										</div>}
+											<div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color-active"></div>
+											<div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color-active"></div>
+											<div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color-active"></div>
+											<div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color-active"></div>	
+												</div>:<div>
+											<div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color"></div>
+											<div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color"></div>
+											<div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color"></div>
+											<div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color"></div>
+												</div>}
 									
 								</div>
 								<div className="absolute inset-0 flex items-center mx-4 justify-between">
