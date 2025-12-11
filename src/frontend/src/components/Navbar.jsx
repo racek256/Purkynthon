@@ -1,10 +1,10 @@
 import User from '../assets/user_icon.svg'
 export default function Navbar(){
 	return(
-		<div className="h-20  border-b  border-ctp-rosewater-900 w-full flex bg-ctp-base">
-		<div className="h-full w-5/8 border-r border-ctp-rosewater-900">
-		<h1 className="text-xl text-white p-2 pb-0">Vyřeš úlohu</h1>
-		<p className="p-2 text-lg text-white">Tady bude úloha</p>
+		<div className="h-20  border-b  border-border w-full flex bg-bg">
+		<div className="h-full w-5/8 border-r border-border">
+		<h1 className="text-xl text-text-light p-2 pb-0">Vyřeš úlohu</h1>
+		<p className="p-2 text-lg text-text-light">Tady bude úloha</p>
 			
 		</div>
 		<div className="flex">
