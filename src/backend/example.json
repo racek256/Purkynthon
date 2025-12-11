@@ -1,123 +1,73 @@
-
-"nodes": {
+{
+  "nodes": [ 
     {
-    "id": "n1",
-    "position": {
-      "x": 100,
-      "y": 200
+      "id": "n1",
+      "type": "input",
+      "position": {
+        "x": 100,
+        "y": 200
+      },
+      "data": {
+        "label": "Input Number"
+      },
+      "code": "return 5",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false
     },
-    "data": {
-      "label": "Input"
+    {
+      "id": "n2",
+      "position": {
+        "x": 400,
+        "y": 200
+      },
+      "data": {
+        "label": "Double Processor"
+      },
+      "code": "input_num = input_value\n\nreturn input_value + 1",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false
     },
-    "type": "input",
-    "code": "main()",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    },
-    "selected": false
-  },
-  {
-    "id": "n2",
-    "position": {
-      "x": 300,
-      "y": 200
-    },
-    "data": {
-      "label": "Main function"
-    },
-    "code": "if text.contains('+'):\n\tadd()",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    },
-    "selected": false
-  },
-  {
-    "id": "n3",
-    "position": {
-      "x": 500,
-      "y": 100
-    },
-    "data": {
-      "label": "Add"
-    },
-    "code": "string = mainInput.string;\n\noutput(exec(string))\n",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
+    {
+      "id": "n3",
+      "type": "output",
+      "position": {
+        "x": 700,
+        "y": 200
+      },
+      "data": {
+        "label": "Console Output"
+      },
+      "code": "print(input_value)",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": true
     }
-  },
-  {
-    "id": "n4",
-    "position": {
-      "x": 500,
-      "y": 300
-    },
-    "data": {
-      "label": "Subtract"
-    },
-    "code": "string = mainInput.string;\n\noutput(exec(string))\n",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    }
-  },
-  {
-    "id": "n5",
-    "position": {
-      "x": 713.5812530517578,
-      "y": 246
-    },
-    "data": {
-      "label": "output"
-    },
-    "type": "output",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    },
-    "selected": false,
-    "dragging": false
-  }
-},
+  ],
 
-"connections": {
-  {
-    "id": "n1-n2",
-    "source": "n1",
-    "target": "n2"
-  },
-  {
-    "id": "n2-n3",
-    "source": "n2",
-    "target": "n3",
-    "selected": false
-  },
-  {
-    "id": "n2-n4",
-    "source": "n2",
-    "target": "n4",
-    "selected": false
-  },
-  {
-    "id": "n3-n5",
-    "source": "n3",
-    "target": "n5"
-  },
-  {
-    "id": "n4-n5",
-    "source": "n4",
-    "target": "n5"
-  }
+  "connections": [
+    {
+      "id": "e1-2",
+      "source": "n1",
+      "target": "n2"
+    },
+    {
+      "id": "e2-3",
+      "source": "n2",
+      "target": "n3"
+    }
+  ]
 }
