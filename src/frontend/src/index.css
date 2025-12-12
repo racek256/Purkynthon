@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "@catppuccin/tailwindcss/mocha.css";
 
+
 /* Custom edge hover effects */
 .hover\:stroke-ctp-red-500:hover {
   stroke: var(--ctp-red-500);
@@ -11,135 +12,77 @@
 }
 
 :root {
+
 }
 /* Do not edit this one */
 @theme {
   /* Main colors */
-  --color-bg: var(--color-ctp-base); /* background color */
+  --color-bg:  var(--color-ctp-base); /* background color */
   --color-text-dark: var(--color-ctp-text); /* black text */
-  --color-text-light: #ffffff; /* white text*/
+  --color-text-light: #ffffff;/* white text*/
   --color-button: var(--color-ctp-green-900); /* button */
-  --color-button-hover: var(
-    --color-ctp-green-950
-  ); /* button when mouse over it */
-  --color-border: var(
-    --color-ctp-rosewater-900
-  ); /* color for borders of most elements*/
+  --color-button-hover: var(--color-ctp-green-950);/* button when mouse over it */
+  --color-border: var(--color-ctp-rosewater-900); /* color for borders of most elements*/
   /* Login Screen */
-  --color-login-start: var(--color-ctp-base); /* gradient start */
-  --color-login-end: var(--color-ctp-mantle); /* gradient end */
-  --color-login-popup: var(
-    --color-ctp-surface1
-  ); /* the place you enter the password and username */
-  --color-login-input: var(
-    --color-ctp-surface2
-  ); /* the place you write your password and username to*/
-  --color-login-button: var(
-    --color-ctp-mauve-900
-  ); /* this one is self-explanatory*/
-  --color-login-button-hover: var(
-    --color-ctp-mauve-950
-  ); /* the same but when mouse is hovering over it */
+  --color-login-start: #0c1638; /* gradient start */
+  --color-login-end: #1c1670; /* gradient end */
+  --color-login-popup: var(--color-ctp-surface1); /* the place you enter the password and username */
+  --color-login-input: var(--color-ctp-surface2); /* the place you write your password and username to*/
+  --color-login-button: #85a3ff; /* this one is self-explanatory*/
+  --color-login-button-hover: #1b5ef5; /* the same but when mouse is hovering over it */
   /* Code Execution */
-  --color-runner-bg: var(--color-ctp-mantle); /* background of code runner*/
-  --color-runner-output: var(
-    --color-ctp-base
-  ); /* color of the code output background */
-  --color-runner-border: var(
-    --color-ctp-sapphire-800
-  ); /* color of borders of the code runner window */
-  --color-runner-text: var(
-    --color-ctp-sapphire-600
-  ); /* color of the output text */
+  --color-runner-bg: var(--color-ctp-mantle); /* background of code runner*/ 
+  --color-runner-output: var(--color-ctp-base); /* color of the code output background */
+  --color-runner-border: var(--color-ctp-sapphire-800); /* color of borders of the code runner window */
+  --color-runner-text: var(--color-ctp-sapphire-600); /* color of the output text */
   /* Leaderboard */
-  --color-leaderboard-color-active: var(
-    --color-ctp-mauve-200
-  ); /* color of current player in Leaderboard */
-  --color-leaderboard-color: var(
-    --color-ctp-mauve-700
-  ); /* color of all players in Leaderboard */
+  --color-leaderboard-color-active: var(--color-ctp-mauve-200); /* color of current player in Leaderboard */
+  --color-leaderboard-color: var(--color-ctp-mauve-700); /* color of all players in Leaderboard */
   /* Sidebar */
   --color-sidebar-bg: var(--color-ctp-mantle); /* Background of sidebar */
-  --color-sidebar-profile-bar-bg: var(
-    --color-ctp-mauve-950
-  ); /* Please somebody fix this it looks terrible */ /* Please fix this one */
+  --color-sidebar-profile-bar-bg: var(--color-ctp-mauve-950); /* Please somebody fix this it looks terrible */     /* Please fix this one */
   --color-sidebar-theme-selector: var(--color-ctp-mauve-300);
   /* Stupid-AI */
-  --color-ai-border: var(
-    --color-ctp-mauve-600
-  ); /* border of nearly all AI elements */
-  --color-ai-bg: var(--color-ctp-mauve-950); /* background of AI elements */
-  --color-ai-assistant-message: var(
-    --color-ctp-green-600
-  ); /* message from AI */ /* Please fix this one */
-  --color-ai-user-message: var(
-    --color-red-500
-  ); /*   message from User - */ /* Please fix this one */
-  --color-ai-input: var(--color-ctp-base); /* color of the input bar */
+  --color-ai-border: var(--color-ctp-mauve-600); /* border of nearly all AI elements */
+  --color-ai-bg: var(--color-ctp-mauve-950);  /* background of AI elements */
+  --color-ai-assistant-message: var(--color-ctp-green-600); /* message from AI */ 				 /* Please fix this one */
+  --color-ai-user-message: var(--color-red-500); /*   message from User - */      				 /* Please fix this one */
+  --color-ai-input: var(--color-ctp-base);  /* color of the input bar */
   --color-ai-send-button: var(--color-green-600); /* color of the send button */
 }
 
-/* Edit this one*/
+/* Edit this one*/ 
 @theme {
   /* Main colors */
-  --color-bg: var(--color-ctp-base); /* background color */
-  --color-text-dark: var(--color-ctp-text); /* black text */
-  --color-text-light: #ffffff; /* white text*/
-  --color-button: var(--color-ctp-green-900); /* button */
-  --color-button-hover: var(
-    --color-ctp-green-950
-  ); /* button when mouse over it */
-  --color-border: var(
-    --color-ctp-rosewater-900
-  ); /* color for borders of most elements*/
-  /* Login Screen */
-  --color-login-start: var(--color-ctp-base); /* gradient start */
-  --color-login-end: var(--color-ctp-mantle); /* gradient end */
-  --color-login-popup: var(
-    --color-ctp-surface1
-  ); /* the place you enter the password and username */
-  --color-login-input: var(
-    --color-ctp-surface2
-  ); /* the place you write your password and username to*/
-  --color-login-button: var(
-    --color-ctp-mauve-900
-  ); /* this one is self-explanatory*/
-  --color-login-button-hover: var(
-    --color-ctp-mauve-950
-  ); /* the same but when mouse is hovering over it */
+  --color-bg: #ffffff ;
+  --color-text-dark: #000000;
+  --color-text-light: #000000;
+
+  --color-button: #dedede;
+  --color-button-hover: #f0f0f0;
+  --color-border: #000000;
+
   /* Code Execution */
-  --color-runner-bg: var(--color-ctp-mantle); /* background of code runner*/
-  --color-runner-output: var(
-    --color-ctp-base
-  ); /* color of the code output background */
-  --color-runner-border: var(
-    --color-ctp-sapphire-800
-  ); /* color of borders of the code runner window */
-  --color-runner-text: var(
-    --color-ctp-sapphire-600
-  ); /* color of the output text */
+  --color-runner-bg: #ffffff;
+  --color-runner-output: #000000;
+  --color-runner-border: #000000;
+  --color-runner-text: #000000;
+
   /* Leaderboard */
-  --color-leaderboard-color-active: var(
-    --color-ctp-mauve-200
-  ); /* color of current player in Leaderboard */
-  --color-leaderboard-color: var(
-    --color-ctp-mauve-700
-  ); /* color of all players in Leaderboard */
+  --color-leaderboard-color-active: #dedede;
+  --color-leaderboard-color: #f0f0f0;
+
   /* Sidebar */
-  --color-sidebar-bg: var(--color-ctp-mantle); /* Background of sidebar */
-  --color-sidebar-profile-bar-bg: var(
-    --color-ctp-mauve-950
-  ); /* Please somebody fix this it looks terrible */
-  --color-sidebar-theme-selector: var(--color-ctp-mauve-300);
+  --color-sidebar-bg:  #ffffff;
+  --color-sidebar-profile-bar-bg: #dedede;
+  --color-sidebar-theme-selector: #f0f0f0;
+
   /* Stupid-AI */
-  --color-ai-border: var(
-    --color-ctp-mauve-600
-  ); /* border of nearly all AI elements */
-  --color-ai-bg: var(--color-ctp-mauve-950); /* background of AI elements */
-  --color-ai-assistant-message: var(
-    --color-ctp-green-600
-  ); /* message from AI */
+
+  --color-ai-border: var(--color-ctp-mauve-600); /* border of nearly all AI elements */
+  --color-ai-bg: var(--color-ctp-mauve-950);  /* background of AI elements */
+  --color-ai-assistant-message: var(--color-ctp-green-600); /* message from AI */ 
   --color-ai-user-message: var(--color-red-300); /*   message from User*/
-  --color-ai-input: var(--color-ctp-base); /* color of the input bar */
+  --color-ai-input: var(--color-ctp-base);  /* color of the input bar */
   --color-ai-send-button: var(--color-green-600); /* color of the send button */
 }
