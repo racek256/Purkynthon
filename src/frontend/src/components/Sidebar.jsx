@@ -1,5 +1,5 @@
 import UserIcon from "../assets/user_icon.svg";
-export default function Sidebar({ selectTheme }) {
+export default function Sidebar({ selectTheme,theme }) {
   return (
     <div className="w-5/32 min-w-42 h-dvh  border-r border-border bg-sidebar-bg flex flex-col justify-between">
       <div className=""></div>
@@ -13,15 +13,16 @@ export default function Sidebar({ selectTheme }) {
           <p className="w-full ">Lekce1</p>
           <select
             className="bg-sidebar-theme-selector shadow-xl   p-2 rounded-lg"
+	  		value={theme}
             onChange={(e) => {
               console.log("setting theme: " + e.target.value);
               selectTheme(e.target.value);
             }}
           >
             <option>mocha</option>
-            <option>macchiato</option>
-            <option>frappe</option>
-            <option>latte</option>
+            <option>ocean</option>
+            <option>fire</option>
+            <option>light</option>
           </select>
         </div>
       </div>

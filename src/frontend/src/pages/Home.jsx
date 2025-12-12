@@ -31,13 +31,25 @@ const nodeTypes = {
 };
 function Home() {
   const [expanded, setExpanded] = useState(false);
-  const cookies = useCookies();
+  const [cookies, setCookies] = useCookies();
   const [selectedNodes, setSelectedNodes] = useState([]);
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
-  const [theme, setTheme] = useState("mocha");
+  const [theme, setTheme] = useState(cookies?.theme?.currTheme);
+  
   const [nextScreen, setNextScren] = useState(false);
   const [showTerm, setShowTerm] = useState(false);
+
+	function updateTheme(newTheme){
+		setTheme(newTheme)	
+		setCookies(
+                "theme",
+                { currTheme: newTheme },
+                {
+                  expires: new Date(Date.now() + 1000000 * 60 * 60 * 1000), // 1000000 hours in case this is not enough just add few zeros
+                },
+              );
+	}
 
   const onNodesChange = useCallback(
     (changes) =>
@@ -64,11 +76,12 @@ function Home() {
     [setEdges],
   );
   const navigate = useNavigate();
-  if (cookies[0]?.session?.token == "tester") {
+  if (cookies?.session?.token == "tester") {
     console.log("logged in ");
   } else {
     navigate("/login");
   }
+  
 
   const onChange = useCallback(({ nodes, edges }) => {
     setSelectedNodes(nodes);
@@ -81,10 +94,10 @@ function Home() {
   const proOptions = { hideAttribution: true };
 
   return (
-    <div className={`  ${theme}  h-dvh overflow-hidden w-screen`}>
+    <div className={`  ${theme}  h-dvh overflow-hidden w-screen `}>
       <div className="  bg-bg  h-dvh w-screen">
         <div className="flex">
-          <Sidebar selectTheme={setTheme} />
+          <Sidebar selectTheme={updateTheme} theme={theme} />
           <div className="flex flex-col h-dvh w-full">
             <Navbar />
             <div className=" w-full flex h-full ">
