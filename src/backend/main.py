@@ -1,9 +1,10 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Any, Dict, List, cast
+from ollama import ChatResponse, Client
 from modules.block_class import Block
 from modules.standard_stuff import get_ollama_client_ip
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import Any, Dict, List
-from ollama import ChatResponse, Client
 import uvicorn
 import io
 import contextlib
@@ -69,6 +70,13 @@ class ChatResponseModel(BaseModel):
 client = Client(host=get_ollama_client_ip())
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/run-graph", response_model=GraphResponse)
 async def run_graph(request: GraphRequest):
