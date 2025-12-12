@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import Any, Dict
+from typing import Any, Dict, List, cast
+from ollama import ChatResponse, Client
 import uvicorn
 import sys
 import traceback
 import io
 from modules.block_class import Block
+from modules.standard_stuff import get_ollama_client_ip
 
 
 def load_blocks_from_json(data: Dict[str, Any]):
@@ -58,7 +60,14 @@ class GraphResponse(BaseModel):
     logs: str
     returnValue: Any
 
+class ChatRequest(BaseModel):
+    history: List[Any]
 
+class ChatResponseModel(BaseModel):
+    message: str
+
+
+client = Client(host=get_ollama_client_ip())
 app = FastAPI()
 
 @app.post("/run-graph", response_model=GraphResponse)
@@ -94,6 +103,16 @@ async def run_graph(request: GraphRequest):
             logs=tb,
             returnValue=""
         )
+
+
+@app.post("/api/chat", response_model=ChatResponseModel)
+async def chatwithAI(data: ChatRequest):
+    response: ChatResponse = client.chat(
+        model='gemma3:1b-it-qat',
+        messages=data.history
+    )
+    
+    return ChatResponseModel(message=response.message.content) if response.message.content else ""
 
 
 if __name__ == "__main__":
