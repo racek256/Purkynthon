@@ -1,13 +1,12 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import Any, Dict, List, cast
-from ollama import ChatResponse, Client
-import uvicorn
-import sys
-import traceback
-import io
 from modules.block_class import Block
 from modules.standard_stuff import get_ollama_client_ip
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Any, Dict, List
+from ollama import ChatResponse, Client
+import uvicorn
+import io
+import contextlib
 
 
 def load_blocks_from_json(data: Dict[str, Any]):
@@ -70,20 +69,17 @@ class ChatResponseModel(BaseModel):
 client = Client(host=get_ollama_client_ip())
 app = FastAPI()
 
+
 @app.post("/run-graph", response_model=GraphResponse)
 async def run_graph(request: GraphRequest):
-
-    # every request spawns a new stdout(gl to the server hosting ts)
     log_capture = io.StringIO()
-    real_stdout = sys.stdout
-    sys.stdout = log_capture
 
     try:
-        blocks = load_blocks_from_json(request.graph)
-        result = execute_graph(blocks["n1"])
+        # actually fr ong spawn a new stdout
+        with contextlib.redirect_stdout(log_capture):
+            blocks = load_blocks_from_json(request.graph)
+            result = execute_graph(blocks["n1"])
 
-        # steal the logs
-        sys.stdout = real_stdout
         logs_text = log_capture.getvalue().strip().split("\n")
 
         logs = "\n".join(logs_text[:-1]) if len(logs_text) > 1 else ""
@@ -96,12 +92,10 @@ async def run_graph(request: GraphRequest):
         )
 
     except Exception as e:
-        sys.stdout = real_stdout
-        tb = traceback.format_exc()
         return GraphResponse(
             success=False,
-            logs=tb,
-            returnValue=""
+            logs=log_capture.getvalue(),
+            returnValue=str(e)
         )
 
 
