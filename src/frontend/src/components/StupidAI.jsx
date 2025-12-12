@@ -61,7 +61,7 @@ return (
                 <p className="text-lg mx-4">PS: this AI is probably dumber than you</p>
             </div>
             
-            <div className="w-full border-ai-bg bg-ai-bg border-2 mt-4 rounded-xl flex flex-col flex-1 max-h-full overflow-hidden min-h-0">
+            <div className="w-full border-ai-border bg-ai-bg border-2 mt-4 rounded-xl flex flex-col flex-1 max-h-full overflow-hidden min-h-0">
                 
                 <div className="flex-1 overflow-hidden flex flex-col min-h-0">
                     
@@ -93,6 +93,12 @@ return (
                         onChange={(e) => updateText(e.target.value)}
                         placeholder="Type your message..."
                         rows={1}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey && currentText.length !== 0) {
+                                e.preventDefault();
+                                askAI(currentText);
+                            }
+                        }}
                     />
                     <button 
                         className="bg-ai-send-button rounded-lg mx-2 cursor-pointer h-12 w-12 flex items-center justify-center flex-shrink-0"
