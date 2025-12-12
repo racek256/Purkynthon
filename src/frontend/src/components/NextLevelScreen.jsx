@@ -1,5 +1,6 @@
 import User from '../assets/user_icon.svg'
 import Circle from '../assets/Circle.svg'
+import { useState } from 'react'
 const leaderboard = [{
 	name:"racek256",
 	score:265
@@ -14,7 +15,7 @@ const leaderboard = [{
 	score:324,
 	},
 	{
-	name:"Martin40654",
+	name:"Martin40645",
 	score:234
 	},
 ]
@@ -23,6 +24,7 @@ const leaderboard = [{
 export default function NextLevel({hide}){
 
 	const LeaderBoard = [...leaderboard].sort((a,b) => a.score - b.score).reverse()
+	const [displayed, setDisplayed] = useState(false)
 
 	return(
 		<div className="w-screen top-0 left-0 h-screen fixed backdrop-blur-xs  z-999">
@@ -69,7 +71,7 @@ export default function NextLevel({hide}){
 						)
 					})}
 				</div>
-				<div className='flex-1'><button className='bg-green-600 transition w-full h-12 rounded-md hover:bg-green-500 cursor-pointer text-xl' onClick={()=>{hide()}}>Next</button></div>
+				<div className='flex-1'><button className='bg-button transition w-full h-12 rounded-md hover:bg-button-hover cursor-pointer text-xl' onClick={()=>{hide()}}>Next</button></div>
 				</div>
 			</div>
 		</div>)
