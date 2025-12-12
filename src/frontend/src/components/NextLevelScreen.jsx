@@ -1,6 +1,7 @@
 import User from "../assets/user_icon.svg";
 import Circle from "../assets/Circle.svg";
 import { useState } from "react";
+import { useEffect } from "react";
 const leaderboard = [
   {
     name: "racek256",
@@ -20,22 +21,38 @@ const leaderboard = [
     score: 234,
   },
 ];
-//https://proxy.heexy.org/?q=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F88%2F14%2F9b%2F88149b0400750578f4d07d9bc3fb0fee.gif
+//https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif
 //https://media.tenor.com/JYyzR_1h77MAAAAi/angry-emoji.gif
 export default function NextLevel({ hide }) {
   const LeaderBoard = [...leaderboard]
     .sort((a, b) => a.score - b.score)
     .reverse();
   const [displayed, setDisplayed] = useState(false);
+  const [closing, setClosing] = useState(false);
+	useEffect(()=>{
+		if (!closing){
+			setTimeout(()=>{
+				setDisplayed(true)
+			},10);
+			setTimeout(()=>{
+				setClosing(true)
+			},150)
+		}
+			
+	})
+	function hideScreen(){
+		setDisplayed(false);
+		setTimeout(()=>{hide()},150)
+	}
 
   return (
-    <div className="w-screen top-0 left-0 h-screen fixed backdrop-blur-xs  z-999">
-      <div className="absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-xl h-1/2 flex border border-white bg-bg">
+    <div className={`w-screen ${displayed ? "opacity-100" : "opacity-0"} transition-all top-0 left-0 h-screen fixed backdrop-blur-xs  z-999`}>
+      <div className={`absolute ease-in-out  ${displayed  ? "top-1/2 scale-100 opacity-100" : !displayed && !closing ?   "scale-75 opacity-0 top-3/4": "scale-75 opacity-0 top-1/4"} transition-all  left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-xl h-1/2 flex border border-white bg-bg`}>
         <div className="border border-white rounded-l-xl border-r w-11/16 h-full p-3">
           <div className="flex items-center">
             <img
               className="rounded-full bg-gray-500 m-3 h-24 w-24"
-              src="https://proxy.heexy.org/?q=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F88%2F14%2F9b%2F88149b0400750578f4d07d9bc3fb0fee.gif"
+	  		  src="https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif"
             />
             <div className="text-white text-3xl">
               Příště trochu rychleji jo?{" "}
@@ -91,7 +108,7 @@ export default function NextLevel({ hide }) {
             <button
               className="bg-button transition w-full h-12 rounded-md hover:bg-button-hover cursor-pointer text-xl"
               onClick={() => {
-                hide();
+                hideScreen();
               }}
             >
               Next
