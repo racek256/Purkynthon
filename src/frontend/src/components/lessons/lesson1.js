@@ -17,9 +17,9 @@ const initialNodes = [
     position: { x: X_START, y: Y_CENTER },
     data: { label: 'Input Number' },
     // Kód ukazuje, že zde vzniká hodnota
-    code: `const number = 5;
+    code: `number = 2;
 
-return number;`,
+return number`,
     ...nodeDefaults,
   },
   {
@@ -27,11 +27,11 @@ return number;`,
     position: { x: X_START + GAP, y: Y_CENTER },
     data: { label: 'Double Processor' },
     // Kód ukazuje jednoduchou matematiku
-    code: `input = receive();
+    code: `input = input_value 
 
 result = input * 2;
 
-send(result);`,
+return result`,
     ...nodeDefaults,
   },
   {
@@ -40,10 +40,10 @@ send(result);`,
     position: { x: X_START + GAP * 2, y: Y_CENTER },
     data: { label: 'Console Output' },
     // Kód ukazuje výsledek
-    code: `final_value = receive();
+    code: `final_value = input_value 
 
 print(final_value);
-// Expected: 10`,
+return final_value`,
     ...nodeDefaults,
   }
 ];
