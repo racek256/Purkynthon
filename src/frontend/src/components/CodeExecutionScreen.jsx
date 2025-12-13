@@ -7,16 +7,37 @@ const LoadingText = [
   "Your code is cooking our servers",
   "Our servers are cooking your code",
   "Executing your code",
-  "Do you even remember the optimal trajectory for a hypercube?",
-  "You’re trying to trigger a system error, aren’t you?",
+  "Creating a black hole",
+  "Deviding by 0 to run your code",
   "My calculations indicate a 98.7% probability of catastrophic system failure if this continues.",
   "Aligning flux capacitors… please wait",
-  "Compiling quantum entanglements",
-  "Summoning virtual gremlins to debug your code",
-  "Adjusting spacetime continuum… nearly there",
+  "Detected multiple leviathan-class bugs",
+  "Defusing bugs on the site",
+  "You may not rest now, there are bugs in your code",
+  "The only thing they fear is your code",
+  "The right code in the wrong place",
+  "We know, its not a bug, its a feature",
+  "Emergency meeting: we have to execute some code",
+  "Nicely done, Agent"
+  "Server CPU temperature: 98402750°C",
+  "Running your spagetti code",
+  "Making a coin flip if your code will work",
   "Rewriting reality to fit your algorithm",
-  "Convincing the AI to cooperate… almost done",
-  "Counting to infinity (or at least trying)"
+  "Convincing AI to cooperate",
+  "Counting to infinity",
+  "Where are the fire extinguishers?"
+  "Errors exceeds acceptable thresholds",
+  "GG, nice code",
+  "You feel an evil presense of bugs watching you",
+  "The spirits are pleased with your code",
+  "The code must grow",
+  "Code support: offline",
+  "Reacting to your code in 1 word: hell nah",
+  "Sometimes, your genius is almost, frightening",
+  "Probability of success: 12%",
+  "Coding your execution",
+  "Silence, machine. Horrible code is running"
+  "We is cooking you code, pls wait"
 ];
 
 
