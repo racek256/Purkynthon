@@ -22,7 +22,7 @@ export default function Sidebar({ selectTheme,theme }) {
             <option>mocha</option>
             <option>ocean</option>
             <option>fire</option>
-            <option>light</option>
+            <option>flashbang</option>
           </select>
         </div>
       </div>
