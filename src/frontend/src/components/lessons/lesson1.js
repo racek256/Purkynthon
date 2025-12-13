@@ -17,21 +17,21 @@ const initialNodes = [
     position: { x: X_START, y: Y_CENTER },
     data: { label: 'Input Number' },
     // Kód ukazuje, že zde vzniká hodnota
-    code: `number = 2;
+    code: `print('e')
+for i in range(5):
+    print('xddd')
+print('xd')
 
-return number`,
+return 1
+`,
     ...nodeDefaults,
   },
   {
     id: 'n2',
     position: { x: X_START + GAP, y: Y_CENTER },
-    data: { label: 'Double Processor' },
+    data: { label: 'Multiplier' },
     // Kód ukazuje jednoduchou matematiku
-    code: `input = input_value 
-
-result = input * 2;
-
-return result`,
+    code: `return input_value * 2`,
     ...nodeDefaults,
   },
   {
@@ -40,10 +40,7 @@ return result`,
     position: { x: X_START + GAP * 2, y: Y_CENTER },
     data: { label: 'Console Output' },
     // Kód ukazuje výsledek
-    code: `final_value = input_value 
-
-print(final_value);
-return final_value`,
+    code: `print(input_value)`,
     ...nodeDefaults,
   }
 ];
