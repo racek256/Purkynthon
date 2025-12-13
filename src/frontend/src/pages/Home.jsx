@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import Navbar from "../components/Navbar.jsx";
 import {
@@ -17,17 +17,21 @@ import Editor from "@monaco-editor/react";
 import StupidAI from "../components/StupidAI.jsx";
 import CustomEdge from "../components/CustomEdge.jsx";
 import CustomNode from "../components/CustomNode.jsx";
-import { initialEdges, initialNodes } from "../components/lessons/lesson1.js";
+import EditableNode from "../components/EditableNode.jsx";
+import { initialEdges, initialNodes, name, description } from "../components/lessons/lesson1.js";
 import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
+
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import React from 'react'
+
+const CREATOR_MODE = false;
+
 const edgeTypes = {
   default: CustomEdge,
 };
-const nodeTypes = {
-  default: CustomNode,
-  input: CustomNode,
-  output: CustomNode,
-};
+
 function Home() {
   const [expanded, setExpanded] = useState(false);
   const [cookies, setCookies] = useCookies();
@@ -39,7 +43,19 @@ function Home() {
   const [nextScreen, setNextScren] = useState(false);
   const [showTerm, setShowTerm] = useState(false);
 
-  
+  // Creator Mode states
+  const [creatorMode, setCreatorMode] = useState(false);
+  const [levelName, setLevelName] = useState(name);
+  const [levelDescription, setLevelDescription] = useState(description);
+  const [konamiCode, setKonamiCode] = useState([]);
+ 
+const [code, setCode] = React.useState("console.log('hello world!');");
+  const onCodeChange = React.useCallback((val, viewUpdate) => {
+    setCode(val);
+  }, []);
+
+
+
 
   function updateTheme(newTheme) {
     setTheme(newTheme);
@@ -78,21 +94,91 @@ function Home() {
     [setEdges],
   );
   const navigate = useNavigate();
-  if (cookies?.session?.token == "tester") {
-    console.log("logged in ");
-  } else {
+  if (cookies?.session?.token != "tester") {
     navigate("/login");
   }
 
-  const onChange = useCallback(({ nodes, edges }) => {
-    setSelectedNodes(nodes);
+  const onChange = useCallback(({ nodes: selectedNodesArray }) => {
+    setSelectedNodes(selectedNodesArray || []);
   }, []);
 
   useOnSelectionChange({
     onChange,
   });
 
+  // Secret cheat detection
+  /*useEffect(() => {
+    const SECRET_SEQUENCE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    
+    const handleKeyPress = (e) => {
+	
+
+      const newSequence = [...konamiCode, e.key];
+      
+      if (newSequence.length > SECRET_SEQUENCE.length) {
+        newSequence.shift();
+      }
+      
+      setKonamiCode(newSequence);
+      
+      if (newSequence.join('') === SECRET_SEQUENCE.join('')) {
+        setCreatorMode(!creatorMode);
+        setKonamiCode([]);
+        if (!creatorMode) {
+          console.log('%c🎨 Creator Mode Activated! 🎨', 'color: #ff6b6b; font-size: 16px; font-weight: bold;');
+        } else {
+          console.log('%cCreator Mode Deactivated', 'color: #666; font-size: 14px;');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [konamiCode, creatorMode]);*/
+
   const proOptions = { hideAttribution: true };
+
+  const updateNodeLabel = useCallback((nodeId, newLabel) => {
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === nodeId
+          ? { ...node, data: { ...node.data, label: newLabel } }
+          : node
+      )
+    );
+  }, []);
+
+  const nodeTypes = creatorMode ? {
+    default: EditableNode,
+    input: EditableNode,
+    output: EditableNode,
+  } : {
+    default: CustomNode,
+    input: CustomNode,
+    output: CustomNode,
+  };
+
+  const nodesWithCallback = creatorMode
+    ? nodes.map((node) => ({
+        ...node,
+        data: { ...node.data, onLabelChange: updateNodeLabel },
+      }))
+    : nodes;
+
+  const addBlankNode = () => {
+    const newNode = {
+      id: `node-${Date.now()}`,
+      type: 'default',
+      position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 },
+      data: creatorMode 
+        ? { label: 'New Node', onLabelChange: updateNodeLabel }
+        : { label: 'New Node' },
+      code: '# Write your code here\n\nreturn None',
+      sourcePosition: Position.Right,
+      targetPosition: Position.Left,
+    };
+    setNodes((nds) => [...nds, newNode]);
+  };
 
   return (
     <div className={`  ${theme}  h-dvh overflow-hidden w-screen `}>
@@ -100,11 +186,17 @@ function Home() {
         <div className="flex">
           <Sidebar selectTheme={updateTheme} theme={theme} />
           <div className="flex flex-col h-dvh w-full">
-            <Navbar />
+            <Navbar 
+              name={creatorMode ? levelName : name} 
+              description={creatorMode ? levelDescription : description}
+              creatorMode={creatorMode}
+              onNameChange={setLevelName}
+              onDescriptionChange={setLevelDescription}
+            />
             <div className=" w-full flex h-full ">
               <div className="relative flex flex-col h-full w-1/2">
                 <ReactFlow
-                  nodes={nodes}
+                  nodes={nodesWithCallback}
                   edges={edges}
                   onNodesChange={onNodesChange}
                   onEdgesChange={onEdgesChange}
@@ -130,6 +222,14 @@ function Home() {
                 )}
 
                 <div className="absolute right-5 bottom-5 z-100">
+                  {creatorMode && (
+                    <button
+                      className=" m-2 rounded-xl p-4 text-xl  hover:bg-button-hover transition-all bg-button"
+                      onClick={addBlankNode}
+                    >
+                      Add Node
+                    </button>
+                  )}
                   <button
                     className=" m-2 rounded-xl p-4 text-xl  hover:bg-button-hover transition-all bg-button"
                     onClick={() => {
@@ -137,6 +237,28 @@ function Home() {
                       console.log(nodes);
                       console.log("Edging");
                       console.log(edges);
+                      
+                      const exportData = {
+                        name: creatorMode ? levelName : name,
+                        description: creatorMode ? levelDescription : description,
+                        nodes: nodes,
+                        edges: edges,
+                        tags: creatorMode ? ["creator-mode", new Date().toISOString()] : ["lesson-mode"]
+                      };
+                      
+                      console.log("%c↓↓↓ JSON copy this ↓↓↓", "color: red; font-weight: bold;");
+                      console.log(exportData);
+                      console.log("%c↑↑↑ JSON copy this ↑↑↑", "color: green; font-weight: bold;");
+                      
+                      /*// Copy to clipboard
+                      navigator.clipboard.writeText(JSON.stringify(exportData, null, 2))
+                        .then(() => {
+                          console.log('%c✅ JSON copied to clipboard!', 'color: #4caf50; font-weight: bold;');
+                        })
+                        .catch(() => {
+                          console.log('%c❌ Failed to copy to clipboard', 'color: #f44336; font-weight: bold;');
+                        });*/
+
                       setShowTerm(true);
                     }}
                   >
@@ -158,21 +280,39 @@ function Home() {
                 <div
                   className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "flex-1"} overflow-hidden`}
                 >
-                  {selectedNodes.length === 1 ? (
-                    <Editor
-                      className="h-full"
-                      key={selectedNodes[0].id}
-                      onChange={(e) => {
+                  {selectedNodes && selectedNodes.length === 1 && selectedNodes[0] ? (
+					<CodeMirror value={selectedNodes[0].code} height="100%" theme="dark" className="h-full" extensions={[javascript({ jsx: true })]}     onChange={(val, viewUpdate) => {
+						setCode(val)
+						console.log("key press in editor")
                         const nodesClone = [...nodes];
                         const index = nodesClone.findIndex(
                           (n) => selectedNodes[0].id === n.id,
                         );
-                        nodesClone[index].code = e;
+                        if (index !== -1) {
+                          nodesClone[index].code = val;
+                          //setNodes(nodesClone);
+                        }
+					}} />
+                    /*<Editor
+                      //className="h-full"
+                      //key={selectedNodes[0].id}
+					  //onMount={handleEditorDidMount}
+                      onChange={(e) => {
+						console.log("key press in editor")
+                        const nodesClone = [...nodes];
+                        const index = nodesClone.findIndex(
+                          (n) => selectedNodes[0].id === n.id,
+                        );
+                        if (index !== -1) {
+                          nodesClone[index].code = e;
+                          //setNodes(nodesClone);
+                        }
                       }}
-                      defaultValue={selectedNodes[0].code}
-                      language="python"
-                      theme="vs-dark"
-                    />
+					  
+                      //defaultValue={selectedNodes[0].code}
+                      //language="python"
+                      //theme="vs-dark"
+                    />*/
                   ) : (
                     <div
                       className={`flex items-center justify-center ${expanded ? "h-0 overflow-hidden" : "h-full"} text-4xl text-ctp-mauve-900`}

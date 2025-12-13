@@ -18,14 +18,14 @@ const LoadingText = [
   "The right code in the wrong place",
   "We know, its not a bug, its a feature",
   "Emergency meeting: we have to execute some code",
-  "Nicely done, Agent"
+  "Nicely done, Agent",
   "Server CPU temperature: 98402750°C",
   "Running your spagetti code",
   "Making a coin flip if your code will work",
   "Rewriting reality to fit your algorithm",
   "Convincing AI to cooperate",
   "Counting to infinity",
-  "Where are the fire extinguishers?"
+  "Where are the fire extinguishers?",
   "Errors exceeds acceptable thresholds",
   "GG, nice code",
   "You feel an evil presense of bugs watching you",
@@ -36,7 +36,7 @@ const LoadingText = [
   "Sometimes, your genius is almost, frightening",
   "Probability of success: 12%",
   "Coding your execution",
-  "Silence, machine. Horrible code is running"
+  "Silence, machine. Horrible code is running",
   "We is cooking you code, pls wait"
 ];
 
