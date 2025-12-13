@@ -1,6 +1,25 @@
 import Typewriter from "typewriter-effect";
 import { useState, useEffect } from "react";
 
+
+
+const LoadingText = [
+  "Your code is cooking our servers",
+  "Our servers are cooking your code",
+  "Executing your code",
+  "Do you even remember the optimal trajectory for a hypercube?",
+  "You’re trying to trigger a system error, aren’t you?",
+  "My calculations indicate a 98.7% probability of catastrophic system failure if this continues.",
+  "Aligning flux capacitors… please wait",
+  "Compiling quantum entanglements",
+  "Summoning virtual gremlins to debug your code",
+  "Adjusting spacetime continuum… nearly there",
+  "Rewriting reality to fit your algorithm",
+  "Convincing the AI to cooperate… almost done",
+  "Counting to infinity (or at least trying)"
+];
+
+
 const options = {
   delay: 10,
   cursor:"",
@@ -52,7 +71,6 @@ export default function Terminal({ hide, graph }) {
     <div
       className={` overflow-y-auto absolute bottom-0 left-0 w-full z-9999  ${displayTerm ? "h-1/3 py-2" : "h-0 py-0"} ease-in-out  transition-200 transition-all flex border-t border-border bg-runner-bg px-4  flex-col flex`}
     >
-	  {/*
       <Typewriter
         className="text-3xl my-2 text-white"
         wrapperClassName="text-white text-3xl"
@@ -60,39 +78,7 @@ export default function Terminal({ hide, graph }) {
         onInit={(typewriter) => {
           typewriter
             .typeString(
-              '<span class="text-3xl my-2 text-white" >Letting our servers cook...</span>',
-            )
-            .callFunction(() => {
-              console.log("String typed out!");
-            })
-            .start();
-        }}
-      />
-      <Typewriter
-        className="text-3xl my-2 text-white"
-        wrapperClassName="text-white text-3xl"
-        options={options}
-        onInit={(typewriter) => {
-          typewriter
-            .pauseFor(2500)
-            .typeString(
-              '<span class="text-3xl my-2 text-white" >Executing your code...</span>',
-            )
-            .callFunction(() => {
-              console.log("String typed out!");
-            })
-            .start();
-        }}
-      />
-		*/}
-      <Typewriter
-        className="text-3xl my-2 text-white"
-        wrapperClassName="text-white text-3xl"
-        options={options}
-        onInit={(typewriter) => {
-          typewriter
-            .typeString(
-              '<span class="text-3xl my-2 text-white" >Your code is cooking our servers...</span>',
+              `<span class="text-3xl my-2 text-white" > ${LoadingText[Math.round((Math.random()*(LoadingText.length-1)))]} ...</span>`,
             )
             .pauseFor(1000)
             .callFunction(() => {
