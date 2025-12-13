@@ -23,7 +23,7 @@ import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
 
 import CodeMirror from '@uiw/react-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
 import React from 'react'
 
 const CREATOR_MODE = false;
@@ -281,7 +281,7 @@ const [code, setCode] = React.useState("console.log('hello world!');");
                   className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "flex-1"} overflow-hidden`}
                 >
                   {selectedNodes && selectedNodes.length === 1 && selectedNodes[0] ? (
-					<CodeMirror value={selectedNodes[0].code} height="100%" theme="dark" className="h-full" extensions={[javascript({ jsx: true })]}     onChange={(val, viewUpdate) => {
+					<CodeMirror value={selectedNodes[0].code} height="100%" theme="dark" className="h-full" extensions={[python()]}     onChange={(val, viewUpdate) => {
 						setCode(val)
 						console.log("key press in editor")
                         const nodesClone = [...nodes];
