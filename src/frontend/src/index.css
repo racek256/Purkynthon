@@ -151,3 +151,12 @@
   --color-ai-input: #f6c177;
   --color-ai-send-button: #ea9d34;
 }
+
+/* Creator Mode styles */
+.cursor-text {
+  cursor: text;
+}
+
+.bg-bg-hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}

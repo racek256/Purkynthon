@@ -1,4 +1,5 @@
 import UserIcon from "../assets/user_icon.svg";
+import Editor from '@monaco-editor/react';
 export default function Sidebar({ selectTheme,theme }) {
   return (
     <div className="w-5/32 min-w-42 h-dvh  border-r border-border bg-sidebar-bg flex flex-col justify-between">
