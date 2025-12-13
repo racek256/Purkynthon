@@ -19,13 +19,13 @@ class Block:
     ) -> None:
         self.output_nodes = output_nodes
         self.input_values = input_values
-        code_safety = check_code_validity(code)
-        if not code_safety[1]:
-            raise self.exception_maker(f"Your code contains code that isn't allowed to be executed: \n '{code_safety[0]}' on line {code_safety[2]}",
-                                       "executing")
-        self.code = replace_final_return(code, get_return_statement_sub())
         self.name = name
         self.id = id
+        code_safety = check_code_validity(code)
+        if not code_safety[1]:
+            raise self.exception_maker(f"Your code contains code that isn't allowed to be executed: '{code_safety[0]}' on line {code_safety[2]}",
+                                       "executing")
+        self.code = replace_final_return(code, get_return_statement_sub())
     
     def execute(self) -> Any:
         
@@ -59,17 +59,3 @@ class Block:
     def exception_maker(self, message: str, exec_step: str) -> BlockException:
         return BlockException(self.name, self.id, message, exec_step)
 
-# test_code = """
-# print('e')
-# for i in range(5):
-#     print('xddd')
-# print('xd')
-#
-# return 1
-# """
-# ts1 = """
-# return input_value + 1
-# """
-# test_node = Block(test_code, 1, "test", {})
-# test_node1 = Block(ts1, 2, "test2", test_node.execute())
-# test_node3 = Block("print(input_value)", 3, "test3", test_node1.execute()).execute()
