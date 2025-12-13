@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-
 import { useCookies } from "react-cookie";
 import { useState, useCallback } from "react";
 import Sidebar from "../components/Sidebar.jsx";
@@ -36,20 +35,22 @@ function Home() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const [theme, setTheme] = useState(cookies?.theme?.currTheme);
-  
+
   const [nextScreen, setNextScren] = useState(false);
   const [showTerm, setShowTerm] = useState(false);
 
-	function updateTheme(newTheme){
-		setTheme(newTheme)	
-		setCookies(
-                "theme",
-                { currTheme: newTheme },
-                {
-                  expires: new Date(Date.now() + 1000000 * 60 * 60 * 1000), // 1000000 hours in case this is not enough just add few zeros
-                },
-              );
-	}
+  
+
+  function updateTheme(newTheme) {
+    setTheme(newTheme);
+    setCookies(
+      "theme",
+      { currTheme: newTheme },
+      {
+        expires: new Date(Date.now() + 1000000 * 60 * 60 * 1000), // 1000000 hours in case this is not enough just add few zeros
+      },
+    );
+  }
 
   const onNodesChange = useCallback(
     (changes) =>
@@ -66,6 +67,7 @@ function Home() {
     [],
   );
 
+ 
   const onEdgeClick = useCallback(
     (event, edge) => {
       console.log("Edge clicked:", edge.id);
@@ -81,7 +83,6 @@ function Home() {
   } else {
     navigate("/login");
   }
-  
 
   const onChange = useCallback(({ nodes, edges }) => {
     setSelectedNodes(nodes);
@@ -121,6 +122,8 @@ function Home() {
                     hide={() => {
                       setShowTerm(false);
                     }}
+					graph={{nodes, connections:edges}}
+
                   />
                 ) : (
                   <div />
