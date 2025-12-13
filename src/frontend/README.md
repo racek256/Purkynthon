@@ -1,1 +1,1 @@
-# This is frontend for purkynthon
+# This is the frontend for Purkynthon
