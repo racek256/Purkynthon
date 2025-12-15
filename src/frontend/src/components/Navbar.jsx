@@ -55,7 +55,7 @@ export default function Navbar({name,description,creatorMode,onNameChange,onDesc
   };
 
   return (
-    <div className="h-max  border-b  border-border w-full flex bg-bg">
+    <div className="h-24  border-b  border-border w-full flex bg-bg">
       <div className="h-full w-5/8 border-r border-border">
         {isEditingName && creatorMode ? (
           <input

@@ -1,0 +1,80 @@
+{
+  "name": "Level 1: Oprava převodníku",
+  "description": "Náš převodník teploty přestal fungovat. Technik vymazal vzorec pro převod z Celsia na Fahrenheity. Tvým úkolem je doplnit kód v prostředním uzlu podle vzorce: (vstup * 1.8) + 32.",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "input",
+      "position": {
+        "x": 100,
+        "y": 200
+      },
+      "data": {
+        "label": "Senzor (°C)"
+      },
+      "code": "# Nastavíme testovací teplotu\nteplota = 20\n\nprint(f\"Vstupní teplota: {teplota}°C\")\n\nreturn teplota",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": 400,
+        "y": 209
+      },
+      "data": {
+        "label": "Procesor (CHYBA)"
+      },
+      "code": "# TODO: Oprav tento kód!\n# Vzorec pro Fahrenheity je: (input_value * 1.8) + 32\n\n# Zde je chyba - momentálně vracíme jen nulu\nvysledek = 0 \n\nreturn vysledek",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "n3",
+      "type": "output",
+      "position": {
+        "x": 700,
+        "y": 200
+      },
+      "data": {
+        "label": "Kontrola"
+      },
+      "code": "# Očekáváme, že 20°C bude 68°F\nocekavana_hodnota = 68.0\n\nprint(f\"Tvůj výsledek: {input_value}°F\")\n\nif input_value == ocekavana_hodnota:\n    print(\"✅ SKVĚLÉ! Oprava úspěšná.\")\nelse:\n    print(f\"❌ CHYBA: Očekáváno {ocekavana_hodnota}, ale přišlo {input_value}.\")\n    print(\"Tip: Zkontroluj Funkci Procesor.\")",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "n1",
+      "target": "n2",
+      "animated": true
+    },
+    {
+      "id": "e2-3",
+      "source": "n2",
+      "target": "n3",
+      "animated": true
+    }
+  ],
+  "tags": [
+    "creator-mode",
+    "2025-12-14T12:56:33.426Z"
+  ]
+}
