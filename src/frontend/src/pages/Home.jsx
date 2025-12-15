@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect} from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import Navbar from "../components/Navbar.jsx";
 import {
@@ -13,7 +13,6 @@ import {
   useOnSelectionChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import Editor from "@monaco-editor/react";
 import StupidAI from "../components/StupidAI.jsx";
 import CustomEdge from "../components/CustomEdge.jsx";
 import CustomNode from "../components/CustomNode.jsx";
@@ -24,20 +23,21 @@ import Terminal from "../components/CodeExecutionScreen.jsx";
 
 import CodeMirror from '@uiw/react-codemirror';
 import { python } from '@codemirror/lang-python';
-import React from 'react'
+import loadLesson from "../components/lessons/lessonLoader.js";
 
-const CREATOR_MODE = false;
 
 const edgeTypes = {
   default: CustomEdge,
 };
 
 function Home() {
+
+
   const [expanded, setExpanded] = useState(false);
   const [cookies, setCookies] = useCookies();
   const [selectedNodes, setSelectedNodes] = useState([]);
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
   const [theme, setTheme] = useState(cookies?.theme?.currTheme);
 
   const [nextScreen, setNextScren] = useState(false);
@@ -48,11 +48,18 @@ function Home() {
   const [levelName, setLevelName] = useState(name);
   const [levelDescription, setLevelDescription] = useState(description);
   const [konamiCode, setKonamiCode] = useState([]);
- 
-const [code, setCode] = React.useState("console.log('hello world!');");
-  const onCodeChange = React.useCallback((val, viewUpdate) => {
-    setCode(val);
-  }, []);
+
+  useEffect(()=>{
+	  async function initLevel(){
+		  const data = await loadLesson()
+		  console.log(data)
+		  setNodes(data.nodes)
+		  setEdges(data.edges)
+		  setLevelName(data.name)
+		  setLevelDescription(data.description)
+	  }
+	  initLevel()
+  },[])
 
 
 
@@ -107,7 +114,7 @@ const [code, setCode] = React.useState("console.log('hello world!');");
   });
 
   // Secret cheat detection
-  /*useEffect(() => {
+  useEffect(() => {
     const SECRET_SEQUENCE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
     
     const handleKeyPress = (e) => {
@@ -134,7 +141,7 @@ const [code, setCode] = React.useState("console.log('hello world!');");
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [konamiCode, creatorMode]);*/
+  }, [konamiCode, creatorMode]);
 
   const proOptions = { hideAttribution: true };
 
@@ -249,16 +256,6 @@ const [code, setCode] = React.useState("console.log('hello world!');");
                       console.log("%c↓↓↓ JSON copy this ↓↓↓", "color: red; font-weight: bold;");
                       console.log(exportData);
                       console.log("%c↑↑↑ JSON copy this ↑↑↑", "color: green; font-weight: bold;");
-                      
-                      /*// Copy to clipboard
-                      navigator.clipboard.writeText(JSON.stringify(exportData, null, 2))
-                        .then(() => {
-                          console.log('%c✅ JSON copied to clipboard!', 'color: #4caf50; font-weight: bold;');
-                        })
-                        .catch(() => {
-                          console.log('%c❌ Failed to copy to clipboard', 'color: #f44336; font-weight: bold;');
-                        });*/
-
                       setShowTerm(true);
                     }}
                   >
@@ -282,7 +279,6 @@ const [code, setCode] = React.useState("console.log('hello world!');");
                 >
                   {selectedNodes && selectedNodes.length === 1 && selectedNodes[0] ? (
 					<CodeMirror value={selectedNodes[0].code} height="100%" theme="dark" className="h-full" extensions={[python()]}     onChange={(val, viewUpdate) => {
-						setCode(val)
 						console.log("key press in editor")
                         const nodesClone = [...nodes];
                         const index = nodesClone.findIndex(
@@ -290,29 +286,9 @@ const [code, setCode] = React.useState("console.log('hello world!');");
                         );
                         if (index !== -1) {
                           nodesClone[index].code = val;
-                          //setNodes(nodesClone);
+                          setNodes(nodesClone);
                         }
-					}} />
-                    /*<Editor
-                      //className="h-full"
-                      //key={selectedNodes[0].id}
-					  //onMount={handleEditorDidMount}
-                      onChange={(e) => {
-						console.log("key press in editor")
-                        const nodesClone = [...nodes];
-                        const index = nodesClone.findIndex(
-                          (n) => selectedNodes[0].id === n.id,
-                        );
-                        if (index !== -1) {
-                          nodesClone[index].code = e;
-                          //setNodes(nodesClone);
-                        }
-                      }}
-					  
-                      //defaultValue={selectedNodes[0].code}
-                      //language="python"
-                      //theme="vs-dark"
-                    />*/
+					}} /> 
                   ) : (
                     <div
                       className={`flex items-center justify-center ${expanded ? "h-0 overflow-hidden" : "h-full"} text-4xl text-ctp-mauve-900`}
