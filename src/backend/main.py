@@ -60,6 +60,11 @@ class GraphResponse(BaseModel):
     logs: str
     returnValue: Any
 
+class ExecOnceRequest(BaseModel):
+    code: str
+
+
+
 class ChatRequest(BaseModel):
     history: List[Any]
 
@@ -106,6 +111,31 @@ async def run_graph(request: GraphRequest):
             returnValue=str(e)
         )
 
+@app.post("/exec-one", response_model=GraphResponse)
+async def exec_one(request: ExecOnceRequest):
+    log_capt = io.StringIO()
+
+    try:
+        with contextlib.redirect_stdout(log_capt):
+            result = Block(request, 0, "test", {"input_value": "plinK"}).execute()
+
+        logs_text = log_capt.getvalue().strip().split("\n")
+
+        logs = "\n".join(logs_text[:-1]) if len(logs_text) > 1 else ""
+        return_value = logs_text[-1] if logs_text else str(result)
+
+        return GraphResponse(
+            success=True,
+            logs=logs,
+            returnValue=return_value
+        )
+    except Exception as e:
+        return GraphResponse(
+            success = False,
+            logs = log_capt.getvalue(),
+            returnValue = str(e)
+        )
+    
 
 @app.post("/api/chat", response_model=ChatResponseModel)
 async def chatwithAI(data: ChatRequest):
