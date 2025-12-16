@@ -52,7 +52,7 @@
 }
 
 /* Edit this one*/ 
-.light {
+.flashbang {
   /* Main colors */
   --color-bg: #ffffff ;
   --color-text-dark: #000000;
@@ -117,7 +117,7 @@
   --color-ai-send-button: #1b5ef5; /* color of the send button */
 }
 
-/*Uplne ohen theme */
+/* Uplne ohen theme */
 .fire {
   /* Main colors */
   --color-bg: #191724;
@@ -131,12 +131,12 @@
   /* Code Execution */
   --color-runner-bg: #26233a;
   --color-runner-output: #f6c177;
-  --color-runner-border: ;
+  --color-runner-border: #ea9d34;
   --color-runner-text:;
 
   /* Leaderboard */
-  --color-leaderboard-color-active:;
-  --color-leaderboard-color: ;
+  --color-leaderboard-color-active: #ea9d34;
+  --color-leaderboard-color: #f6c177;
 
   /* Sidebar */
   --color-sidebar-bg:#1f1d2e;
@@ -145,9 +145,18 @@
 
   /* Stupid-AI */
   --color-ai-border: #ea9d34;
-  --color-ai-bg: 393552;
+  --color-ai-bg: #393552;
   --color-ai-assistant-message: #f6c177;
   --color-ai-user-message: #f6c177;
   --color-ai-input: #f6c177;
   --color-ai-send-button: #ea9d34;
+}
+
+/* Creator Mode styles */
+.cursor-text {
+  cursor: text;
+}
+
+.bg-bg-hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
