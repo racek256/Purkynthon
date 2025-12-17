@@ -17,8 +17,8 @@
 /* Do not edit this one */
 @theme {
   /* Main colors */
-  --color-bg:  var(--color-ctp-base); /* background color */
-  --color-text-dark: var(--color-ctp-text); /* black text */
+  --color-bg: #1e1e2e; /* background color */
+  --color-text-dark: #cdd6f4; /* black text */
   --color-text-light: #ffffff;/* white text*/
   --color-button: var(--color-ctp-green-900); /* button */
   --color-button-hover: var(--color-ctp-green-950);/* button when mouse over it */
@@ -26,20 +26,20 @@
   /* Login Screen */
   --color-login-start: #0c1638; /* gradient start */
   --color-login-end: #1c1670; /* gradient end */
-  --color-login-popup: var(--color-ctp-surface1); /* the place you enter the password and username */
-  --color-login-input: var(--color-ctp-surface2); /* the place you write your password and username to*/
+  --color-login-popup: #bcc0cc; /* the place you enter the password and username */
+  --color-login-input: #acb0be; /* the place you write your password and username to*/
   --color-login-button: #85a3ff; /* this one is self-explanatory*/
   --color-login-button-hover: #1b5ef5; /* the same but when mouse is hovering over it */
   /* Code Execution */
-  --color-runner-bg: var(--color-ctp-mantle); /* background of code runner*/ 
-  --color-runner-output: var(--color-ctp-base); /* color of the code output background */
+  --color-runner-bg: #1e2030; /* background of code runner*/ 
+  --color-runner-output: #1e1e2e; /* color of the code output background */
   --color-runner-border: var(--color-ctp-sapphire-800); /* color of borders of the code runner window */
   --color-runner-text: var(--color-ctp-sapphire-600); /* color of the output text */
   /* Leaderboard */
   --color-leaderboard-color-active: var(--color-ctp-mauve-200); /* color of current player in Leaderboard */
   --color-leaderboard-color: var(--color-ctp-mauve-700); /* color of all players in Leaderboard */
   /* Sidebar */
-  --color-sidebar-bg: var(--color-ctp-mantle); /* Background of sidebar */
+  --color-sidebar-bg: #1e2030; /* Background of sidebar */
   --color-sidebar-profile-bar-bg: var(--color-ctp-mauve-950); /* Please somebody fix this it looks terrible */     /* Please fix this one */
   --color-sidebar-theme-selector: var(--color-ctp-mauve-300);
   /* Stupid-AI */
