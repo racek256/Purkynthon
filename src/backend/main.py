@@ -56,6 +56,9 @@ def execute_graph(block):
     for nxt in block.output_nodes:
         if len(nxt.input_nodes) > 1:
             input_keys = {node.id for node in nxt.input_nodes}
+            for node in nxt.input_nodes:
+                if node.id not in global_output_memory:
+                    execute_graph(node)
             nxt.input_values = {k: v for k, v in global_output_memory.items() if k in input_keys}
         else:
             nxt.input_values = result
@@ -127,7 +130,7 @@ async def exec_one(request: ExecOnceRequest):
 
     try:
         with contextlib.redirect_stdout(log_capt):
-            result = Block(request, 0, "test", {"input_value": "plinK"}).execute()
+            result = Block(request, 0, "test", {"input_value": "plinK"}, global_output_memory).execute()
 
         logs_text = log_capt.getvalue().strip().split("\n")
 
