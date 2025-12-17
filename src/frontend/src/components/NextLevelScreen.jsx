@@ -23,7 +23,13 @@ const leaderboard = [
 ];
 //https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif
 //https://media.tenor.com/JYyzR_1h77MAAAAi/angry-emoji.gif
-export default function NextLevel({ hide }) {
+export default function NextLevel({ hide, graph, tests }) {
+	const [finished, setFinished] = useState(false);	
+	console.log(tests)
+	
+
+
+	console.log(tests)
   const LeaderBoard = [...leaderboard]
     .sort((a, b) => a.score - b.score)
     .reverse();
@@ -44,7 +50,6 @@ export default function NextLevel({ hide }) {
 		setDisplayed(false);
 		setTimeout(()=>{hide()},150)
 	}
-
   return (
     <div className={`w-screen ${displayed ? "opacity-100" : "opacity-0"} transition-all top-0 left-0 h-screen fixed backdrop-blur-xs  z-999`}>
       <div className={`absolute ease-in-out  ${displayed  ? "top-1/2 scale-100 opacity-100" : !displayed && !closing ?   "scale-75 opacity-0 top-3/4": "scale-75 opacity-0 top-1/4"} transition-all  left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-xl h-1/2 flex border border-white bg-bg`}>
@@ -58,19 +63,18 @@ export default function NextLevel({ hide }) {
               Příště trochu rychleji jo?{" "}
             </div>
           </div>
-          <div className="flex-col">
-            <div className="text-white text-3xl py-4 border-y border-white">
+          <div className="flex-col text-white">
+	  		<div className="flex border-white border-y text-3xl py-4 text-white">
+				<div className="p-2 border-r border-white">Test 1: success</div>
+				<div className="p-2 border-r border-white">Test 1: success</div>
+				<div className="p-2 border-white">Test 1: success</div>
+	  		</div>
+            <div className="text-white text-3xl py-4 border-b border-white">
               Skóre: 465
             </div>
             <div className="text-white text-3xl py-4 ">Peníze: 543</div>
             <div className="text-white text-3xl py-4 border-y border-white">
               Čas: 5m 36s
-            </div>
-            <div className="relative w-max h-max  ">
-              <img src={Circle} className="h-24 w-24 " />
-              <div className="absolute top-1/2 left-1/2 -translate-y-1/2 text-6xl -translate-x-1/2 text-white">
-                B
-              </div>
             </div>
           </div>
         </div>
