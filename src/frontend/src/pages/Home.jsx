@@ -44,7 +44,7 @@ function Home() {
   const [showTerm, setShowTerm] = useState(false);
 
   // Creator Mode states
-  const [creatorMode, setCreatorMode] = useState(false);
+  const [creatorMode, setCreatorMode] = useState(true);
   const [levelName, setLevelName] = useState(name);
   const [levelDescription, setLevelDescription] = useState(description);
   const [konamiCode, setKonamiCode] = useState([]);
