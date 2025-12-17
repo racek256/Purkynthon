@@ -55,8 +55,8 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
 
       <div className="bg-bg w-full flex flex-col p-4 pt-0 flex-1 overflow-hidden min-h-0">
         <div className="w-full border-ai-border bg-ai-bg border-2 rounded-full h-12 flex justify-between items-center flex-shrink-0">
-          <h1 className="font-bold text-2xl text-black mx-4">Dumb AI</h1>
-          <p className="text-lg mx-4">
+          <h1 className="font-bold text-2xl mx-4 text-text-light">Dumb AI</h1>
+          <p className="text-lg mx-4 text-text-light">
             PS: this AI is probably dumber than you
           </p>
         </div>
