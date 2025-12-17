@@ -3,7 +3,7 @@ from modules.sanitization import check_code_validity, replace_final_return
 from modules.standard_stuff import get_return_statement_sub, get_return_statement_sub_name
 
 class BlockException(Exception):
-    def __init__(self, node_name: str, node_id: int, message: str, exec_step: str) -> None:
+    def __init__(self, node_name: str, node_id: str, message: str, exec_step: str) -> None:
         self.message = f'Node "{node_name}"(id: {node_id}) raised an exception while {exec_step}: "{message}"'
     def __str__(self) -> str:
         return self.message
@@ -31,8 +31,7 @@ class Block:
                                        "executing")
         self.code = replace_final_return(code, get_return_statement_sub())
     
-    def execute(self) -> Any:
-        
+    def execute(self) -> Any: 
         input_safety = self.eval_input_value_safety()
         if not input_safety[1]:
             raise self.exception_maker(input_safety[0], "evaluating input safety")

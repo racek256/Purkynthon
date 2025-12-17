@@ -55,7 +55,7 @@ def execute_graph(block):
     result = block.execute()
     for nxt in block.output_nodes:
         if len(nxt.input_nodes) > 1:
-            input_keys = {block.id in nxt.input_nodes}
+            input_keys = {node.id for node in nxt.input_nodes}
             nxt.input_values = {k: v for k, v in global_output_memory.items() if k in input_keys}
         else:
             nxt.input_values = result
@@ -74,8 +74,6 @@ class GraphResponse(BaseModel):
 
 class ExecOnceRequest(BaseModel):
     code: str
-
-
 
 class ChatRequest(BaseModel):
     history: List[Any]
