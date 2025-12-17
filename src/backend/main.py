@@ -10,6 +10,8 @@ import io
 import contextlib
 
 
+global_output_memory: Dict[str, Any] = {}
+
 def load_blocks_from_json(data: Dict[str, Any]):
     nodes = data["nodes"]
     connections = data["connections"]
@@ -22,7 +24,9 @@ def load_blocks_from_json(data: Dict[str, Any]):
             id=node["id"],
             name=node["data"]["label"],
             input_values={},
-            output_nodes=[]
+            output_nodes=[],
+            input_nodes=[],
+            output_memory=global_output_memory
         )
         block_map[node["id"]] = block
 
@@ -38,8 +42,11 @@ def load_blocks_from_json(data: Dict[str, Any]):
 
         src_block = block_map[src_id]
         dst_block = block_map[dst_id]
-
+        
+        
         src_block.output_nodes.append(dst_block)
+        for block in src_block.output_nodes:
+            block.input_nodes.append(src_block)
 
     return block_map
 
@@ -47,7 +54,12 @@ def load_blocks_from_json(data: Dict[str, Any]):
 def execute_graph(block):
     result = block.execute()
     for nxt in block.output_nodes:
-        nxt.input_values = result
+        if len(nxt.input_nodes) > 1:
+            input_keys = {block.id in nxt.input_nodes}
+            nxt.input_values = {k: v for k, v in global_output_memory.items() if k in input_keys}
+        else:
+            nxt.input_values = result
+
         execute_graph(nxt)
     return result
 
