@@ -12,15 +12,19 @@ class Block:
     def __init__(
         self,
         code: str,  # Stores the code that this block executes
-        id: int,
+        id: str,
         name: str,
         input_values: Dict[str, Any],
+        output_memory: Dict[str, Any],
         output_nodes: Optional[List[Self]] = None,
+        input_nodes: Optional[List[Self]] = None,
     ) -> None:
         self.output_nodes = output_nodes
+        self.input_nodes = input_nodes
         self.input_values = input_values
         self.name = name
         self.id = id
+        self.output_memory = output_memory
         code_safety = check_code_validity(code)
         if not code_safety[1]:
             raise self.exception_maker(f"Your code contains code that isn't allowed to be executed: '{code_safety[0]}' on line {code_safety[2]}",
@@ -43,6 +47,8 @@ class Block:
             out = output_values[get_return_statement_sub_name()]
         except KeyError:
             out = None
+        
+        self.output_memory[self.id] = out
 
         return out
 
