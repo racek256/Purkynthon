@@ -10,15 +10,15 @@ function Login() {
           Login To Purkynthon
         </h1>
 
-        <p className="text-text-dark text-xl mt-6">username:</p>
+        <p className="text-text-dark text-xl mt-6">Username:</p>
         <input
           className="w-full bg-login-input rounded-md  text-text-light p-2"
-          placeholder="email"
+          placeholder="Username"
         />
-        <p className="text-text-dark text-xl mt-6">password:</p>
+        <p className="text-text-dark text-xl mt-6">Password:</p>
         <input
           className="w-full bg-login-input rounded-md  text-text-light p-2"
-          placeholder="password"
+          placeholder="Password"
         />
         <div className="w-full flex">
           <button
@@ -34,7 +34,7 @@ function Login() {
               navigate("/");
             }}
           >
-            Submit
+            Login
           </button>
         </div>
       </div>

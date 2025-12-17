@@ -98,7 +98,7 @@ export default function Navbar({name,description,creatorMode,onNameChange,onDesc
       <div className="flex">
         <img className="rounded-full p-2" src={User} />
         <div>
-          <h1 className="text-white text-xl p-2 pb-0">Zaměstnavatel</h1>
+          <h1 className="text-text-light text-xl p-2 pb-0">Zaměstnavatel</h1>
           <div className="rounded-xl border-3 border-black h-6 w-64 m-2 overflow-hidden relative">
             <div className="w-1/2 bg-gradient-to-r from-ctp-green-600 to-ctp-red-900 h-full "></div>
           </div>
