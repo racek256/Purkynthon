@@ -53,6 +53,8 @@ function Home() {
 	  async function initLevel(){
 		  const data = await loadLesson()
 		  console.log(data)
+
+		  // Store ALL nodes (including test nodes) in state
 		  setNodes(data.nodes)
 		  setEdges(data.edges)
 		  setLevelName(data.name)
@@ -165,12 +167,22 @@ function Home() {
     output: CustomNode,
   };
 
+  // Filter out the test node when not in creator mode for display
+  const filteredNodesForDisplay = creatorMode
+    ? nodes
+    : nodes.filter(node => node.id !== 'test');
+
   const nodesWithCallback = creatorMode
-    ? nodes.map((node) => ({
+    ? filteredNodesForDisplay.map((node) => ({
         ...node,
         data: { ...node.data, onLabelChange: updateNodeLabel },
       }))
-    : nodes;
+    : filteredNodesForDisplay;
+	function getTestNode(nodes) {
+	  const data =nodes.filter((node) => node.id === "test");
+	return JSON.parse(data[0].code)
+	}
+
 
   const addBlankNode = () => {
     const newNode = {
@@ -248,7 +260,7 @@ function Home() {
                       const exportData = {
                         name: creatorMode ? levelName : name,
                         description: creatorMode ? levelDescription : description,
-                        nodes: nodes,
+                        nodes: nodes, // Always include all nodes in export (including test nodes) when in creator mode
                         edges: edges,
                         tags: creatorMode ? ["creator-mode", new Date().toISOString()] : ["lesson-mode"]
                       };
@@ -318,6 +330,8 @@ function Home() {
           hide={() => {
             setNextScren(false);
           }}
+		  graph={{nodes, connections:edges}}
+		  tests={getTestNode(nodes)}
         />
       ) : (
         <div></div>
