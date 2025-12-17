@@ -10,6 +10,8 @@ import io
 import contextlib
 
 
+global_output_memory: Dict[str, Any] = {}
+
 def load_blocks_from_json(data: Dict[str, Any]):
     nodes = data["nodes"]
     connections = data["connections"]
@@ -22,7 +24,9 @@ def load_blocks_from_json(data: Dict[str, Any]):
             id=node["id"],
             name=node["data"]["label"],
             input_values={},
-            output_nodes=[]
+            output_nodes=[],
+            input_nodes=[],
+            output_memory=global_output_memory
         )
         block_map[node["id"]] = block
 
@@ -38,8 +42,11 @@ def load_blocks_from_json(data: Dict[str, Any]):
 
         src_block = block_map[src_id]
         dst_block = block_map[dst_id]
-
+        
+        
         src_block.output_nodes.append(dst_block)
+        for block in src_block.output_nodes:
+            block.input_nodes.append(src_block)
 
     return block_map
 
@@ -47,7 +54,15 @@ def load_blocks_from_json(data: Dict[str, Any]):
 def execute_graph(block):
     result = block.execute()
     for nxt in block.output_nodes:
-        nxt.input_values = result
+        if len(nxt.input_nodes) > 1:
+            input_keys = {node.id for node in nxt.input_nodes}
+            for node in nxt.input_nodes:
+                if node.id not in global_output_memory:
+                    execute_graph(node)
+            nxt.input_values = {k: v for k, v in global_output_memory.items() if k in input_keys}
+        else:
+            nxt.input_values = result
+
         execute_graph(nxt)
     return result
 
@@ -62,8 +77,6 @@ class GraphResponse(BaseModel):
 
 class ExecOnceRequest(BaseModel):
     code: str
-
-
 
 class ChatRequest(BaseModel):
     history: List[Any]
@@ -117,7 +130,7 @@ async def exec_one(request: ExecOnceRequest):
 
     try:
         with contextlib.redirect_stdout(log_capt):
-            result = Block(request, 0, "test", {"input_value": "plinK"}).execute()
+            result = Block(request, 0, "test", {"input_value": "plinK"}, global_output_memory).execute()
 
         logs_text = log_capt.getvalue().strip().split("\n")
 

@@ -144,7 +144,7 @@ export default function Terminal({ hide, graph }) {
         onInit={(typewriter) => {
           typewriter
             .typeString(
-              `<span class="text-3xl my-2 text-white" > ${LoadingText[Math.round((Math.random()*(LoadingText.length-1)))]} ...</span>`,
+              `<span class="text-3xl my-2 text-white" > ${LoadingText[Math.round((Math.random()*(LoadingText.length-1)))]}...</span>`,
             )
             .pauseFor(1000)
             .callFunction(() => {
