@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { useState, useCallback, useEffect} from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import Navbar from "../components/Navbar.jsx";
 import {
@@ -16,8 +16,8 @@ import "@xyflow/react/dist/style.css";
 import StupidAI from "../components/StupidAI.jsx";
 import CustomEdge from "../components/CustomEdge.jsx";
 import CustomNode from "../components/CustomNode.jsx";
+import InputNode from "../components/InputNode.jsx";
 import EditableNode from "../components/EditableNode.jsx";
-import { initialEdges, initialNodes, name, description } from "../components/lessons/lesson1.js";
 import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
 
@@ -36,6 +36,8 @@ function Home() {
   const [expanded, setExpanded] = useState(false);
   const [cookies, setCookies] = useCookies();
   const [selectedNodes, setSelectedNodes] = useState([]);
+  // State for resizable split between nodes and code editor
+  const [splitPosition, setSplitPosition] = useState(50); // Percentage of width for nodes panel
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [theme, setTheme] = useState(cookies?.theme?.currTheme);
@@ -43,19 +45,34 @@ function Home() {
   const [nextScreen, setNextScren] = useState(false);
   const [showTerm, setShowTerm] = useState(false);
 
+  const [input, setInput] = useState(0);
   // Creator Mode states
   const [creatorMode, setCreatorMode] = useState(false);
-  const [levelName, setLevelName] = useState(name);
-  const [levelDescription, setLevelDescription] = useState(description);
+  const [levelName, setLevelName] = useState("loading");
+  const [levelDescription, setLevelDescription] = useState("loading");
   const [konamiCode, setKonamiCode] = useState([]);
 
+	useEffect(()=>{
+		if(nodes.length>0 && input != undefined){
+		const nodesClone = [...nodes]
+		nodesClone[0].input = input
+		setNodes(nodesClone)
+		console.log(nodes)
+		}
+	},[input])
+ 
   useEffect(()=>{
 	  async function initLevel(){
 		  const data = await loadLesson()
 		  console.log(data)
 
 		  // Store ALL nodes (including test nodes) in state
+		  // For now the script expects the first node to be input 
+		  //  TODO:: fixit
+		  
+		  data.nodes[0].data.setInput = setInput
 		  setNodes(data.nodes)
+		  setInput(data.nodes[0].data.input)
 		  setEdges(data.edges)
 		  setLevelName(data.name)
 		  setLevelDescription(data.description)
@@ -121,7 +138,7 @@ function Home() {
     
     const handleKeyPress = (e) => {
 	
-
+ 
       const newSequence = [...konamiCode, e.key];
       
       if (newSequence.length > SECRET_SEQUENCE.length) {
@@ -145,6 +162,34 @@ function Home() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [konamiCode, creatorMode]);
 
+  // Refs for resizing functionality
+  const resizeStartX = useRef(0);
+  const startSplitPosition = useRef(0);
+
+  // Resize handlers for the split between nodes and code editor
+  const startSplitResize = useCallback((e) => {
+    e.preventDefault();
+    resizeStartX.current = e.clientX;
+    startSplitPosition.current = splitPosition;
+
+    document.addEventListener("mousemove", handleSplitResize);
+    document.addEventListener("mouseup", stopSplitResize);
+  }, [splitPosition]);
+
+  const handleSplitResize = useCallback((e) => {
+    const containerWidth = document.querySelector('.flex.h-full').clientWidth;
+    const deltaX = e.clientX - resizeStartX.current;
+    const deltaPercent = (deltaX / containerWidth) * 100;
+    const newSplitPosition = Math.max(20, Math.min(80, startSplitPosition.current + deltaPercent)); // Limit between 20% and 80%
+
+    setSplitPosition(newSplitPosition);
+  }, []);
+
+  const stopSplitResize = useCallback(() => {
+    document.removeEventListener("mousemove", handleSplitResize);
+    document.removeEventListener("mouseup", stopSplitResize);
+  }, []);
+
   const proOptions = { hideAttribution: true };
 
   const updateNodeLabel = useCallback((nodeId, newLabel) => {
@@ -163,7 +208,7 @@ function Home() {
     output: EditableNode,
   } : {
     default: CustomNode,
-    input: CustomNode,
+    input: InputNode,
     output: CustomNode,
   };
 
@@ -207,89 +252,106 @@ function Home() {
           <div className="flex flex-col h-dvh w-full">
             <Navbar 
               name={creatorMode ? levelName : name} 
-              description={creatorMode ? levelDescription : description}
+              description={creatorMode ? levelDescription : levelDescription}
               creatorMode={creatorMode}
               onNameChange={setLevelName}
               onDescriptionChange={setLevelDescription}
             />
-            <div className=" w-full flex h-full ">
-              <div className="relative flex flex-col h-full w-1/2">
-                <ReactFlow
-                  nodes={nodesWithCallback}
-                  edges={edges}
-                  onNodesChange={onNodesChange}
-                  onEdgesChange={onEdgesChange}
-                  onConnect={onConnect}
-                  onEdgeClick={onEdgeClick}
-                  onChange={onChange}
-                  proOptions={proOptions}
-                  edgeTypes={edgeTypes}
-                  nodeTypes={nodeTypes}
-                >
-                  <Background />
-                </ReactFlow>
-                {showTerm ? (
-                  <Terminal
-                    hide={() => {
-                      setShowTerm(false);
-                    }}
-					graph={{nodes, connections:edges}}
+              <div className="w-full flex h-full">
+               <div 
+                 className="relative flex flex-col h-full"
+                 style={{ width: `${splitPosition}%` }}
+               >
+                 <ReactFlow
+                   nodes={nodesWithCallback}
+                   edges={edges}
+                   onNodesChange={onNodesChange}
+                   onEdgesChange={onEdgesChange}
+                   onConnect={onConnect}
+                   onEdgeClick={onEdgeClick}
+                   onChange={onChange}
+                   proOptions={proOptions}
+                   edgeTypes={edgeTypes}
+                   nodeTypes={nodeTypes}
+                 >
+                   <Background />
+                 </ReactFlow>
+                 {showTerm ? (
+                   <Terminal
+ 				input={input}
+                     hide={() => {
+                       setShowTerm(false);
+                     }}
+ 				graph={{nodes, connections:edges}}
+ 
+                   />
+                 ) : (
+                   <div />
+                 )}
 
-                  />
-                ) : (
-                  <div />
-                )}
-
-                <div className="absolute right-5 bottom-5 z-100">
-                  {creatorMode && (
-                    <button
-                      className=" m-2 rounded-xl p-4 text-xl  hover:bg-button-hover transition-all bg-button"
-                      onClick={addBlankNode}
-                    >
-                      Add Node
-                    </button>
-                  )}
-                  <button
-                    className=" m-2 rounded-xl p-4 text-xl  hover:bg-button-hover transition-all bg-button"
-                    onClick={() => {
-                      console.log("Nodes");
-                      console.log(nodes);
-                      console.log("Edging");
-                      console.log(edges);
-                      
-                      const exportData = {
-                        name: creatorMode ? levelName : name,
-                        description: creatorMode ? levelDescription : description,
-                        nodes: nodes, // Always include all nodes in export (including test nodes) when in creator mode
-                        edges: edges,
-                        tags: creatorMode ? ["creator-mode", new Date().toISOString()] : ["lesson-mode"]
-                      };
-                      
-                      console.log("%c↓↓↓ JSON copy this ↓↓↓", "color: red; font-weight: bold;");
-                      console.log(exportData);
-                      console.log("%c↑↑↑ JSON copy this ↑↑↑", "color: green; font-weight: bold;");
-                      setShowTerm(true);
-                    }}
-                  >
-                    Run Code
-                  </button>
-                  <button
-                    className=" m-2 rounded-xl p-4 text-xl  hover:bg-button-hover transition-all bg-button"
-                    onClick={() => {
-                      setNextScren(true);
-                    }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex flex-col w-1/2 h-full border-l border-white  overflow-hidden">
+                 <div className="absolute right-5 bottom-5 z-100">
+                   {creatorMode && (
+                     <button
+                       className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
+                       onClick={addBlankNode}
+                     >
+                       Add Node
+                     </button>
+                   )}
+                   <button
+                     className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
+                     onClick={() => {
+                       console.log("Nodes");
+                       console.log(nodes);
+                       console.log("Edging");
+                       console.log(edges);
+                       
+                       const exportData = {
+                         name: creatorMode ? levelName : name,
+                         levelDescription: creatorMode ? levelDescription : levelDescription,
+                         nodes: nodes, // Always include all nodes in export (including test nodes) when in creator mode
+                         edges: edges,
+                         tags: creatorMode ? ["creator-mode", new Date().toISOString()] : ["lesson-mode"]
+                       };
+                       
+                       console.log("%c↓↓↓ JSON copy this ↓↓↓", "color: red; font-weight: bold;");
+                       console.log(exportData);
+                       console.log("%c↑↑↑ JSON copy this ↑↑↑", "color: green; font-weight: bold;");
+                       setShowTerm(true);
+                     }}
+                   >
+                     Run Code
+                   </button>
+                   <button
+                     className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
+                     onClick={() => {
+                       setNextScren(true);
+                     }}
+                   >
+                     Submit
+                   </button>
+                 </div>
+               </div>
+               
+               {/* Resize handle between nodes and code editor */}
+               <div
+                 className="w-1 cursor-col-resize hover:bg-ctp-surface1 transition-colors"
+                 onMouseDown={startSplitResize}
+               >
+                 <div className="w-full h-full flex justify-center">
+                   <div className="w-0.5 h-6 bg-transparent hover:bg-ctp-overlay2 rounded-full mt-10 opacity-0 hover:opacity-100 transition-all"></div>
+                 </div>
+               </div>
+               
+               <div 
+                 className="flex flex-col h-full border-l border-white overflow-hidden"
+                 style={{ width: `${100 - splitPosition}%` }}
+               >
                 {/* EDITOR */}
                 <div
                   className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "flex-1"} overflow-hidden`}
                 >
-                  {selectedNodes && selectedNodes.length === 1 && selectedNodes[0] ? (
+                  {selectedNodes && selectedNodes.length === 1 && selectedNodes[0] && selectedNodes[0].type != "input" && selectedNodes[0].type != "output" ? (
 					<CodeMirror value={selectedNodes[0].code} height="100%" theme="dark" className="h-full" extensions={[python()]}     onChange={(val, viewUpdate) => {
 						console.log("key press in editor")
                         const nodesClone = [...nodes];
@@ -332,6 +394,7 @@ function Home() {
           }}
 		  graph={{nodes, connections:edges}}
 		  tests={getTestNode(nodes)}
+		  input={input}
         />
       ) : (
         <div></div>

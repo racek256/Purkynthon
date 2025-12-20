@@ -1,8 +1,6 @@
 import Typewriter from "typewriter-effect";
 import { useState, useEffect, useRef } from "react";
 
-
-
 const LoadingText = [
   "Your code is cooking our servers",
   "Our servers are cooking your code",
@@ -37,15 +35,14 @@ const LoadingText = [
   "Probability of success: 12%",
   "Coding your execution",
   "Silence, machine. Horrible code is running",
-  "We is cooking you code, pls wait"
+  "We is cooking you code, pls wait",
 ];
-
 
 const options = {
   delay: 10,
-  cursor:"",
+  cursor: "",
 };
-export default function Terminal({ hide, graph }) {
+export default function Terminal({ hide, graph, input }) {
   const [displayOutput, setDisplayOutput] = useState(false);
   const [displayTerm, setDisplayTerm] = useState(false);
   const [output, setOutput] = useState();
@@ -56,47 +53,55 @@ export default function Terminal({ hide, graph }) {
   const resizeStartY = useRef(0);
   const startHeight = useRef(0);
 
-
   useEffect(() => {
     setTimeout(() => {
       setDisplayTerm(true);
     }, 1);
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
+    async function processCode() {
+		const graph_clone = JSON.parse(JSON.stringify(graph))
 
-	  async function processCode() {
-    const data = await fetch("https://aiserver.purkynthon.online/run-graph", {
-      method: "POST",
-      body: JSON.stringify({
-        graph: graph,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const response = await data.json();
-    console.log(response);
-	return response
-  }
+		console.log(graph.nodes)
+      const inputIndex = graph.nodes.findIndex((e) => e.type == "input");
+		console.log(inputIndex)
+	  graph_clone.nodes[inputIndex].code = graph_clone.nodes[inputIndex].code.replace("{original_input}", input)
+	console.log(`curr code: ${graph_clone.nodes[inputIndex].code}`)
+      const data = await fetch("https://aiserver.purkynthon.online/run-graph", {
+        method: "POST",
+        body: JSON.stringify({
+          graph: graph_clone,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const response = await data.json();
+      console.log(response);
+		console.log(graph.nodes[0])
+		
+      return response;
+    }
 
-	async function some(){
-		const data = await processCode()
-		console.log(data)
-		setOutput(data)
-	}
-	some()
-
-  },[])
+    async function some() {
+      const data = await processCode();
+      console.log(data);
+      setOutput(data);
+    }
+    some();
+  }, []);
 
   // Resize handlers
   const startResize = (e) => {
     e.preventDefault();
     resizeStartY.current = e.clientY;
-    startHeight.current = terminalRef.current ? terminalRef.current.getBoundingClientRect().height : window.innerHeight * (height / 100);
+    startHeight.current = terminalRef.current
+      ? terminalRef.current.getBoundingClientRect().height
+      : window.innerHeight * (height / 100);
 
-    document.addEventListener('mousemove', handleResize);
-    document.addEventListener('mouseup', stopResize);
+    document.addEventListener("mousemove", handleResize);
+    document.addEventListener("mouseup", stopResize);
   };
 
   const handleResize = (e) => {
@@ -105,19 +110,18 @@ export default function Terminal({ hide, graph }) {
     const windowHeight = window.innerHeight;
     const deltaY = e.clientY - resizeStartY.current;
     const newHeightPx = startHeight.current - deltaY;
-    const newHeightPercent = Math.max(10, Math.min(80, (newHeightPx / windowHeight) * 100)); // Limit between 10% and 80%
+    const newHeightPercent = Math.max(
+      10,
+      Math.min(80, (newHeightPx / windowHeight) * 100),
+    ); // Limit between 10% and 80%
 
     setHeight(newHeightPercent);
   };
 
   const stopResize = () => {
-    document.removeEventListener('mousemove', handleResize);
-    document.removeEventListener('mouseup', stopResize);
+    document.removeEventListener("mousemove", handleResize);
+    document.removeEventListener("mouseup", stopResize);
   };
-
- 
- 
-
 
   return (
     <div
@@ -129,11 +133,11 @@ export default function Terminal({ hide, graph }) {
     >
       {/* Resize handle - placed at the top of the terminal */}
       <div
-        className="w-full h-2 cursor-row-resize bg-border mt-[-8px] pt-[6px] hover:bg-button transition-colors"
+        className="w-full h-2 cursor-row-resize hover:bg-ctp-surface1 transition-colors mt-[-8px]"
         onMouseDown={startResize}
       >
         <div className="w-full h-1 flex justify-center">
-          <div className="w-12 h-0.5 bg-border rounded-full"></div>
+          <div className="w-full h-0.5 bg-transparent hover:bg-ctp-overlay2 opacity-0 hover:opacity-100 transition-all"></div>
         </div>
       </div>
 
@@ -144,7 +148,7 @@ export default function Terminal({ hide, graph }) {
         onInit={(typewriter) => {
           typewriter
             .typeString(
-              `<span class="text-3xl my-2 text-white" > ${LoadingText[Math.round((Math.random()*(LoadingText.length-1)))]}...</span>`,
+              `<span class="text-3xl my-2 text-white" > ${LoadingText[Math.round(Math.random() * (LoadingText.length - 1))]}...</span>`,
             )
             .pauseFor(1000)
             .callFunction(() => {
@@ -154,23 +158,37 @@ export default function Terminal({ hide, graph }) {
             .start();
         }}
       />
-	  {output?.logs ? <>
-		<p className={`text-gray-300 text-3xl  ${!displayOutput ? "opacity-0" : "opacity-100"} my-2`}>Logs:</p>
-      <p className={`bg-runner-output transition-400 ${!displayOutput ? "opacity-0" : "opacity-100"} max-h-32 h-max overflow-y-auto  transition-all rounded-xl p-4 text-runner-text`}>
-       {output.logs.split("\n").map((line, i) => (
-    		<span key={i}>{line}<br/></span>
-  		))}
+      {output?.logs ? (
+        <>
+          <p
+            className={`text-gray-300 text-3xl  ${!displayOutput ? "opacity-0" : "opacity-100"} my-2`}
+          >
+            Logs:
+          </p>
+          <p
+            className={`bg-runner-output transition-400 ${!displayOutput ? "opacity-0" : "opacity-100"} max-h-32 h-max overflow-y-auto  transition-all rounded-xl p-4 text-runner-text`}
+          >
+            {output.logs.split("\n").map((line, i) => (
+              <span key={i}>
+                {line}
+                <br />
+              </span>
+            ))}
+          </p>
+        </>
+      ) : (
+        <></>
+      )}
+      <p
+        className={`text-gray-300 text-3xl ${!displayOutput ? "opacity-0" : "opacity-100"} my-2 `}
+      >
+        Output:
       </p>
-
-		  </>:<></>}
-		<p className={`text-gray-300 text-3xl ${!displayOutput ? "opacity-0" : "opacity-100"} my-2 `}>Output:</p>
       <p
         className={`bg-runner-output transition-400 ${!displayOutput ? "opacity-0" : "opacity-100"}  transition-all rounded-xl p-4 text-runner-text`}
       >
         {output?.returnValue}
       </p>
-
-
 
       <button
         className="bg-button absolute right-5 top-5  w-max p-4 m-2  flex items-center  transition   rounded-xl hover:bg-button-hover cursor-pointer text-xl"
