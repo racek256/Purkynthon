@@ -32,7 +32,6 @@ class Block:
         self.code = replace_final_return(code, get_return_statement_sub())
     
     def execute(self) -> Any:
-        print("exec")
         input_safety = self.eval_input_value_safety()
         if not input_safety[1]:
             raise self.exception_maker(input_safety[0], "evaluating input safety")
