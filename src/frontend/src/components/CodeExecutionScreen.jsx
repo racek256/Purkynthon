@@ -48,6 +48,8 @@ export default function Terminal({ hide, graph, input }) {
   const [output, setOutput] = useState();
   // State for terminal height - default to 1/3 of screen
   const [height, setHeight] = useState(33);
+  // State for tracking resize drag
+  const [isResizing, setIsResizing] = useState(false);
   // Refs for resizing functionality
   const terminalRef = useRef(null);
   const resizeStartY = useRef(0);
@@ -95,6 +97,7 @@ export default function Terminal({ hide, graph, input }) {
   // Resize handlers
   const startResize = (e) => {
     e.preventDefault();
+    setIsResizing(true); // disable transition while dragging
     resizeStartY.current = e.clientY;
     startHeight.current = terminalRef.current
       ? terminalRef.current.getBoundingClientRect().height
@@ -121,14 +124,15 @@ export default function Terminal({ hide, graph, input }) {
   const stopResize = () => {
     document.removeEventListener("mousemove", handleResize);
     document.removeEventListener("mouseup", stopResize);
+    setIsResizing(false); // re‑enable transition after drag
   };
 
   return (
     <div
       ref={terminalRef}
-      className={`overflow-y-auto absolute bottom-0 left-0 w-full z-9999 ${
-        displayTerm ? "py-2" : "h-0 py-0"
-      } ease-in-out transition-200 transition-all flex border-t border-border bg-runner-bg px-4 flex-col`}
+className={`overflow-y-auto absolute bottom-0 left-0 w-full z-9999 ${
+          displayTerm ? "py-2" : "h-0 py-0"
+        } ${isResizing ? "transition-none" : "ease-in-out transition-200 transition-all"} flex border-t border-border bg-runner-bg px-4 flex-col`}
       style={{ height: displayTerm ? `${height}vh` : "0px" }}
     >
       {/* Resize handle - placed at the top of the terminal */}
