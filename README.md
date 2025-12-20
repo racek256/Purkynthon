@@ -38,6 +38,6 @@ Purkynthon is an educational web-based game for 8./9. graders. Created for the e
 
 #### Honorable mention: 
 - Racek's `grammar mistakes` and pushing venv files
-- Fimes's `laziness` to start working on the backend
+- Fimes's `laziness` to start working on the backend and accounts
 - Rakon `solving racism`
 - Martin for removing the venv files and just `existing`
