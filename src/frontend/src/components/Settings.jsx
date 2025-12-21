@@ -1,23 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export default function Settings({ hide, theme, selectTheme }) {
   const [displayed, setDisplayed] = useState(false);
   const [closing, setClosing] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => setDisplayed(true), 10);
-    setTimeout(() => setClosing(true), 150);
-  }, []);
 
   function hideScreen() {
     setDisplayed(false);
     setTimeout(() => hide(), 150);
   }
 
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "Escape") {
+      hideScreen();
+    }
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => setDisplayed(true), 10);
+    setTimeout(() => setClosing(true), 150);
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      hideScreen();
+    }
+  };
+
   return (
     <div
       className={`fixed top-0 left-0 w-screen h-screen z-999 backdrop-blur-xs transition-opacity
         ${displayed ? "opacity-100" : "opacity-0"}`}
+      onClick={handleBackdropClick}
     >
 <div
          className={`absolute left-1/2 top-1/2 w-1/2 h-1/2 bg-bg border border-white rounded-xl
@@ -48,18 +64,16 @@ export default function Settings({ hide, theme, selectTheme }) {
                 <option>flashbang</option>
               </select>
             </div>
-            
-            <div className="mb-6">
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
-                onClick={() => {
-                  console.log("user wanted to logout not knowing its a placeholder");
-                }}
-              >
-                Logout - it doesnt work because fimes is lazy
-              </button>
-            </div>
           </div>
+          
+          <button
+            className="absolute bottom-4 left-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
+            onClick={() => {
+              console.log("user wanted to logout not knowing its a placeholder");
+            }}
+          >
+            Logout - it doesnt work because fimes is lazy
+          </button>
           
           <button
             className="absolute bottom-4 right-4 bg-button px-6 py-2 rounded-md hover:bg-button-hover"

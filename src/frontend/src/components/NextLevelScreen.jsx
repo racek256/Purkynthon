@@ -1,7 +1,6 @@
 import User from "../assets/user_icon.svg";
 import Circle from "../assets/Circle.svg";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 const leaderboard = [
   {
     name: "racek256",
@@ -35,6 +34,20 @@ export default function NextLevel({ hide, graph, tests, input }) {
     .reverse();
   const [displayed, setDisplayed] = useState(false);
   const [closing, setClosing] = useState(false);
+  
+  function hideScreen() {
+    setDisplayed(false);
+    setTimeout(() => {
+      hide();
+    }, 150);
+  }
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "Escape") {
+      hideScreen();
+    }
+  }, []);
+
   useEffect(() => {
     if (!closing) {
       setTimeout(() => {
@@ -44,13 +57,16 @@ export default function NextLevel({ hide, graph, tests, input }) {
         setClosing(true);
       }, 150);
     }
-  });
-  function hideScreen() {
-    setDisplayed(false);
-    setTimeout(() => {
-      hide();
-    }, 150);
-  }
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      hideScreen();
+    }
+  };
 
   useEffect(() => {
     async function runTest(input, output, index) {
@@ -102,6 +118,7 @@ export default function NextLevel({ hide, graph, tests, input }) {
   return (
     <div
       className={`w-screen ${displayed ? "opacity-100" : "opacity-0"} transition-all top-0 left-0 h-screen fixed backdrop-blur-xs  z-999`}
+      onClick={handleBackdropClick}
     >
       <div
         className={`absolute ease-in-out  ${displayed ? "top-1/2 scale-100 opacity-100" : !displayed && !closing ? "scale-75 opacity-0 top-3/4" : "scale-75 opacity-0 top-1/4"} transition-all  left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 rounded-xl h-1/2 flex border border-white bg-bg`}
@@ -143,28 +160,12 @@ export default function NextLevel({ hide, graph, tests, input }) {
           <div className="h-7/8 overflow-y-auto">
             {LeaderBoard.map((e, i) => {
               return (
-                <div key={i} className="my-3 relative ">
-                  <div className="flex flex-col">
-                    {e.active ? (
-                      <div>
-                        <div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color-active"></div>
-                        <div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color-active"></div>
-                        <div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color-active"></div>
-                        <div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color-active"></div>
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color"></div>
-                        <div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color"></div>
-                        <div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color"></div>
-                        <div className="w-full h-3 p-0 rounded-xl bg-leaderboard-color"></div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="absolute inset-0 flex items-center mx-4 justify-between">
-                    <div className="text-xl truncate">{`${i + 1}. ${e.name}`}</div>
-                    <div className="text-xl">{e.score}</div>
-                  </div>
+                <div 
+                  key={i} 
+                  className={`my-3 p-3 rounded-lg flex items-center justify-between ${e.active ? 'bg-leaderboard-color-active' : 'bg-leaderboard-color'}`}
+                >
+                  <div className="text-xl truncate">{`${i + 1}. ${e.name}`}</div>
+                  <div className="text-xl">{e.score}</div>
                 </div>
               );
             })}

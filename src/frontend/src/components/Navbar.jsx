@@ -55,8 +55,8 @@ export default function Navbar({name,description,creatorMode,onNameChange,onDesc
   };
 
   return (
-    <div className="h-24  border-b  border-border w-full flex bg-bg">
-      <div className="h-full w-5/8 border-r border-border">
+    <div className="h-24  border-b  border-border w-full flex justify-between bg-bg">
+      <div className="h-full">
         {isEditingName && creatorMode ? (
           <input
             type="text"
@@ -95,8 +95,8 @@ export default function Navbar({name,description,creatorMode,onNameChange,onDesc
           </p>
         )}
       </div>
-      <div className="flex">
-        <img className="rounded-full p-2" src={User} />
+      <div className="flex border-l border-border p-2">
+        <img className="rounded-full border border-white" src={User} />
         <div>
           <h1 className="text-text-light text-xl p-2 pb-0">Zaměstnavatel</h1>
           <div className="rounded-xl border-3 border-black h-6 w-64 m-2 overflow-hidden relative">
