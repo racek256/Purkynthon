@@ -47,7 +47,7 @@ export default function Terminal({ hide, graph, input }) {
   const [displayTerm, setDisplayTerm] = useState(false);
   const [output, setOutput] = useState();
   // State for terminal height - default to 1/3 of screen
-  const [height, setHeight] = useState(33);
+  const [height, setHeight] = useState(35);
   // State for tracking resize drag
   const [isResizing, setIsResizing] = useState(false);
   // Refs for resizing functionality

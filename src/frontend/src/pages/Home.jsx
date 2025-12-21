@@ -38,7 +38,7 @@ function Home() {
   const [cookies, setCookies] = useCookies();
   const [selectedNodes, setSelectedNodes] = useState([]);
   // State for resizable split between nodes and code editor
-  const [splitPosition, setSplitPosition] = useState(50); // Percentage of width for nodes panel
+  const [splitPosition, setSplitPosition] = useState(60); // Percentage of width for nodes panel
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [theme, setTheme] = useState(cookies?.theme?.currTheme);
