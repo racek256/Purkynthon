@@ -78,7 +78,6 @@
   --color-sidebar-theme-selector: #f0f0f0;
 
   /* Stupid-AI */
-
   --color-ai-border: var(--color-ctp-mauve-600); /* border of nearly all AI elements */
   --color-ai-bg: var(--color-ctp-mauve-950);  /* background of AI elements */
   --color-ai-assistant-message: var(--color-ctp-green-600); /* message from AI */ 
