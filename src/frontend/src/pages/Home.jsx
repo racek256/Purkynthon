@@ -20,6 +20,7 @@ import InputNode from "../components/InputNode.jsx";
 import EditableNode from "../components/EditableNode.jsx";
 import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
+import Settings from "../components/Settings.jsx";
 
 import CodeMirror from '@uiw/react-codemirror';
 import { python } from '@codemirror/lang-python';
