@@ -26,9 +26,9 @@
   /* Login Screen */
   --color-login-start: #0c1638; /* gradient start */
   --color-login-end: #1c1670; /* gradient end */
-  --color-login-popup: #bcc0cc; /* the place you enter the password and username */
-  --color-login-input: #acb0be; /* the place you write your password and username to*/
-  --color-login-button: #85a3ff; /* this one is self-explanatory*/
+  --color-login-popup: #1c1670; /* the place you enter the password and username */
+  --color-login-input: #cdd6f4; /* the place you write your password and username to*/
+  --color-login-button: #58a3ff; /* this one is self-explanatory*/
   --color-login-button-hover: #1b5ef5; /* the same but when mouse is hovering over it */
   /* Code Execution */
   --color-runner-bg: #1e2030; /* background of code runner*/ 
@@ -112,7 +112,7 @@
   --color-ai-bg: #4b64ab;  /* background of AI elements */
   --color-ai-assistant-message: #1348e2; /* message from AI */ 
   --color-ai-user-message: #1348e2; /*   message from User*/
-  --color-ai-input: #183690;  /* color of the input bar */
+  --color-ai-input: #1348e2;  /* color of the input bar */
   --color-ai-send-button: #1b5ef5; /* color of the send button */
 }
 
