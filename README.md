@@ -33,7 +33,7 @@ Purkynthon is an educational web-based game for 8./9. graders. Created for the e
 
 - **Racek256** – Frontend development
 - **ItsFimes** – Backend development
-- **Rakon150** – Profesionall Vibecoder
+- **Rakon150** – Professional vibecoder
 - **Martin40645** – Existing I guess
 
 #### Honorable mention: 
