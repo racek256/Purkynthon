@@ -205,7 +205,7 @@ function Home() {
 
   const nodeTypes = creatorMode ? {
     default: EditableNode,
-    input: EditableNode,
+    input: InputNode,
     output: EditableNode,
   } : {
     default: CustomNode,
@@ -246,11 +246,11 @@ function Home() {
   };
 
   return (
-    <div className={`  ${theme}  h-dvh overflow-hidden w-screen `}>
-      <div className="  bg-bg  h-dvh w-screen">
-        <div className="flex">
+    <div className={`${theme} h-dvh overflow-x-clip overflow-y-hidden w-full max-w-full`}>
+      <div className="bg-bg h-dvh w-full max-w-full overflow-hidden">
+        <div className="flex w-full max-w-full">
           <Sidebar selectTheme={updateTheme} theme={theme} />
-          <div className="flex flex-col h-dvh w-full">
+          <div className="flex flex-col h-dvh w-full min-w-0">
             <Navbar 
               name={creatorMode ? levelName : name} 
               description={creatorMode ? levelDescription : levelDescription}
