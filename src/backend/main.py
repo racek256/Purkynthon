@@ -8,7 +8,7 @@ from modules.standard_stuff import get_ollama_client_ip
 import uvicorn
 import io
 import contextlib
-
+from modules.db import router
 
 global_output_memory: Dict[str, Any] = {}
 
@@ -51,6 +51,8 @@ def load_blocks_from_json(data: Dict[str, Any]):
     return block_map
 
 
+
+
 def execute_graph(block):
     result = block.execute()
     for nxt in block.output_nodes:
@@ -86,7 +88,11 @@ class ChatResponseModel(BaseModel):
 
 
 client = Client(host=get_ollama_client_ip())
+
+
 app = FastAPI()
+app.include_router(router, prefix="/api/auth", tags=["users"])
+
 
 app.add_middleware(
     CORSMiddleware,
