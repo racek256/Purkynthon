@@ -22,18 +22,15 @@ import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
 import Settings from "../components/Settings.jsx";
 
-import CodeMirror from '@uiw/react-codemirror';
-import { python } from '@codemirror/lang-python';
+import CodeMirror from "@uiw/react-codemirror";
+import { python } from "@codemirror/lang-python";
 import loadLesson from "../components/lessons/lessonLoader.js";
-
 
 const edgeTypes = {
   default: CustomEdge,
 };
 
 function Home() {
-
-
   const [expanded, setExpanded] = useState(false);
   const [cookies, setCookies] = useCookies();
   const [selectedNodes, setSelectedNodes] = useState([]);
@@ -53,36 +50,65 @@ function Home() {
   const [levelDescription, setLevelDescription] = useState("loading");
   const [konamiCode, setKonamiCode] = useState([]);
 
-	useEffect(()=>{
-		if(nodes.length>0 && input != undefined){
-		const nodesClone = [...nodes]
-		nodesClone[0].input = input
-		setNodes(nodesClone)
-		console.log(nodes)
-		}
-	},[input])
- 
-  useEffect(()=>{
-	  async function initLevel(){
-		  const data = await loadLesson()
-		  console.log(data)
+  const navigate = useNavigate();
+  function logout() {
+    setCookies("session", { token: "nope" }, {});
+    navigate("/");
+  }
 
-		  // Store ALL nodes (including test nodes) in state
-		  // For now the script expects the first node to be input 
-		  //  TODO:: fixit
-		  
-		  data.nodes[0].data.setInput = setInput
-		  setNodes(data.nodes)
-		  setInput(data.nodes[0].data.input)
-		  setEdges(data.edges)
-		  setLevelName(data.name)
-		  setLevelDescription(data.description)
-	  }
-	  initLevel()
-  },[])
+  // verify login
+  useEffect(() => {
+    async function callMe() {
+      if (!cookies?.session?.token) {
+        navigate("/login");
+      } else {
+        const data = await fetch(
+          "https://aiserver.purkynthon.online/api/auth/verify",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ jwt_token: cookies.session.token }),
+          },
+        );
+        const response = await data.json();
+        console.log(response);
+        if (!response.success) {
+          navigate("/login");
+        }
+      }
+    }
+    callMe();
+  }, []);
 
+  useEffect(() => {
+    if (nodes.length > 0 && input != undefined) {
+      const nodesClone = [...nodes];
+      nodesClone[0].input = input;
+      setNodes(nodesClone);
+      console.log(nodes);
+    }
+  }, [input]);
 
+  useEffect(() => {
+    async function initLevel() {
+      const data = await loadLesson();
+      console.log(data);
 
+      // Store ALL nodes (including test nodes) in state
+      // For now the script expects the first node to be input
+      //  TODO:: fixit
+
+      data.nodes[0].data.setInput = setInput;
+      setNodes(data.nodes);
+      setInput(data.nodes[0].data.input);
+      setEdges(data.edges);
+      setLevelName(data.name);
+      setLevelDescription(data.description);
+    }
+    initLevel();
+  }, []);
 
   function updateTheme(newTheme) {
     setTheme(newTheme);
@@ -110,7 +136,6 @@ function Home() {
     [],
   );
 
- 
   const onEdgeClick = useCallback(
     (event, edge) => {
       console.log("Edge clicked:", edge.id);
@@ -120,10 +145,6 @@ function Home() {
     },
     [setEdges],
   );
-  const navigate = useNavigate();
-  if (cookies?.session?.token != "tester") {
-    navigate("/login");
-  }
 
   const onChange = useCallback(({ nodes: selectedNodesArray }) => {
     setSelectedNodes(selectedNodesArray || []);
@@ -135,32 +156,47 @@ function Home() {
 
   // Secret cheat detection
   useEffect(() => {
-    const SECRET_SEQUENCE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-    
+    const SECRET_SEQUENCE = [
+      "ArrowUp",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowLeft",
+      "ArrowRight",
+      "b",
+      "a",
+    ];
+
     const handleKeyPress = (e) => {
-	
- 
       const newSequence = [...konamiCode, e.key];
-      
+
       if (newSequence.length > SECRET_SEQUENCE.length) {
         newSequence.shift();
       }
-      
+
       setKonamiCode(newSequence);
-      
-      if (newSequence.join('') === SECRET_SEQUENCE.join('')) {
+
+      if (newSequence.join("") === SECRET_SEQUENCE.join("")) {
         setCreatorMode(!creatorMode);
         setKonamiCode([]);
         if (!creatorMode) {
-          console.log('%c🎨 Creator Mode Activated! 🎨', 'color: #ff6b6b; font-size: 16px; font-weight: bold;');
+          console.log(
+            "%c🎨 Creator Mode Activated! 🎨",
+            "color: #ff6b6b; font-size: 16px; font-weight: bold;",
+          );
         } else {
-          console.log('%cCreator Mode Deactivated', 'color: #666; font-size: 14px;');
+          console.log(
+            "%cCreator Mode Deactivated",
+            "color: #666; font-size: 14px;",
+          );
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [konamiCode, creatorMode]);
 
   // Refs for resizing functionality
@@ -168,20 +204,26 @@ function Home() {
   const startSplitPosition = useRef(0);
 
   // Resize handlers for the split between nodes and code editor
-  const startSplitResize = useCallback((e) => {
-    e.preventDefault();
-    resizeStartX.current = e.clientX;
-    startSplitPosition.current = splitPosition;
+  const startSplitResize = useCallback(
+    (e) => {
+      e.preventDefault();
+      resizeStartX.current = e.clientX;
+      startSplitPosition.current = splitPosition;
 
-    document.addEventListener("mousemove", handleSplitResize);
-    document.addEventListener("mouseup", stopSplitResize);
-  }, [splitPosition]);
+      document.addEventListener("mousemove", handleSplitResize);
+      document.addEventListener("mouseup", stopSplitResize);
+    },
+    [splitPosition],
+  );
 
   const handleSplitResize = useCallback((e) => {
-    const containerWidth = document.querySelector('.flex.h-full').clientWidth;
+    const containerWidth = document.querySelector(".flex.h-full").clientWidth;
     const deltaX = e.clientX - resizeStartX.current;
     const deltaPercent = (deltaX / containerWidth) * 100;
-    const newSplitPosition = Math.max(20, Math.min(80, startSplitPosition.current + deltaPercent)); // Limit between 20% and 80%
+    const newSplitPosition = Math.max(
+      20,
+      Math.min(80, startSplitPosition.current + deltaPercent),
+    ); // Limit between 20% and 80%
 
     setSplitPosition(newSplitPosition);
   }, []);
@@ -198,25 +240,27 @@ function Home() {
       nds.map((node) =>
         node.id === nodeId
           ? { ...node, data: { ...node.data, label: newLabel } }
-          : node
-      )
+          : node,
+      ),
     );
   }, []);
 
-  const nodeTypes = creatorMode ? {
-    default: EditableNode,
-    input: InputNode,
-    output: EditableNode,
-  } : {
-    default: CustomNode,
-    input: InputNode,
-    output: CustomNode,
-  };
+  const nodeTypes = creatorMode
+    ? {
+        default: EditableNode,
+        input: InputNode,
+        output: EditableNode,
+      }
+    : {
+        default: CustomNode,
+        input: InputNode,
+        output: CustomNode,
+      };
 
   // Filter out the test node when not in creator mode for display
   const filteredNodesForDisplay = creatorMode
     ? nodes
-    : nodes.filter(node => node.id !== 'test');
+    : nodes.filter((node) => node.id !== "test");
 
   const nodesWithCallback = creatorMode
     ? filteredNodesForDisplay.map((node) => ({
@@ -224,21 +268,20 @@ function Home() {
         data: { ...node.data, onLabelChange: updateNodeLabel },
       }))
     : filteredNodesForDisplay;
-	function getTestNode(nodes) {
-	  const data =nodes.filter((node) => node.id === "test");
-	return JSON.parse(data[0].code)
-	}
-
+  function getTestNode(nodes) {
+    const data = nodes.filter((node) => node.id === "test");
+    return JSON.parse(data[0].code);
+  }
 
   const addBlankNode = () => {
     const newNode = {
       id: `node-${Date.now()}`,
-      type: 'default',
+      type: "default",
       position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 },
-      data: creatorMode 
-        ? { label: 'New Node', onLabelChange: updateNodeLabel }
-        : { label: 'New Node' },
-      code: '# Write your code here\n\nreturn None',
+      data: creatorMode
+        ? { label: "New Node", onLabelChange: updateNodeLabel }
+        : { label: "New Node" },
+      code: "# Write your code here\n\nreturn None",
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
     };
@@ -246,115 +289,136 @@ function Home() {
   };
 
   return (
-    <div className={`${theme} h-dvh overflow-x-clip overflow-y-hidden w-full max-w-full`}>
+    <div
+      className={`${theme} h-dvh overflow-x-clip overflow-y-hidden w-full max-w-full`}
+    >
       <div className="bg-bg h-dvh w-full max-w-full overflow-hidden">
         <div className="flex w-full max-w-full">
-          <Sidebar selectTheme={updateTheme} theme={theme} />
+          <Sidebar logout={logout} selectTheme={updateTheme} theme={theme} />
           <div className="flex flex-col h-dvh w-full min-w-0">
-            <Navbar 
-              name={creatorMode ? levelName : name} 
+            <Navbar
+              name={creatorMode ? levelName : name}
               description={creatorMode ? levelDescription : levelDescription}
               creatorMode={creatorMode}
               onNameChange={setLevelName}
               onDescriptionChange={setLevelDescription}
             />
-              <div className="w-full flex h-full">
-               <div 
-                 className="relative flex flex-col h-full"
-                 style={{ width: `${splitPosition}%` }}
-               >
-                 <ReactFlow
-                   nodes={nodesWithCallback}
-                   edges={edges}
-                   onNodesChange={onNodesChange}
-                   onEdgesChange={onEdgesChange}
-                   onConnect={onConnect}
-                   onEdgeClick={onEdgeClick}
-                   onChange={onChange}
-                   proOptions={proOptions}
-                   edgeTypes={edgeTypes}
-                   nodeTypes={nodeTypes}
-                 >
-                   <Background />
-                 </ReactFlow>
-                 {showTerm ? (
-                   <Terminal
- 				input={input}
-                     hide={() => {
-                       setShowTerm(false);
-                     }}
- 				graph={{nodes, connections:edges}}
- 
-                   />
-                 ) : (
-                   <div />
-                 )}
+            <div className="w-full flex h-full">
+              <div
+                className="relative flex flex-col h-full"
+                style={{ width: `${splitPosition}%` }}
+              >
+                <ReactFlow
+                  nodes={nodesWithCallback}
+                  edges={edges}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  onConnect={onConnect}
+                  onEdgeClick={onEdgeClick}
+                  onChange={onChange}
+                  proOptions={proOptions}
+                  edgeTypes={edgeTypes}
+                  nodeTypes={nodeTypes}
+                >
+                  <Background />
+                </ReactFlow>
+                {showTerm ? (
+                  <Terminal
+                    input={input}
+                    hide={() => {
+                      setShowTerm(false);
+                    }}
+                    graph={{ nodes, connections: edges }}
+                  />
+                ) : (
+                  <div />
+                )}
 
-                 <div className="absolute right-5 bottom-5 z-100">
-                   {creatorMode && (
-                     <button
-                       className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
-                       onClick={addBlankNode}
-                     >
-                       Add Node
-                     </button>
-                   )}
-                   <button
-                     className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
-                     onClick={() => {
-                       console.log("Nodes");
-                       console.log(nodes);
-                       console.log("Edging");
-                       console.log(edges);
-                       
-                       const exportData = {
-                         name: creatorMode ? levelName : name,
-                         levelDescription: creatorMode ? levelDescription : levelDescription,
-                         nodes: nodes, // Always include all nodes in export (including test nodes) when in creator mode
-                         edges: edges,
-                         tags: creatorMode ? ["creator-mode", new Date().toISOString()] : ["lesson-mode"]
-                       };
-                       
-                       console.log("%c↓↓↓ JSON copy this ↓↓↓", "color: red; font-weight: bold;");
-                       console.log(exportData);
-                       console.log("%c↑↑↑ JSON copy this ↑↑↑", "color: green; font-weight: bold;");
-                       setShowTerm(true);
-                     }}
-                   >
-                     Run Code
-                   </button>
-                   <button
-                     className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
-                     onClick={() => {
-                       setNextScren(true);
-                     }}
-                   >
-                     Submit
-                   </button>
-                 </div>
-               </div>
-               
-               {/* Resize handle between nodes and code editor */}
-               <div
-                 className="w-1 cursor-col-resize hover:bg-ctp-surface1 transition-colors"
-                 onMouseDown={startSplitResize}
-               >
-                 <div className="w-full h-full flex justify-center">
-                   <div className="w-0.5 h-6 bg-transparent hover:bg-ctp-overlay2 rounded-full mt-10 opacity-0 hover:opacity-100 transition-all"></div>
-                 </div>
-               </div>
-               
-               <div 
-                 className="flex flex-col h-full border-l border-white overflow-hidden"
-                 style={{ width: `${100 - splitPosition}%` }}
-               >
+                <div className="absolute right-5 bottom-5 z-100">
+                  {creatorMode && (
+                    <button
+                      className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
+                      onClick={addBlankNode}
+                    >
+                      Add Node
+                    </button>
+                  )}
+                  <button
+                    className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
+                    onClick={() => {
+                      console.log("Nodes");
+                      console.log(nodes);
+                      console.log("Edging");
+                      console.log(edges);
+
+                      const exportData = {
+                        name: creatorMode ? levelName : name,
+                        levelDescription: creatorMode
+                          ? levelDescription
+                          : levelDescription,
+                        nodes: nodes, // Always include all nodes in export (including test nodes) when in creator mode
+                        edges: edges,
+                        tags: creatorMode
+                          ? ["creator-mode", new Date().toISOString()]
+                          : ["lesson-mode"],
+                      };
+
+                      console.log(
+                        "%c↓↓↓ JSON copy this ↓↓↓",
+                        "color: red; font-weight: bold;",
+                      );
+                      console.log(exportData);
+                      console.log(
+                        "%c↑↑↑ JSON copy this ↑↑↑",
+                        "color: green; font-weight: bold;",
+                      );
+                      setShowTerm(true);
+                    }}
+                  >
+                    Run Code
+                  </button>
+                  <button
+                    className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
+                    onClick={() => {
+                      setNextScren(true);
+                    }}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+
+              {/* Resize handle between nodes and code editor */}
+              <div
+                className="w-1 cursor-col-resize hover:bg-ctp-surface1 transition-colors"
+                onMouseDown={startSplitResize}
+              >
+                <div className="w-full h-full flex justify-center">
+                  <div className="w-0.5 h-6 bg-transparent hover:bg-ctp-overlay2 rounded-full mt-10 opacity-0 hover:opacity-100 transition-all"></div>
+                </div>
+              </div>
+
+              <div
+                className="flex flex-col h-full border-l border-white overflow-hidden"
+                style={{ width: `${100 - splitPosition}%` }}
+              >
                 {/* EDITOR */}
                 <div
                   className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "flex-1"} overflow-hidden`}
                 >
-                  {selectedNodes && selectedNodes.length === 1 && selectedNodes[0] && selectedNodes[0].type != "input" && selectedNodes[0].type != "output" ? (
-					<CodeMirror value={selectedNodes[0].code} height="100%" theme="dark" className="h-full" extensions={[python()]}     onChange={(val, viewUpdate) => {
-						console.log("key press in editor")
+                  {selectedNodes &&
+                  selectedNodes.length === 1 &&
+                  selectedNodes[0] &&
+                  selectedNodes[0].type != "input" &&
+                  selectedNodes[0].type != "output" ? (
+                    <CodeMirror
+                      value={selectedNodes[0].code}
+                      height="100%"
+                      theme="dark"
+                      className="h-full"
+                      extensions={[python()]}
+                      onChange={(val, viewUpdate) => {
+                        console.log("key press in editor");
                         const nodesClone = [...nodes];
                         const index = nodesClone.findIndex(
                           (n) => selectedNodes[0].id === n.id,
@@ -363,7 +427,8 @@ function Home() {
                           nodesClone[index].code = val;
                           setNodes(nodesClone);
                         }
-					}} /> 
+                      }}
+                    />
                   ) : (
                     <div
                       className={`flex items-center justify-center ${expanded ? "h-0 overflow-hidden" : "h-full"} text-4xl text-ctp-mauve-900`}
@@ -393,9 +458,9 @@ function Home() {
           hide={() => {
             setNextScren(false);
           }}
-		  graph={{nodes, connections:edges}}
-		  tests={getTestNode(nodes)}
-		  input={input}
+          graph={{ nodes, connections: edges }}
+          tests={getTestNode(nodes)}
+          input={input}
         />
       ) : (
         <div></div>

@@ -3,7 +3,7 @@ import SettingsIcon from "../assets/settings_icon.svg";
 import { useState } from "react";
 import Settings from "./Settings.jsx";
 
-export default function Sidebar({ selectTheme, theme }) {
+export default function Sidebar({ selectTheme, theme, logout }) {
   const [showSettings, setShowSettings] = useState(false);
 
   return (
@@ -30,6 +30,7 @@ export default function Sidebar({ selectTheme, theme }) {
 
       {showSettings && (
         <Settings 
+		  logout={logout}
           hide={() => setShowSettings(false)} 
           theme={theme}
           selectTheme={selectTheme}

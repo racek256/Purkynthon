@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 
-export default function Settings({ hide, theme, selectTheme }) {
+export default function Settings({ hide, theme, selectTheme, logout }) {
   const [displayed, setDisplayed] = useState(false);
   const [closing, setClosing] = useState(false);
 
@@ -69,10 +69,11 @@ export default function Settings({ hide, theme, selectTheme }) {
           <button
             className="absolute bottom-4 left-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
             onClick={() => {
-              console.log("user wanted to logout not knowing its a placeholder");
+              console.log("User logged out");
+				logout()
             }}
           >
-            Logout - it doesnt work because fimes is lazy
+	  Logout - UPDATE: Works thanks to Racek doing Fimes’s job.
           </button>
           
           <button
