@@ -5,6 +5,8 @@ function Login() {
   const [cookies, setCookies] = useCookies(["session"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   return (
@@ -14,7 +16,50 @@ function Login() {
           Login To Purkynthon
         </h1>
 
-        <div className="space-y-5">
+        <form className="space-y-5" onSubmit={async (e) => {
+              e.preventDefault();
+              setError("");
+              setIsLoading(true);
+
+              try {
+                const data = await fetch(
+                  "https://aiserver.purkynthon.online/api/auth/login",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username, password }),
+                  },
+                );
+
+                if (!data.ok) {
+                  setError("Cannot connect to server.");
+                  setIsLoading(false);
+                  return;
+                }
+
+                const response = await data.json();
+
+                if (response.success) {
+                  setCookies(
+                    "session",
+                    { token: response.jwt_token },
+                    {
+                      expires: new Date(Date.now() + 3 * 60 * 60 * 1000),
+                    },
+                  );
+                  navigate("/");
+                } else {
+                  setError("Invalid username or password");
+                  setPassword("");
+                }
+              } catch (err) {
+                setError("Cannot connect to server.");
+              }
+
+              setIsLoading(false);
+            }}>
           <div>
             <label className="text-text-dark text-sm font-medium mb-2 block">
               Username
@@ -40,38 +85,21 @@ function Login() {
             />
           </div>
 
-          <button
-            className="w-full py-3 px-4 bg-login-button hover:bg-login-button-hover active:scale-[0.98] transition-all cursor-pointer mt-4 rounded-lg font-medium text-black"
-            onClick={async (e) => {
-              const data = await fetch(
-                "https://aiserver.purkynthon.online/api/auth/login",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ username, password }),
-                },
-              );
-              const response = await data.json();
-              console.log(response);
-              if (response.success) {
-                setCookies(
-                  "session",
-                  { token: response.jwt_token },
-                  {
-                    expires: new Date(Date.now() + 3 * 60 * 60 * 1000), // 1 hour
-                  },
-                );
-              navigate("/");
-              }
+          {error && (
+            <div className="bg-red-500/60 border border-red-500 text-white rounded-lg p-3 text-sm mt-4 -mb-1">
+              {error}
+            </div>
+          )}
 
-            }}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-3 px-4 bg-login-button hover:bg-login-button-hover active:scale-[0.98] transition-all cursor-pointer mt-5 rounded-lg font-medium text-black disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
 	  <p className="text-white text-xl text-center">user: admin password: brambora</p>
-        </div>
+        </form>
       </div>
     </div>
   );
