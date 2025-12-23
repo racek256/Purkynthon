@@ -70,7 +70,7 @@ export default function Settings({ hide, theme, selectTheme, logout }) {
             className="absolute bottom-4 left-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
             onClick={() => {
               console.log("User logged out");
-				logout()
+				logout();
             }}
           >
 	  Logout - UPDATE: Works thanks to Racek doing Fimes’s job.
