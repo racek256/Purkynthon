@@ -11,15 +11,10 @@ from modules.db import router
 
 global_output_memory: Dict[str, Any] = {}
 
-
-
 client = Client(host=get_ollama_client_ip())
-
 
 app = FastAPI()
 app.include_router(router, prefix="/api/auth", tags=["users"])
-
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
