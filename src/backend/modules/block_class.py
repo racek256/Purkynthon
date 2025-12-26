@@ -64,3 +64,58 @@ class Block:
     def exception_maker(self, message: str, exec_step: str) -> BlockException:
         return BlockException(self.name, self.id, message, exec_step)
 
+
+def load_blocks_from_json(data: Dict[str, Any], global_output_memory: Dict[str, Any]):
+    nodes = data["nodes"]
+    connections = data["connections"]
+
+    block_map = {}
+
+    for node in nodes:
+        block = Block(
+            code=node.get("code", ""),
+            id=node["id"],
+            name=node["data"]["label"],
+            input_values={},
+            output_nodes=[],
+            input_nodes=[],
+            output_memory=global_output_memory
+)
+        block_map[node["id"]] = block
+
+    for connection in connections:
+        src_id = connection["source"]
+        dst_id = connection["target"]
+
+        if src_id not in block_map:
+            raise KeyError(f"Connection source '{src_id}' not found in nodes")
+
+        if dst_id not in block_map:
+            raise KeyError(f"Connection target '{dst_id}' not found in nodes")
+
+        src_block = block_map[src_id]
+        dst_block = block_map[dst_id]
+        
+        
+        src_block.output_nodes.append(dst_block)
+        for block in src_block.output_nodes:
+            block.input_nodes.append(src_block)
+
+    return block_map
+
+
+def execute_graph(block, global_output_memory: Dict[str, Any]):
+    result = block.execute()
+    for nxt in block.output_nodes:
+        if len(nxt.input_nodes) > 1:
+            input_keys = {node.id for node in nxt.input_nodes}
+            for node in nxt.input_nodes:
+                if node.id not in global_output_memory:
+                    execute_graph(node, global_output_memory)
+            nxt.input_values = {k: v for k, v in global_output_memory.items() if k in input_keys}
+        else:
+            nxt.input_values = result
+
+        execute_graph(nxt, global_output_memory)
+    return result
+
