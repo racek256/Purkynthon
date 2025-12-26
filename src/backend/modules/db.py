@@ -3,7 +3,8 @@ from pydantic import BaseModel
 import sqlite3
 import os 
 import jwt  # pip install pyjwt
-from datetime import datetime, timedelta
+import datetime
+from datetime import timedelta
 from passlib.hash import bcrypt
 
 
@@ -28,19 +29,21 @@ if not os.path.exists(DB_FILE):
 
 
 def create_access_token(user_id, username,expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
-    expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
+    expire = datetime.datetime.now(datetime.UTC) + timedelta(minutes=expires_minutes)
     payload = {
         "sub": str(user_id),       # user identifier
         "username": username,      # optional extra info
         "exp": expire,             # expiration time
-        "iat": datetime.utcnow()   # issued at
+        "iat": datetime.datetime.now(datetime.UTC)   # issued at
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
 
+class LoginData(BaseModel):
+    username: str
+    password: str
 
-# Routes and Login logic
 @router.get("/users")
 async def get_users():
     conn = sqlite3.connect(DB_FILE)
@@ -49,13 +52,7 @@ async def get_users():
     users = cur.fetchall()
     return users
 
-
-# Routes and Login logic
-class LoginData(BaseModel):
-    username: str
-    password: str
 @router.post("/login")
-
 async def get_user(user:LoginData):
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
