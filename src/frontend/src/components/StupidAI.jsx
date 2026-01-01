@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import SendIcon from "../assets/send_icon.svg";
 import ArrowUP from "../assets/arrow_up_icon.svg";
 import ArrowDown from "../assets/arrow_down_icon.svg";
@@ -17,77 +17,29 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     },
   ]);
   const [currentText, updateText] = useState("");
-  const [aiEnabled, setAiEnabled] = useState(true);
-  const [aiLoading, setAiLoading] = useState(false);
-
-  // Check AI status on mount and periodically
-  useEffect(() => {
-    async function checkAIStatus() {
-      try {
-        const response = await fetch("http://localhost:2069/api/admin/ai-status");
-        const data = await response.json();
-        setAiEnabled(data.ai_enabled);
-      } catch (err) {
-        console.error("Failed to check AI status");
-      }
-    }
-
-    checkAIStatus();
-    // Check every 5 seconds for faster response to admin changes
-    const interval = setInterval(checkAIStatus, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   async function askAI(question) {
-    if (!aiEnabled) {
-      updateHistory([...history, 
-        { role: "user", content: question },
-        { role: "assistant", content: "AI has been disabled by the administrator. Please try again later." }
-      ]);
-      updateText("");
-      return;
-    }
-
     const newChat = [...history];
     newChat.push({ role: "user", content: question });
     updateText("");
-    setAiLoading(true);
 
     updateHistory(newChat);
-    try {
-      const data = await fetch("https://aiserver.purkynthon.online/api/chat", {
-        method: "POST",
-        body: JSON.stringify({
-          history: newChat,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      
-      if (data.status === 503) {
-        // AI is disabled
-        setAiEnabled(false);
-        const newChat2 = [...newChat];
-        newChat2.push({ role: "assistant", content: "AI has been disabled by the administrator. Please try again later." });
-        updateHistory(newChat2);
-        setAiLoading(false);
-        return;
-      }
+    const data = await fetch("https://aiserver.purkynthon.online/api/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        history: newChat,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const response = await data.json();
+    console.log(response);
 
-      const response = await data.json();
-      console.log(response);
+    const newChat2 = [...newChat];
 
-      const newChat2 = [...newChat];
-
-      newChat2.push({ role: "assistant", content: response.message });
-      updateHistory(newChat2);
-    } catch (err) {
-      const newChat2 = [...newChat];
-      newChat2.push({ role: "assistant", content: "Failed to connect to AI server." });
-      updateHistory(newChat2);
-    }
-    setAiLoading(false);
+    newChat2.push({ role: "assistant", content: response.message });
+    updateHistory(newChat2);
   }
 
   return (
@@ -105,11 +57,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
         <div className="w-full border-ai-border bg-ai-bg border-2 rounded-full h-12 flex justify-between items-center flex-shrink-0">
           <h1 className="font-bold text-2xl mx-4 text-text-light">Dumb AI</h1>
           <p className="text-lg mx-4 text-text-light">
-            {aiEnabled ? (
-              "PS: this AI is probably dumber than you"
-            ) : (
-              <span className="text-red-400">AI is currently disabled</span>
-            )}
+            PS: this AI is probably dumber than you
           </p>
         </div>
 
@@ -141,16 +89,13 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
               className="p-3 text-white h-12 rounded-xl w-full bg-ai-input resize-none"
               value={currentText}
               onChange={(e) => updateText(e.target.value)}
-              placeholder={aiEnabled ? "Type your message..." : "AI is disabled by administrator"}
-              disabled={!aiEnabled || aiLoading}
+              placeholder="Type your message..."
               rows={1}
               onKeyDown={(e) => {
                 if (
                   e.key === "Enter" &&
                   !e.shiftKey &&
-                  currentText.length !== 0 &&
-                  aiEnabled &&
-                  !aiLoading
+                  currentText.length !== 0
                 ) {
                   e.preventDefault();
                   askAI(currentText);
@@ -158,21 +103,14 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
               }}
             />
             <button
-              className={`bg-ai-send-button rounded-lg mx-2 cursor-pointer h-12 w-12 flex items-center justify-center flex-shrink-0 ${
-                (!aiEnabled || aiLoading) ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={!aiEnabled || aiLoading}
+              className="bg-ai-send-button rounded-lg mx-2 cursor-pointer h-12 w-12 flex items-center justify-center flex-shrink-0"
               onClick={() => {
-                if (currentText.length !== 0 && aiEnabled && !aiLoading) {
+                if (currentText.length !== 0) {
                   askAI(currentText);
                 }
               }}
             >
-              {aiLoading ? (
-                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <img src={SendIcon} className="h-full w-full p-1" />
-              )}
+              <img src={SendIcon} className="h-full w-full p-1" />
             </button>
           </div>
         </div>
