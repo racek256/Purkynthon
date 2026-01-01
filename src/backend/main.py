@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Any, Dict, List, cast
@@ -8,7 +8,9 @@ from modules.standard_stuff import get_ollama_client_ip
 import uvicorn
 import io
 import contextlib
+import sqlite3
 from modules.db import router
+from modules.admin import router as admin_router
 
 global_output_memory: Dict[str, Any] = {}
 
@@ -92,6 +94,7 @@ client = Client(host=get_ollama_client_ip())
 
 app = FastAPI()
 app.include_router(router, prefix="/api/auth", tags=["users"])
+app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
 
 
 app.add_middleware(
@@ -156,8 +159,23 @@ async def exec_one(request: ExecOnceRequest):
         )
     
 
+DB_FILE = "db.db"
+
+def is_ai_enabled():
+    """Check if AI is enabled in settings."""
+    conn = sqlite3.connect(DB_FILE)
+    cur = conn.cursor()
+    cur.execute("SELECT value FROM settings WHERE key='ai_enabled'")
+    result = cur.fetchone()
+    conn.close()
+    return result[0] == "true" if result else True
+
 @app.post("/api/chat", response_model=ChatResponseModel)
 async def chatwithAI(data: ChatRequest):
+    # Check if AI is enabled
+    if not is_ai_enabled():
+        raise HTTPException(status_code=503, detail="AI is currently disabled by administrator")
+    
     response: ChatResponse = client.chat(
         model='gemma3:1b-it-qat',
         messages=data.history

@@ -20,6 +20,7 @@ import InputNode from "../components/InputNode.jsx";
 import EditableNode from "../components/EditableNode.jsx";
 import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
+import Toast from "../components/Toast.jsx";
 
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
@@ -48,21 +49,90 @@ function Home() {
   const [levelName, setLevelName] = useState("loading");
   const [levelDescription, setLevelDescription] = useState("loading");
   const [konamiCode, setKonamiCode] = useState([]);
+  // User info
+  const [userInfo, setUserInfo] = useState({ username: "Loading...", role: "user" });
+  // Maintenance and announcement state
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
+  const [sessionVersion, setSessionVersion] = useState(null);
+  // Notifications
+  const [notifications, setNotifications] = useState([]);
 
+  const API_BASE = "http://localhost:2069";
   const navigate = useNavigate();
   function logout() {
     setCookies("session", { token: "nope" }, {});
     navigate("/login");
   }
 
-  // verify login
+  // Check for user notifications
+  async function checkNotifications() {
+    if (!cookies?.session?.token) return;
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/notifications`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jwt_token: cookies.session.token }),
+      });
+      const data = await res.json();
+      if (data.success && data.notifications.length > 0) {
+        setNotifications(data.notifications);
+      }
+    } catch (err) {
+      console.error("Failed to check notifications");
+    }
+  }
+
+  // Mark notification as read and remove from list
+  async function dismissNotification(notificationId) {
+    try {
+      await fetch(`${API_BASE}/api/admin/notifications/${notificationId}/read`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jwt_token: cookies.session.token }),
+      });
+      setNotifications(notifications.filter(n => n.id !== notificationId));
+    } catch (err) {
+      console.error("Failed to mark notification as read");
+    }
+  }
+
+  // verify login and check system status
   useEffect(() => {
     async function callMe() {
       if (!cookies?.session?.token) {
         navigate("/login");
-      } else {
+        return;
+      }
+      
+      try {
+        // Check system status first
+        const statusRes = await fetch(`${API_BASE}/api/admin/status`);
+        const status = await statusRes.json();
+        
+        // Store session version for later comparison
+        if (sessionVersion === null) {
+          setSessionVersion(status.session_version);
+        } else if (sessionVersion !== status.session_version) {
+          // Session version changed - force logout
+          // Store flag in localStorage so login page knows to show message
+          localStorage.setItem("force_logged_out", "true");
+          setCookies("session", { token: "nope" }, {});
+          navigate("/login");
+          return;
+        }
+        
+        // Check for announcement
+        if (status.announcement && status.announcement !== announcement) {
+          setAnnouncement(status.announcement);
+          setShowAnnouncement(true);
+        }
+        
+        // Verify token
         const data = await fetch(
-          "https://aiserver.purkynthon.online/api/auth/verify",
+          `${API_BASE}/api/auth/verify`,
           {
             method: "POST",
             headers: {
@@ -73,13 +143,38 @@ function Home() {
         );
         const response = await data.json();
         console.log(response);
+        
         if (!response.success) {
           navigate("/login");
+          return;
         }
+        
+        // Check maintenance mode - only allow admins
+        if (status.maintenance_mode && response.role !== "admin") {
+          setMaintenanceMode(true);
+          return;
+        } else {
+          setMaintenanceMode(false);
+        }
+        
+        setUserInfo({ username: response.username, role: response.role });
+        
+        // Check for notifications
+        checkNotifications();
+      } catch (err) {
+        console.error("Failed to verify:", err);
+        navigate("/login");
       }
     }
     callMe();
-  }, []);
+    
+    // Poll for status updates every 5 seconds for faster response
+    const interval = setInterval(() => {
+      callMe();
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [sessionVersion]);
 
   useEffect(() => {
     if (nodes.length > 0 && input != undefined) {
@@ -287,13 +382,101 @@ function Home() {
     setNodes((nds) => [...nds, newNode]);
   };
 
+  // If maintenance mode is active, show maintenance screen
+  if (maintenanceMode) {
+    return (
+      <div className="mocha h-dvh w-screen bg-gradient-to-br from-login-start to-login-end flex items-center justify-center">
+        <div className="bg-login-popup rounded-2xl p-8 max-w-md text-center border border-white/10">
+          <div className="text-6xl mb-4">&#128679;</div>
+          <h1 className="text-3xl font-bold text-text-dark mb-4">
+            Maintenance Mode
+          </h1>
+          <p className="text-text-dark/70 mb-6">
+            The application is currently undergoing maintenance. Please check back later.
+          </p>
+          <button
+            onClick={logout}
+            className="px-6 py-3 bg-login-button hover:bg-login-button-hover text-black rounded-lg transition-all"
+          >
+            Return to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`${theme} h-dvh overflow-x-clip overflow-y-hidden w-full max-w-full`}
     >
+      {/* Toast for announcements */}
+      {showAnnouncement && (
+        <Toast 
+          message={announcement} 
+          onClose={() => setShowAnnouncement(false)}
+          onDismiss={async () => {
+            // Clear announcement on server when timer expires
+            try {
+              await fetch(`${API_BASE}/api/admin/settings/announcement/clear`, {
+                method: "POST",
+              });
+              setAnnouncement("");
+            } catch (err) {
+              console.error("Failed to clear announcement");
+            }
+          }}
+          duration={30000}
+        />
+      )}
+      
+      {/* Notifications (role changes, etc.) */}
+      {notifications.map((notification, index) => (
+        <div
+          key={notification.id}
+          className="fixed z-50 max-w-md transition-all duration-300"
+          style={{ top: `${4 + index * 5}rem`, right: '1rem' }}
+        >
+          <div className={`bg-login-popup border rounded-xl shadow-lg p-4 ${
+            notification.type === 'role_change' 
+              ? 'border-yellow-500/50' 
+              : 'border-blue-500/50'
+          }`}>
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                {notification.type === 'role_change' ? (
+                  <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1">
+                <p className={`text-sm font-medium ${
+                  notification.type === 'role_change' ? 'text-yellow-300' : 'text-blue-300'
+                }`}>
+                  {notification.type === 'role_change' ? 'Role Changed' : 'Notification'}
+                </p>
+                <p className="text-text-dark mt-1">{notification.message}</p>
+              </div>
+              <button
+                onClick={() => dismissNotification(notification.id)}
+                className="flex-shrink-0 text-text-dark/60 hover:text-text-dark transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+      
       <div className="bg-bg h-dvh w-full max-w-full overflow-hidden">
         <div className="flex w-full max-w-full">
-          <Sidebar logout={logout} selectTheme={updateTheme} theme={theme} />
+          <Sidebar logout={logout} selectTheme={updateTheme} theme={theme} userInfo={userInfo} />
           <div className="flex flex-col h-dvh w-full min-w-0">
             <Navbar
               name={creatorMode ? levelName : name}
