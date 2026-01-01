@@ -27,11 +27,12 @@ if not os.path.exists(DB_FILE):
     conn.close()
 
 
-def create_access_token(user_id, username,expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
+def create_access_token(user_id, username, role="user", expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
     expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
     payload = {
         "sub": str(user_id),       # user identifier
         "username": username,      # optional extra info
+        "role": role,              # user role (user, tester, admin)
         "exp": expire,             # expiration time
         "iat": datetime.utcnow()   # issued at
     }
@@ -59,15 +60,15 @@ class LoginData(BaseModel):
 async def get_user(user:LoginData):
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
-    cur.execute("SELECT id,username,password FROM users WHERE username=?",(user.username,))
+    cur.execute("SELECT id,username,password,role FROM users WHERE username=?",(user.username,))
     user_data = cur.fetchone()
     conn.close()
     if user_data:
         print("user exist checking password")
         if bcrypt.verify(user.password,user_data[2]):
             print("generating JWT")
-            jwt_token = create_access_token(user_data[0], user_data[1])
-            return {"success":True, "jwt_token":jwt_token}
+            jwt_token = create_access_token(user_data[0], user_data[1], user_data[3])
+            return {"success":True, "jwt_token":jwt_token, "role": user_data[3]}
         else: 
             print("Password was incorrect")
             return {"success":False,"message":"password was incorrect"}
@@ -105,12 +106,12 @@ async def verify_jwt(data: JWT):
         # Check if user still exists in database
         conn = sqlite3.connect(DB_FILE)
         cur = conn.cursor()
-        cur.execute("SELECT id FROM users WHERE id=?", (user_id,))
+        cur.execute("SELECT id, role FROM users WHERE id=?", (user_id,))
         user = cur.fetchone()
         conn.close()
         
         if user:
-            return {"success": True, "user_id": user_id, "username": payload["username"]}
+            return {"success": True, "user_id": user_id, "username": payload["username"], "role": user[1]}
         else:
             return {"success": False, "message": "User no longer exists"}
     except jwt.ExpiredSignatureError:
