@@ -6,9 +6,9 @@ import jwt  # pip install pyjwt
 import datetime
 from datetime import timedelta
 from passlib.hash import bcrypt
+from modules.standard_stuff import LoginData, JWT
 
-
-SECRET_KEY = "This is our super secret key nobody will hack into our security HAHAHA you cant hack us you can try but you will fail because of this super secret key"
+SECRET_KEY = "This is our super secret key nobody will hack into our security HAHAHA you cant hack us you can try but you will fail because of this super secret key" # directly commited into a public repo btw
 ALGORITHM = "HS256"  
 
 router = APIRouter()
@@ -40,17 +40,14 @@ def create_access_token(user_id, username,expires_minutes: int = ACCESS_TOKEN_EX
     return token
 
 
-class LoginData(BaseModel):
-    username: str
-    password: str
-
-@router.get("/users")
-async def get_users():
-    conn = sqlite3.connect(DB_FILE)
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM users")
-    users = cur.fetchall()
-    return users
+# Commented out, cuz what in the security catastrophe is this :sob:
+# @router.get("/users")
+# async def get_users():
+#     conn = sqlite3.connect(DB_FILE)
+#     cur = conn.cursor()
+#     cur.execute("SELECT * FROM users")
+#     users = cur.fetchall()
+#     return users
 
 @router.post("/login")
 async def get_user(user:LoginData):
@@ -77,7 +74,7 @@ async def register_user(user:LoginData):
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
 
-    #Prepare user data
+    # Prepare user data
     try: 
         cur.execute("INSERT INTO users (username, password) VALUES (?, ?)", (user.username, bcrypt.hash(user.password)))
         conn.commit()
@@ -89,9 +86,6 @@ async def register_user(user:LoginData):
     # Generate JWT_token
     jwt_token = create_access_token(user_id, user.username)
     return {"success":True, "jwt_token":jwt_token}
-
-class JWT(BaseModel):
-    jwt_token: str
 
 @router.post("/verify")
 async def verify_jwt(data: JWT):
