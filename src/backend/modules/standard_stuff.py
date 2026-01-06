@@ -13,6 +13,7 @@ def get_return_statement_sub_name() -> str:
 def get_ollama_client_ip() -> str:
     return ollama_client_ip
 
+# main.py
 class GraphRequest(BaseModel):
     graph: Dict[str, Any]  # i like my json raw
 
@@ -31,3 +32,10 @@ class ChatResponseModel(BaseModel):
     message: str
 
 
+# db.py
+class JWT(BaseModel):
+    jwt_token: str
+
+class LoginData(BaseModel):
+    username: str
+    password: str
