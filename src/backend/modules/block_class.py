@@ -38,7 +38,10 @@ class Block:
         
         output_values = {} 
         try: 
-            exec(self.code, {"input_value": self.input_values}, output_values) 
+            if self.id != "output":
+                exec(self.code, {"input_value": self.input_values}, output_values)
+            else:
+                exec(self.code, {"original_input_value": self.output_memory["n1"], "input_value": self.input_values}, output_values)
         except Exception as e:
             raise self.exception_maker(f"Your code ran into an error: {e}", "executing")
         
