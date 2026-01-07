@@ -408,8 +408,8 @@ function Home() {
                   {selectedNodes &&
                   selectedNodes.length === 1 &&
                   selectedNodes[0] &&
-                  selectedNodes[0].type != "input" &&
-                  selectedNodes[0].type != "output" ? (
+                  selectedNodes[0].type != "input" | creatorMode &&
+                  selectedNodes[0].type != "output"  | creatorMode ? (
                     <CodeMirror
                       value={selectedNodes[0].code}
                       height="100%"
