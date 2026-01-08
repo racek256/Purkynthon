@@ -30,8 +30,8 @@ class Block:
             raise self.exception_maker(f"Your code contains code that isn't allowed to be executed: '{code_safety[0]}' on line {code_safety[2]}",
                                        "executing")
         self.code = replace_final_return(code, get_return_statement_sub())
-        if self.id == "output":
-            self.code = self.code + "\nreturn 0"
+        # if self.id == "output":
+        #     self.code = self.code + "\nreturn 'gg'"
     
     def execute(self) -> Any:
         input_safety = self.eval_input_value_safety()
