@@ -30,14 +30,14 @@ const edgeTypes = {
 };
 
 function Home() {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [cookies, setCookies] = useCookies();
   const [selectedNodes, setSelectedNodes] = useState([]);
   // State for resizable split between nodes and code editor
   const [splitPosition, setSplitPosition] = useState(60); // Percentage of width for nodes panel
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
-  const [theme, setTheme] = useState(cookies?.theme?.currTheme);
+  const [theme, setTheme] = useState(cookies?.theme?.currTheme || "fire");
 
   const [nextScreen, setNextScren] = useState(false);
   const [showTerm, setShowTerm] = useState(false);
@@ -48,6 +48,9 @@ function Home() {
   const [levelName, setLevelName] = useState("loading");
   const [levelDescription, setLevelDescription] = useState("loading");
   const [konamiCode, setKonamiCode] = useState([]);
+  const [submitAttempts, setSubmitAttempts] = useState(0);
+  const [startTime, setStartTime] = useState(Date.now())
+  const [buttonActive, setButtonActive] = useState(false)
 
   const navigate = useNavigate();
   function logout() {
@@ -131,7 +134,7 @@ function Home() {
     [],
   );
   const onConnect = useCallback(
-    (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
+    (params) => setEdges((edgesSnapshot) => addEdge({...params, animated:true}, edgesSnapshot)),
     [],
   );
 
@@ -324,6 +327,7 @@ function Home() {
                 {showTerm ? (
                   <Terminal
                     input={input}
+					activate={setButtonActive}
                     hide={() => {
                       setShowTerm(false);
                     }}
@@ -343,7 +347,7 @@ function Home() {
                     </button>
                   )}
                   <button
-                    className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
+                    className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button cursor-pointer"
                     onClick={() => {
                       console.log("Nodes");
                       console.log(nodes);
@@ -377,7 +381,7 @@ function Home() {
                     Run Code
                   </button>
                   <button
-                    className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
+                    className={`m-2 rounded-xl p-4 text-xl ${buttonActive ? "hover:bg-button-hover transition-all bg-button cursor-pointer" : "bg-gray-300 pointer-events-none cursor-not-allowed  "} `}
                     onClick={() => {
                       setNextScren(true);
                     }}
@@ -460,6 +464,7 @@ function Home() {
           graph={{ nodes, connections: edges }}
           tests={getTestNode(nodes)}
           input={input}
+		  time={startTime}
         />
       ) : (
         <div></div>

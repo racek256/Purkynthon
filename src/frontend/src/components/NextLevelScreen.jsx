@@ -22,19 +22,18 @@ const leaderboard = [
 ];
 //https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif
 //https://media.tenor.com/JYyzR_1h77MAAAAi/angry-emoji.gif
-export default function NextLevel({ hide, graph, tests, input }) {
+export default function NextLevel({ hide, graph, tests, input, time }) {
   const [finished, setFinished] = useState(false);
   const [testSuccess, setTestSucces] = useState([]);
+  const [finishTime] = useState(Date.now() - time);
 
-  console.log(tests);
-
-  console.log(tests);
   const LeaderBoard = [...leaderboard]
     .sort((a, b) => a.score - b.score)
     .reverse();
   const [displayed, setDisplayed] = useState(false);
   const [closing, setClosing] = useState(false);
-  
+  const [correctness, setCorrectness] = useState(false);
+
   function hideScreen() {
     setDisplayed(false);
     setTimeout(() => {
@@ -57,7 +56,7 @@ export default function NextLevel({ hide, graph, tests, input }) {
         setClosing(true);
       }, 150);
     }
-    
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
@@ -67,6 +66,12 @@ export default function NextLevel({ hide, graph, tests, input }) {
       hideScreen();
     }
   };
+	function scoreCalculator3000(){
+		let score = 1000; 
+		const seconds = finishTime/1000 
+		score = score - seconds*2
+		return Math.round(score)
+	}
 
   useEffect(() => {
     async function runTest(input, output, index) {
@@ -76,7 +81,7 @@ export default function NextLevel({ hide, graph, tests, input }) {
       graph_clone.nodes[inputIndex].code = graph_clone.nodes[
         inputIndex
       ].code.replace("{original_input}", input);
-      
+
       const data = await fetch("https://aiserver.purkynthon.online/run-graph", {
         method: "POST",
         body: JSON.stringify({
@@ -89,32 +94,46 @@ export default function NextLevel({ hide, graph, tests, input }) {
       const response = await data.json();
 
       // Create a copy of testSuccess array and update the specific index
-        // Update state using functional updater to avoid stale closures
-        setTestSucces(prev => {
-          const updated = [...prev];
-          updated[index] = Number(response.returnValue.trim()) == Number(output.trim());
-          // Log test result
-          console.log(`Test number ${index + 1}: ${updated[index] ? 'success' : 'failed'}`);
-          return updated;
-        });
-        
-        return response;
+      // Update state using functional updater to avoid stale closures
+      setTestSucces((prev) => {
+        const updated = [...prev];
+        updated[index] =
+          Number(response.returnValue.trim()) == Number(output.trim());
+        // Log test result
+        console.log(
+          `Test number ${index + 1}: ${updated[index] ? "✅" : "❌"}`,
+        );
+        return updated;
+      });
+
+      return response;
     }
-    
+
     // Run tests sequentially to ensure proper state updates
     async function runTests() {
       // Initialize testSuccess array with correct length
       const initialTests = Array(tests.length).fill(false);
       setTestSucces(initialTests);
-      
+
       // Run tests one by one
       for (let i = 0; i < tests.length; i++) {
         await runTest(tests[i].input, tests[i].output, i);
       }
     }
-    
+
     runTests();
   }, [tests]);
+
+  useEffect(() => {
+    if (testSuccess.length === tests.length && tests.length > 0) {
+      const allPassed = testSuccess.every(Boolean);
+      setCorrectness(allPassed);
+
+      console.log("Final test results:", testSuccess);
+      console.log("All correct:", allPassed);
+    }
+  }, [testSuccess, tests.length]);
+
   return (
     <div
       className={`w-screen ${displayed ? "opacity-100" : "opacity-0"} transition-all top-0 left-0 h-screen fixed backdrop-blur-xs  z-999`}
@@ -133,36 +152,49 @@ export default function NextLevel({ hide, graph, tests, input }) {
               Příště trochu rychleji jo?{" "}
             </div>
           </div>
-             <div className="flex-col text-white">
-             <div className="flex border-white border-y text-3xl py-4 text-white overflow-x-auto">
-               {testSuccess.length > 0 ? (
-                 <div className="flex flex-1 min-w-max gap-2 px-2">
-                   {testSuccess.map((result, index) => (
-                     <div key={index} className="flex-none text-center border-r border-white last:border-r-0 px-4 min-w-48">
-                       Test {index + 1}: {result ? "success" : "failed"}
-                     </div>
-                   ))}
-                 </div>
-               ) : (
-                 <div className="flex-1 text-center">No tests run</div>
-               )}
-             </div>
-            <div className="text-white text-3xl py-4 border-b border-white">
-              Skóre: 465
+          <div className="flex-col text-white h-full">
+            <div className="flex border-white border-y text-3xl py-4 text-white overflow-x-auto">
+              {testSuccess.length > 0 ? (
+                <div className="flex flex-1 min-w-max gap-2 px-2">
+                  {testSuccess.map((result, index) => (
+                    <div
+                      key={index}
+                      className="flex-none text-center border-r border-white last:border-r-0 px-4 min-w-48"
+                    >
+                      Test {index + 1}: {result ? "✅" : "❌"}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex-1 text-center">No tests run</div>
+              )}
             </div>
-            <div className="text-white text-3xl py-4 ">Peníze: 543</div>
-            <div className="text-white text-3xl py-4 border-y border-white">
-              Čas: 5m 36s
-            </div>
+            {correctness ? (
+              <div>
+                <div className="text-white text-3xl py-4 border-y border-white">
+                  Čas:{" "}
+                  {Math.floor(finishTime / 3600000) > 0
+                    ? `${Math.floor(finishTime / 3600000)}h `
+                    : ""}
+                  {Math.floor((finishTime % 3600000) / 60000)}m{" "}
+                  {Math.floor((finishTime % 60000) / 1000)}s
+                </div>
+                <div className="text-white text-3xl py-4 border-b border-white">
+                  Skóre: {scoreCalculator3000()}
+                </div>
+              </div>
+            ) : (
+					<div className="flex items-center justify-center py-8"><div className="text-3xl">Looks like it wasn't quite right</div></div>
+            )}
           </div>
         </div>
         <div className="border border-white border-l rounded-r-xl w-5/16  h-full flex-col p-2 overflow-y-hidden">
           <div className="h-7/8 overflow-y-auto">
             {LeaderBoard.map((e, i) => {
               return (
-                <div 
-                  key={i} 
-                  className={`my-3 p-3 rounded-lg flex items-center justify-between ${e.active ? 'bg-leaderboard-color-active' : 'bg-leaderboard-color'}`}
+                <div
+                  key={i}
+                  className={`my-3 p-3 rounded-lg flex items-center justify-between ${e.active ? "bg-leaderboard-color-active" : "bg-leaderboard-color"}`}
                 >
                   <div className="text-xl truncate">{`${i + 1}. ${e.name}`}</div>
                   <div className="text-xl">{e.score}</div>
