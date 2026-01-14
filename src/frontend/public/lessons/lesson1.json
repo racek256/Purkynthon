@@ -1,97 +1,49 @@
 {
-  "name": "Level 1: Oprava převodníku",
-  "description": "Tvým úkolem je doplnit kód v prostředním uzlu podle vzorce: (vstup * 1.8) + 32.",
+  "name": "Level 1: Účtenka od Beránka",
+  "description": "Sedíš v hospodě a musíš spočítat, kolik budeš platit. Vstupem je počet piv. Cena jednoho piva je 55 Kč. Na konci ale musíš přičíst fixních 10 Kč za misku arašídů, kterou vám vrchní automaticky hodil na stůl.",
   "nodes": [
     {
       "id": "n1",
       "type": "input",
-      "position": {
-        "x": 100,
-        "y": 200
-      },
+      "position": { "x": 100, "y": 200 },
       "data": {
-        "label": "Input",
-      	"input": 10
+        "label": "Počet piv 🍺",
+        "input": 3
       },
-      "code": "input = {original_input} \n\nprint(f\"Vstupní hodnota: {input}\")\n\nreturn input",
+      "code": "input_value = {original_input}\nprint(f\"Na lístku je čárek: {input_value}\")\nreturn input_value",
       "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      },
-      "selected": false
+      "targetPosition": "left"
     },
     {
       "id": "n2",
-      "position": {
-        "x": 400,
-        "y": 200
-      },
-      "data": {
-        "label": "Procesor (CHYBA)"
-      },
-      "code": "# TODO: Oprav tento kód!\n# Vzorec pro Fahrenheity je: (input_value * 1.8) + 32\n\n# Zde je chyba - momentálně vracíme jen nulu\nvysledek = 0 \n\nreturn vysledek",
+      "position": { "x": 400, "y": 200 },
+      "data": { "label": "Kalkulačka útraty" },
+      "code": "# Proměnná 'input_value' obsahuje počet piv.\n# Cena za pivo: 55 Kč\n# Arašídy: 10 Kč\n\n# TODO: Oprav vzorec níže\nvysledek = input_value\n\nreturn vysledek",
       "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      },
-      "selected": false,
-      "dragging": false
+      "targetPosition": "left"
     },
     {
-      "id": "n3",
+      "id": "output",
       "type": "output",
-      "position": {
-        "x": 700,
-        "y": 200
-      },
-      "data": {
-        "label": "Output"
-      },
-      "code": "print(f\"Výsledná hodnota: {input_value}\") \nprint(input_value)",
+      "position": { "x": 700, "y": 200 },
+      "data": { "label": "Konečná cena 💸" },
+      "code": "print(f\"Celkem k platbě: {input_value} Kč\")\nprint(input_value)",
       "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      }
+      "targetPosition": "left"
     },
-    
     {
       "id": "test",
       "type": "default",
-      "position": {
-        "x": 100,
-        "y": 300
-      },
-      "data": {
-        "label": "Test case"
-      },
-       "code": "[{\"input\":\"0\", \"output\":\"32\"}, {\"input\":\"10\", \"output\":\"50\"}, {\"input\":\"25\", \"output\":\"77\"}, {\"input\":\"100\", \"output\":\"212\"}]",
+      "position": { "x": 100, "y": 350 },
+      "data": { "label": "Testovací scénáře" },
+      "code": "[{\"input\":\"1\", \"output\":\"65\"}, {\"input\":\"2\", \"output\":\"120\"}, {\"input\":\"5\", \"output\":\"285\"}, {\"input\":\"0\", \"output\":\"10\"}]",
       "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      }
+      "targetPosition": "left"
     }
   ],
   "edges": [
-    {
-      "id": "e1-2",
-      "source": "n1",
-      "target": "n2",
-      "animated": true
-    },
-    {
-      "id": "e2-3",
-      "source": "n2",
-      "target": "n3",
-      "animated": true
-    }
+    { "id": "e1-2", "source": "n1", "target": "n2", "animated": true },
+    { "id": "e2-3", "source": "n2", "target": "output", "animated": true }
   ],
-  "tags": ["creator-mode", "2025-12-14T12:56:33.426Z"]
+  "tags": ["hospoda-logic", "matika-zaklad"]
 }
