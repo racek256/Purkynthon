@@ -5,15 +5,12 @@
     {
       "id": "n1",
       "type": "input",
-      "position": {
-        "x": 100,
-        "y": 200
-      },
+      "position": { "x": 100, "y": 200 },
       "data": {
         "label": "Input",
         "input": 10
       },
-      "code": "input = {original_input} \n\nprint(f\"Vstupní hodnota: {input}\")\n\nreturn input",
+      "code": "input_value = {original_input}\nprint(f\"Na lístku je čárek: {input_value}\")\nreturn input_value",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
@@ -34,13 +31,7 @@
       },
       "code": "pocet_piv = input_value\n\n# Jedno pivo stojí 40Kč\ncena_piva = 40\n\n# Tento řádek vrací špatné výsledky, oprav ho\ncena_vsech_piv = cena_piva / pocet_piv\n\nreturn cena_vsech_piv",
       "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      },
-      "selected": false,
-      "dragging": false
+      "targetPosition": "left"
     },
     {
       "id": "output",
@@ -73,11 +64,7 @@
       },
       "code": "[{\"input\":\"0\", \"output\":\"32\"}, {\"input\":\"10\", \"output\":\"50\"}, {\"input\":\"25\", \"output\":\"77\"}, {\"input\":\"100\", \"output\":\"212\"}]",
       "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      }
+      "targetPosition": "left"
     }
   ],
   "edges": [

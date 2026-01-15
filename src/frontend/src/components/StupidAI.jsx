@@ -86,7 +86,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
 
           <div className="flex p-4 border-t border-ai-border flex-shrink-0">
             <textarea
-              className="p-3 text-white h-12 rounded-xl w-full bg-ai-input resize-none"
+              className="p-3  h-12 rounded-xl w-full bg-ai-input resize-none text-black"
               value={currentText}
               onChange={(e) => updateText(e.target.value)}
               placeholder="Type your message..."

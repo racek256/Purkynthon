@@ -3,7 +3,14 @@ CREATE TABLE users (
 	username TEXT NOT NULL UNIQUE,
 	password TEXT NOT NULL,
 	score INTEGER DEFAULT 0,
-	level INTEGER DEFAULT 1
+	level INTEGER DEFAULT 0
+);
+CREATE TABLE finished_lessons (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INTEGER NOT NULL,
+	earned_score INTEGER, 
+	time_to_finish INTEGER NOT NULL,
+	lesson_id INTEGER NOT NULL
 );
 
 
