@@ -1,0 +1,102 @@
+{
+  "name": "Level 2: Vyhazov",
+  "levelDescription": "Tvého šéfa začíná štvát placení platu zaměstnancům a potřebuje způsob jak je rychle vyhodit na základě jejich pořadí v listu zaměstnanců. Tvým úkolem je opravit jeho kód.",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "input",
+      "position": {
+        "x": 100,
+        "y": 200
+      },
+      "data": {
+        "label": "Počet piv 🍺",
+        "input": 3
+      },
+      "code": "return {original_input}",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "input": "11",
+      "measured": {
+        "width": 150,
+        "height": 70
+      },
+      "selected": true
+    },
+    {
+      "id": "n2",
+      "position": {
+        "x": 397,
+        "y": 214
+      },
+      "data": {
+        "label": "Vyhazovač 3000"
+      },
+      "code": "id_vyhozeneho_zamestnance = input_value\n\nzamestnanci = [\"Karel J.\", \"Petr P.\", \"Pavel P.\", \"Rastislav V.\", \"David K.\"]\n\n# Pokud není id větší než počet zaměstnanců\n# Toto z nějakého důvodu funguje jen pokud je id jiné než počet zaměstnanců. Oprav to.\n# Mělo by to kontrolovat, jestli je id menší než délka listu.\n#                                                            - Šéf\nif len(zamestnanci) != id_vyhozeneho_zamestnance:\n  print(f\"Vyhazuji zaměstnance: {zamestnanci[id_vyhozeneho_zamestnance]}\")\n  del zamestnanci[id_vyhozeneho_zamestnance]\n\nreturn zamestnanci",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "output",
+      "type": "output",
+      "position": {
+        "x": 391,
+        "y": 339
+      },
+      "data": {
+        "label": "Output"
+      },
+      "code": "zamestnanci = [\"Karel J.\", \"Petr P.\", \"Pavel P.\", \"Rastislav V.\", \"David K.\"]\n\nif len(zamestnanci) >= original_input_value:\n  del zamestnanci[original_input_value]\n\nif zamestnanci == input_value:\n  print(1)\nelse:\n  print(0)",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "test",
+      "type": "default",
+      "position": {
+        "x": 100,
+        "y": 350
+      },
+      "data": {
+        "label": "Testovací scénáře"
+      },
+      "code": "[{\"input\":\"1\", \"output\":\"65\"}, {\"input\":\"2\", \"output\":\"120\"}, {\"input\":\"5\", \"output\":\"285\"}, {\"input\":\"0\", \"output\":\"10\"}]",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1-2",
+      "source": "n1",
+      "target": "n2",
+      "animated": true
+    },
+    {
+      "id": "e2-3",
+      "source": "n2",
+      "target": "output",
+      "animated": true
+    }
+  ],
+  "tags": [
+    "creator-mode",
+    "2026-01-15T07:27:18.897Z"
+  ]
+}
