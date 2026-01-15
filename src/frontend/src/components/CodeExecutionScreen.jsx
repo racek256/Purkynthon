@@ -42,7 +42,7 @@ const options = {
   delay: 10,
   cursor: "",
 };
-export default function Terminal({ hide, graph, input }) {
+export default function Terminal({ hide, graph, input, activate }) {
   const [displayOutput, setDisplayOutput] = useState(false);
   const [displayTerm, setDisplayTerm] = useState(false);
   const [output, setOutput] = useState();
@@ -58,6 +58,7 @@ export default function Terminal({ hide, graph, input }) {
   useEffect(() => {
     setTimeout(() => {
       setDisplayTerm(true);
+		activate(true)
     }, 1);
   }, []);
 

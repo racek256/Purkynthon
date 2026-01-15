@@ -6,7 +6,7 @@ import jwt  # pip install pyjwt
 import datetime
 from datetime import timedelta
 from passlib.hash import bcrypt
-from modules.standard_stuff import LoginData, JWT
+from modules.standard_stuff import LoginData, JWT , LessonData
 
 SECRET_KEY = "This is our super secret key nobody will hack into our security HAHAHA you cant hack us you can try but you will fail because of this super secret key" # directly commited into a public repo btw
 ALGORITHM = "HS256"  
@@ -87,6 +87,34 @@ async def register_user(user:LoginData):
     jwt_token = create_access_token(user_id, user.username)
     return {"success":True, "jwt_token":jwt_token}
 
+
+@router.post("/finished_lesson")
+async def finish_lesson(data:LessonData):
+    conn = sqlite3.connect(DB_FILE)
+    cur = conn.cursor()
+    try: 
+        # Create new row into table finished_lessons
+        cur.execute("INSERT INTO finished_lessons (lesson_id, user_id, earned_score, time_to_finish) VALUES (?, ?,?,?)", (data.lesson_id, data.user_id, data.score, data.time)) 
+        # add user his earned score
+        # Get users current score
+        res = cur.execute("SELECT score FROM users WHERE id=(?)",(data.user_id))
+        old_score = res.fetchone()
+        print(old_score)
+        new_score = data.score + old_score[0]
+        cur.execute("UPDATE users SET score = (?) WHERE id=(?)",(new_score, data.user_id))
+    except: 
+        print(f"Something bad happend ")
+        conn.commit()
+        conn.close()
+        raise HTTPException(status_code=400, detail="Error something id Eroooooor aaaaaaaaaaaaaahh")
+    conn.commit()
+    conn.close()
+    return {"success":True, "message":"This was successfull yaaay, also there is literaly nothing that could fail"}
+
+
+        
+
+
 @router.post("/verify")
 async def verify_jwt(data: JWT):
     try:
@@ -99,9 +127,10 @@ async def verify_jwt(data: JWT):
         cur.execute("SELECT id FROM users WHERE id=?", (user_id,))
         user = cur.fetchone()
         conn.close()
+        cur_lesson = user["level"]
         
         if user:
-            return {"success": True, "user_id": user_id, "username": payload["username"]}
+            return {"success": True, "user_id": user_id, "username": payload["username"], "lesson_id": cur_lesson}
         else:
             return {"success": False, "message": "User no longer exists"}
     except jwt.ExpiredSignatureError:

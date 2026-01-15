@@ -39,3 +39,11 @@ class JWT(BaseModel):
 class LoginData(BaseModel):
     username: str
     password: str
+
+class LessonData(BaseModel):
+    user_id: str
+    score: int 
+    time: int 
+    lesson_id: int
+
+
