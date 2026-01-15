@@ -465,6 +465,7 @@ function Home() {
           tests={getTestNode(nodes)}
           input={input}
 		  time={startTime}
+		  token={cookies.session.token}
         />
       ) : (
         <div></div>

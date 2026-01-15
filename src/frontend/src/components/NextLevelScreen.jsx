@@ -22,7 +22,7 @@ const leaderboard = [
 ];
 //https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif
 //https://media.tenor.com/JYyzR_1h77MAAAAi/angry-emoji.gif
-export default function NextLevel({ hide, graph, tests, input, time }) {
+export default function NextLevel({ hide, graph, tests, input, time,token }) {
   const [finished, setFinished] = useState(false);
   const [testSuccess, setTestSucces] = useState([]);
   const [finishTime] = useState(Date.now() - time);
@@ -133,6 +133,40 @@ export default function NextLevel({ hide, graph, tests, input, time }) {
       console.log("All correct:", allPassed);
     }
   }, [testSuccess, tests.length]);
+
+
+	async function SendData(){
+		// verify
+		const user_data = await fetch(
+          "https://aiserver.purkynthon.online/api/auth/verify",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ jwt_token: token }),
+          },
+        );
+        const response = await user_data.json();
+
+		// get user data
+		const data = JSON.stringify({
+			user_id: response.user_id,
+			score:scoreCalculator3000(),
+			time:finishTime,
+			lesson_id:response.lesson_id
+		})
+		const lesson_data = await fetch("https://aiserver.purkynthon.online/api/auth/finished_lesson",
+{
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: data,
+          })
+		console.log(lesson_data)
+
+	}
 
   return (
     <div
