@@ -127,9 +127,10 @@ async def verify_jwt(data: JWT):
         cur.execute("SELECT id FROM users WHERE id=?", (user_id,))
         user = cur.fetchone()
         conn.close()
+        cur_lesson = user["level"]
         
         if user:
-            return {"success": True, "user_id": user_id, "username": payload["username"]}
+            return {"success": True, "user_id": user_id, "username": payload["username"], "lesson_id": cur_lesson}
         else:
             return {"success": False, "message": "User no longer exists"}
     except jwt.ExpiredSignatureError:
