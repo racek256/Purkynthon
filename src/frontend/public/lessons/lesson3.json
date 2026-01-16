@@ -1,0 +1,49 @@
+{
+  "name": "Level 3: Sleva na Pizzu",
+  "description": "Pizza stojí 200 Kč. Máš slevový kupon na X procent. Spočítej, kolik zaplatíš po slevě. Vstupem je procento slevy (např. 15 = 15% sleva).",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "input",
+      "position": { "x": 100, "y": 200 },
+      "data": {
+        "label": "Sleva v % 🎟️",
+        "input": 10
+      },
+      "code": "sleva_procent = {original_input}\nprint(f\"Máš slevový kupon na {sleva_procent}%\")\nreturn sleva_procent",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "n2",
+      "position": { "x": 400, "y": 200 },
+      "data": { "label": "Kalkulátor ceny" },
+      "code": "# Proměnná 'input_value' obsahuje procento slevy\n# Původní cena pizzy: 200 Kč\n# Vzorec: cena - (cena * sleva / 100)\n\n# TODO: Oprav výpočet\nvysledek = 200\n\nreturn vysledek",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "output",
+      "type": "output",
+      "position": { "x": 700, "y": 200 },
+      "data": { "label": "Cena po slevě 💰" },
+      "code": "print(f\"Za pizzu zaplatíš: {input_value} Kč\")\nprint(input_value)",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "test",
+      "type": "default",
+      "position": { "x": 100, "y": 350 },
+      "data": { "label": "Testovací scénáře" },
+      "code": "[{\"input\":\"10\", \"output\":\"180\"}, {\"input\":\"25\", \"output\":\"150\"}, {\"input\":\"50\", \"output\":\"100\"}, {\"input\":\"0\", \"output\":\"200\"}]",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    }
+  ],
+  "edges": [
+    { "id": "e1-2", "source": "n1", "target": "n2", "animated": true },
+    { "id": "e2-3", "source": "n2", "target": "output", "animated": true }
+  ],
+  "tags": ["procenta", "sleva", "matika"]
+}

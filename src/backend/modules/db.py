@@ -1,15 +1,15 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import sqlite3
-import os 
+import os
 import jwt  # pip install pyjwt
 import datetime
 from datetime import timedelta
 from passlib.hash import bcrypt
-from modules.standard_stuff import LoginData, JWT , LessonData
+from modules.standard_stuff import LoginData, JWT, LessonData
 
-SECRET_KEY = "This is our super secret key nobody will hack into our security HAHAHA you cant hack us you can try but you will fail because of this super secret key" # directly commited into a public repo btw
-ALGORITHM = "HS256"  
+SECRET_KEY = "This is our super secret key nobody will hack into our security HAHAHA you cant hack us you can try but you will fail because of this super secret key"  # directly commited into a public repo btw
+ALGORITHM = "HS256"
 
 router = APIRouter()
 
@@ -22,19 +22,21 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 180
 if not os.path.exists(DB_FILE):
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
-    with open(DB_INIT,"r") as f:
+    with open(DB_INIT, "r") as f:
         cur.executescript(f.read())
     conn.commit()
     conn.close()
 
 
-def create_access_token(user_id, username,expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
+def create_access_token(
+    user_id, username, expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES
+):
     expire = datetime.datetime.now(datetime.UTC) + timedelta(minutes=expires_minutes)
     payload = {
-        "sub": str(user_id),       # user identifier
-        "username": username,      # optional extra info
-        "exp": expire,             # expiration time
-        "iat": datetime.datetime.now(datetime.UTC)   # issued at
+        "sub": str(user_id),  # user identifier
+        "username": username,  # optional extra info
+        "exp": expire,  # expiration time
+        "iat": datetime.datetime.now(datetime.UTC),  # issued at
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     return token
@@ -49,34 +51,40 @@ def create_access_token(user_id, username,expires_minutes: int = ACCESS_TOKEN_EX
 #     users = cur.fetchall()
 #     return users
 
+
 @router.post("/login")
-async def get_user(user:LoginData):
+async def get_user(user: LoginData):
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
-    cur.execute("SELECT id,username,password FROM users WHERE username=?",(user.username,))
+    cur.execute(
+        "SELECT id,username,password FROM users WHERE username=?", (user.username,)
+    )
     user_data = cur.fetchone()
     conn.close()
     if user_data:
         print("user exist checking password")
-        if bcrypt.verify(user.password,user_data[2]):
+        if bcrypt.verify(user.password, user_data[2]):
             print("generating JWT")
             jwt_token = create_access_token(user_data[0], user_data[1])
-            return {"success":True, "jwt_token":jwt_token}
-        else: 
+            return {"success": True, "jwt_token": jwt_token}
+        else:
             print("Password was incorrect")
-            return {"success":False,"message":"password was incorrect"}
+            return {"success": False, "message": "password was incorrect"}
     else:
-        return {"success":False, "message":"user doesnt exist"}
+        return {"success": False, "message": "user doesnt exist"}
 
 
 @router.post("/register")
-async def register_user(user:LoginData):
+async def register_user(user: LoginData):
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
 
     # Prepare user data
-    try: 
-        cur.execute("INSERT INTO users (username, password) VALUES (?, ?)", (user.username, bcrypt.hash(user.password)))
+    try:
+        cur.execute(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            (user.username, bcrypt.hash(user.password)),
+        )
         conn.commit()
     except sqlite3.IntegrityError:
         conn.close()
@@ -85,34 +93,58 @@ async def register_user(user:LoginData):
     conn.close()
     # Generate JWT_token
     jwt_token = create_access_token(user_id, user.username)
-    return {"success":True, "jwt_token":jwt_token}
+    return {"success": True, "jwt_token": jwt_token}
 
 
 @router.post("/finished_lesson")
-async def finish_lesson(data:LessonData):
+async def finish_lesson(data: LessonData):
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
-    try: 
+    try:
+        # Check if the user already completed this lesson
+        cur.execute(
+            "SELECT id FROM finished_lessons WHERE user_id=? AND lesson_id=?",
+            (data.user_id, data.lesson_id),
+        )
+        already_finished = cur.fetchone()
+
+        if already_finished:
+            conn.close()
+            return {"success": False, "message": "Lesson already completed"}
+
         # Create new row into table finished_lessons
-        cur.execute("INSERT INTO finished_lessons (lesson_id, user_id, earned_score, time_to_finish) VALUES (?, ?,?,?)", (data.lesson_id, data.user_id, data.score, data.time)) 
+        cur.execute(
+            "INSERT INTO finished_lessons (lesson_id, user_id, earned_score, time_to_finish) VALUES (?, ?,?,?)",
+            (data.lesson_id, data.user_id, data.score, data.time),
+        )
         # add user his earned score
-        # Get users current score
-        res = cur.execute("SELECT score FROM users WHERE id=(?)",(data.user_id))
-        old_score = res.fetchone()
-        print(old_score)
-        new_score = data.score + old_score[0]
-        cur.execute("UPDATE users SET score = (?) WHERE id=(?)",(new_score, data.user_id))
-    except: 
-        print(f"Something bad happend ")
+        # Get users current score and level
+        res = cur.execute(
+            "SELECT score, level FROM users WHERE id=(?)", (data.user_id,)
+        )
+        user_data = res.fetchone()
+        print(user_data)
+        new_score = data.score + user_data[0]
+        # Increment the user's level (move to next lesson)
+        new_level = user_data[1] + 1
+        cur.execute(
+            "UPDATE users SET score = (?), level = (?) WHERE id=(?)",
+            (new_score, new_level, data.user_id),
+        )
+    except Exception as e:
+        print(f"Something bad happend: {e}")
         conn.commit()
         conn.close()
-        raise HTTPException(status_code=400, detail="Error something id Eroooooor aaaaaaaaaaaaaahh")
+        raise HTTPException(
+            status_code=400, detail="Error something id Eroooooor aaaaaaaaaaaaaahh"
+        )
     conn.commit()
     conn.close()
-    return {"success":True, "message":"This was successfull yaaay, also there is literaly nothing that could fail"}
-
-
-        
+    return {
+        "success": True,
+        "message": "This was successfull yaaay",
+        "new_level": new_level,
+    }
 
 
 @router.post("/verify")
@@ -120,20 +152,43 @@ async def verify_jwt(data: JWT):
     try:
         payload = jwt.decode(data.jwt_token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload["sub"]
-        
-        # Check if user still exists in database
+
+        # Check if user still exists in database and get their level
         conn = sqlite3.connect(DB_FILE)
         cur = conn.cursor()
-        cur.execute("SELECT id FROM users WHERE id=?", (user_id,))
+        cur.execute(
+            "SELECT id, username, level, score FROM users WHERE id=?", (user_id,)
+        )
         user = cur.fetchone()
         conn.close()
-        cur_lesson = user["level"]
-        
+
         if user:
-            return {"success": True, "user_id": user_id, "username": payload["username"], "lesson_id": cur_lesson}
+            return {
+                "success": True,
+                "user_id": user_id,
+                "username": user[1],
+                "level": user[2],
+                "score": user[3],
+            }
         else:
             return {"success": False, "message": "User no longer exists"}
     except jwt.ExpiredSignatureError:
         return {"success": False, "message": "Token has expired"}
     except jwt.InvalidTokenError:
         return {"success": False, "message": "Invalid token"}
+
+
+@router.get("/lessons/current")
+async def get_current_lesson(user_id: int):
+    """Get the current lesson number for a user (next unfinished lesson)"""
+    conn = sqlite3.connect(DB_FILE)
+    cur = conn.cursor()
+    cur.execute("SELECT level FROM users WHERE id=?", (user_id,))
+    user = cur.fetchone()
+    conn.close()
+
+    if user:
+        # Level is 0-indexed, so lesson 1 = level 0
+        return {"success": True, "lesson_number": user[0] + 1}
+    else:
+        return {"success": False, "message": "User not found"}

@@ -1,0 +1,49 @@
+{
+  "name": "Level 5: BMI Kalkulátor",
+  "description": "Spočítej BMI (Body Mass Index). Vstupem je váha v kilogramech. Výška je fixní 1.75 metrů. Vzorec: váha / (výška * výška). Výsledek zaokrouhli na celé číslo.",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "input",
+      "position": { "x": 100, "y": 200 },
+      "data": {
+        "label": "Váha (kg) ⚖️",
+        "input": 70
+      },
+      "code": "vaha = {original_input}\nprint(f\"Tvá váha je {vaha} kg\")\nreturn vaha",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "n2",
+      "position": { "x": 400, "y": 200 },
+      "data": { "label": "BMI Kalkulátor" },
+      "code": "# Proměnná 'input_value' obsahuje váhu v kg\n# Výška: 1.75 metrů (fixní)\n# Vzorec: váha / (výška * výška)\n# Nezapomeň zaokrouhlit na celé číslo pomocí round()\n\n# TODO: Oprav výpočet BMI\nvyska = 1.75\nbmi = 0\n\nreturn bmi",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "output",
+      "type": "output",
+      "position": { "x": 700, "y": 200 },
+      "data": { "label": "Tvé BMI 📊" },
+      "code": "print(f\"Tvé BMI je: {input_value}\")\nprint(input_value)",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "test",
+      "type": "default",
+      "position": { "x": 100, "y": 350 },
+      "data": { "label": "Testovací scénáře" },
+      "code": "[{\"input\":\"70\", \"output\":\"23\"}, {\"input\":\"80\", \"output\":\"26\"}, {\"input\":\"55\", \"output\":\"18\"}, {\"input\":\"100\", \"output\":\"33\"}]",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    }
+  ],
+  "edges": [
+    { "id": "e1-2", "source": "n1", "target": "n2", "animated": true },
+    { "id": "e2-3", "source": "n2", "target": "output", "animated": true }
+  ],
+  "tags": ["zdravi", "bmi", "deleni"]
+}
