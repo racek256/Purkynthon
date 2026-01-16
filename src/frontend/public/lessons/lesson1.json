@@ -1,49 +1,88 @@
 {
-  "name": "Level 1: Účtenka od Beránka",
-  "description": "Sedíš v hospodě a musíš spočítat, kolik budeš platit. Vstupem je počet piv. Cena jednoho piva je 55 Kč. Na konci ale musíš přičíst fixních 10 Kč za misku arašídů, kterou vám vrchní automaticky hodil na stůl.",
+  "name": "Level 1: Zaměstnavatel pivoholik",
+  "levelDescription": "Tvůj zaměstnavatel si rád po (i při) práci chodí na pivo. Potřebuje program, který mu spočítá, kolik celkem zaplatí za určitý počet chyb. Inženýři před tebou se snažili tento program udělat, ale neúspěšně. Oprav jejich kód.",
   "nodes": [
     {
       "id": "n1",
       "type": "input",
       "position": { "x": 100, "y": 200 },
       "data": {
-        "label": "Počet piv 🍺",
-        "input": 3
+        "label": "Input",
+        "input": 10
       },
       "code": "input_value = {original_input}\nprint(f\"Na lístku je čárek: {input_value}\")\nreturn input_value",
       "sourcePosition": "right",
-      "targetPosition": "left"
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 70
+      },
+      "selected": false,
+      "input": 10
     },
     {
       "id": "n2",
-      "position": { "x": 400, "y": 200 },
-      "data": { "label": "Kalkulačka útraty" },
-      "code": "# Proměnná 'input_value' obsahuje počet piv.\n# Cena za pivo: 55 Kč\n# Arašídy: 10 Kč\n\n# TODO: Oprav vzorec níže\nvysledek = input_value\n\nreturn vysledek",
+      "position": {
+        "x": 400,
+        "y": 200
+      },
+      "data": {
+        "label": "Procesor (CHYBA)"
+      },
+      "code": "pocet_piv = input_value\n\n# Jedno pivo stojí 40Kč\ncena_piva = 40\n\n# Tento řádek vrací špatné výsledky, oprav ho\ncena_vsech_piv = cena_piva / pocet_piv\n\nreturn cena_vsech_piv",
       "sourcePosition": "right",
       "targetPosition": "left"
     },
     {
       "id": "output",
       "type": "output",
-      "position": { "x": 700, "y": 200 },
-      "data": { "label": "Konečná cena 💸" },
-      "code": "print(f\"Celkem k platbě: {input_value} Kč\")\nprint(input_value)",
+      "position": {
+        "x": 700,
+        "y": 200
+      },
+      "data": {
+        "label": "Output"
+      },
+      "code": "print(f\"Výsledná hodnota: {input_value}\") \nif original_input_value == input_value:\n  print(\"1\")\nelse:\n  print(\"0\")",
       "sourcePosition": "right",
-      "targetPosition": "left"
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": true
     },
     {
       "id": "test",
       "type": "default",
-      "position": { "x": 100, "y": 350 },
-      "data": { "label": "Testovací scénáře" },
-      "code": "[{\"input\":\"1\", \"output\":\"65\"}, {\"input\":\"2\", \"output\":\"120\"}, {\"input\":\"5\", \"output\":\"285\"}, {\"input\":\"0\", \"output\":\"10\"}]",
+      "position": {
+        "x": 100,
+        "y": 300
+      },
+      "data": {
+        "label": "Test case"
+      },
+      "code": "[{\"input\":\"0\", \"output\":\"32\"}, {\"input\":\"10\", \"output\":\"50\"}, {\"input\":\"25\", \"output\":\"77\"}, {\"input\":\"100\", \"output\":\"212\"}]",
       "sourcePosition": "right",
       "targetPosition": "left"
     }
   ],
   "edges": [
-    { "id": "e1-2", "source": "n1", "target": "n2", "animated": true },
-    { "id": "e2-3", "source": "n2", "target": "output", "animated": true }
+    {
+      "id": "e1-2",
+      "source": "n1",
+      "target": "n2",
+      "animated": true
+    },
+    {
+      "id": "e2-3",
+      "source": "n2",
+      "target": "output",
+      "animated": true
+    }
   ],
-  "tags": ["hospoda-logic", "matika-zaklad"]
+  "tags": [
+    "creator-mode",
+    "2026-01-14T13:03:45.457Z"
+  ]
 }
