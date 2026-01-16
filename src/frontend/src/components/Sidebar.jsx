@@ -3,7 +3,7 @@ import SettingsIcon from "../assets/settings_icon.svg";
 import { useState } from "react";
 import Settings from "./Settings.jsx";
 
-export default function Sidebar({ selectTheme, theme, logout }) {
+export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, userName = "User" }) {
   const [showSettings, setShowSettings] = useState(false);
 
   return (
@@ -13,9 +13,9 @@ export default function Sidebar({ selectTheme, theme, logout }) {
           <img src={UserIcon} className="w-8 h-8" />
           <div className="flex flex-col">
             <span className="font-bold text-2xl truncate">
-              František Pátek
+              {userName}
             </span>
-            <p>Lekce 1</p>
+            <p>Lekce {lessonNumber}</p>
           </div>
         </div>
         <button 

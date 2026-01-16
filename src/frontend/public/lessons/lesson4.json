@@ -1,0 +1,49 @@
+{
+  "name": "Level 4: Obsah čtverce",
+  "description": "Máš čtverec o straně X metrů. Spočítej jeho obsah (plochu). Vzorec: strana * strana (nebo strana na druhou).",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "input",
+      "position": { "x": 100, "y": 200 },
+      "data": {
+        "label": "Délka strany 📐",
+        "input": 5
+      },
+      "code": "strana = {original_input}\nprint(f\"Čtverec má stranu {strana} metrů\")\nreturn strana",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "n2",
+      "position": { "x": 400, "y": 200 },
+      "data": { "label": "Výpočet obsahu" },
+      "code": "# Proměnná 'input_value' obsahuje délku strany\n# Vzorec pro obsah čtverce: strana * strana\n\n# TODO: Oprav výpočet obsahu\nobsah = input_value\n\nreturn obsah",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "output",
+      "type": "output",
+      "position": { "x": 700, "y": 200 },
+      "data": { "label": "Obsah 📏" },
+      "code": "print(f\"Obsah čtverce je: {input_value} m²\")\nprint(input_value)",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    },
+    {
+      "id": "test",
+      "type": "default",
+      "position": { "x": 100, "y": 350 },
+      "data": { "label": "Testovací scénáře" },
+      "code": "[{\"input\":\"5\", \"output\":\"25\"}, {\"input\":\"3\", \"output\":\"9\"}, {\"input\":\"10\", \"output\":\"100\"}, {\"input\":\"1\", \"output\":\"1\"}]",
+      "sourcePosition": "right",
+      "targetPosition": "left"
+    }
+  ],
+  "edges": [
+    { "id": "e1-2", "source": "n1", "target": "n2", "animated": true },
+    { "id": "e2-3", "source": "n2", "target": "output", "animated": true }
+  ],
+  "tags": ["geometrie", "ctverec", "obsah"]
+}

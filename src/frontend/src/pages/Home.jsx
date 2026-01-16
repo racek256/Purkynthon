@@ -23,7 +23,7 @@ import Terminal from "../components/CodeExecutionScreen.jsx";
 
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
-import loadLesson from "../components/lessons/lessonLoader.js";
+import { loadCurrentLesson, loadLessonByNumber, TOTAL_LESSONS } from "../components/lessons/lessonLoader.js";
 
 const edgeTypes = {
   default: CustomEdge,
@@ -51,6 +51,8 @@ function Home() {
   const [submitAttempts, setSubmitAttempts] = useState(0);
   const [startTime, setStartTime] = useState(Date.now())
   const [buttonActive, setButtonActive] = useState(false)
+  const [currentLessonNumber, setCurrentLessonNumber] = useState(1)
+  const [userName, setUserName] = useState("")
 
   const navigate = useNavigate();
   function logout() {
@@ -78,6 +80,8 @@ function Home() {
         console.log(response);
         if (!response.success) {
           navigate("/login");
+        } else {
+          setUserName(response.username || "User");
         }
       }
     }
@@ -95,7 +99,10 @@ function Home() {
 
   useEffect(() => {
     async function initLevel() {
-      const data = await loadLesson();
+      const token = cookies?.session?.token;
+      if (!token) return;
+      
+      const data = await loadCurrentLesson(token);
       console.log(data);
 
       // Store ALL nodes (including test nodes) in state
@@ -108,9 +115,11 @@ function Home() {
       setEdges(data.edges);
       setLevelName(data.name);
       setLevelDescription(data.description);
+      setCurrentLessonNumber(data.lessonNumber || 1);
+      setStartTime(Date.now()); // Reset start time when loading new lesson
     }
     initLevel();
-  }, []);
+  }, [cookies?.session?.token]);
 
   function updateTheme(newTheme) {
     setTheme(newTheme);
@@ -296,7 +305,7 @@ function Home() {
     >
       <div className="bg-bg h-dvh w-full max-w-full overflow-hidden">
         <div className="flex w-full max-w-full">
-          <Sidebar logout={logout} selectTheme={updateTheme} theme={theme} />
+          <Sidebar logout={logout} selectTheme={updateTheme} theme={theme} lessonNumber={currentLessonNumber} userName={userName} />
           <div className="flex flex-col h-dvh w-full min-w-0">
             <Navbar
               name={creatorMode ? levelName : name}
@@ -466,6 +475,22 @@ function Home() {
           input={input}
 		  time={startTime}
 		  token={cookies.session.token}
+          lessonNumber={currentLessonNumber}
+          onLessonComplete={async () => {
+            // Load the next lesson after completion
+            if (currentLessonNumber < TOTAL_LESSONS) {
+              const nextLesson = await loadLessonByNumber(currentLessonNumber + 1);
+              nextLesson.nodes[0].data.setInput = setInput;
+              setNodes(nextLesson.nodes);
+              setInput(nextLesson.nodes[0].data.input);
+              setEdges(nextLesson.edges);
+              setLevelName(nextLesson.name);
+              setLevelDescription(nextLesson.description);
+              setCurrentLessonNumber(currentLessonNumber + 1);
+              setStartTime(Date.now());
+              setButtonActive(false);
+            }
+          }}
         />
       ) : (
         <div></div>

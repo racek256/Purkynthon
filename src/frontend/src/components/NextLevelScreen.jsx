@@ -22,10 +22,11 @@ const leaderboard = [
 ];
 //https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif
 //https://media.tenor.com/JYyzR_1h77MAAAAi/angry-emoji.gif
-export default function NextLevel({ hide, graph, tests, input, time,token }) {
+export default function NextLevel({ hide, graph, tests, input, time, token, lessonNumber = 1, onLessonComplete }) {
   const [finished, setFinished] = useState(false);
   const [testSuccess, setTestSucces] = useState([]);
   const [finishTime] = useState(Date.now() - time);
+  const [dataSent, setDataSent] = useState(false);
 
   const LeaderBoard = [...leaderboard]
     .sort((a, b) => a.score - b.score)
@@ -131,11 +132,19 @@ export default function NextLevel({ hide, graph, tests, input, time,token }) {
 
       console.log("Final test results:", testSuccess);
       console.log("All correct:", allPassed);
+      
+      // Automatically send completion data when all tests pass
+      if (allPassed && !dataSent) {
+        SendData();
+      }
     }
-  }, [testSuccess, tests.length]);
+  }, [testSuccess, tests.length, dataSent]);
 
 
 	async function SendData(){
+		if (dataSent) return; // Prevent double submission
+		setDataSent(true);
+		
 		// verify
 		const user_data = await fetch(
           "https://aiserver.purkynthon.online/api/auth/verify",
@@ -149,12 +158,12 @@ export default function NextLevel({ hide, graph, tests, input, time,token }) {
         );
         const response = await user_data.json();
 
-		// get user data
+		// get user data - use the actual lesson number from props
 		const data = JSON.stringify({
 			user_id: response.user_id,
-			score:scoreCalculator3000(),
-			time:finishTime,
-			lesson_id:response.lesson_id
+			score: scoreCalculator3000(),
+			time: finishTime,
+			lesson_id: lessonNumber
 		})
 		const lesson_data = await fetch("https://aiserver.purkynthon.online/api/auth/finished_lesson",
 {
@@ -164,8 +173,10 @@ export default function NextLevel({ hide, graph, tests, input, time,token }) {
             },
             body: data,
           })
-		console.log(lesson_data)
-
+		const lessonResponse = await lesson_data.json();
+		console.log(lessonResponse);
+		
+		return lessonResponse;
 	}
 
   return (
@@ -240,10 +251,13 @@ export default function NextLevel({ hide, graph, tests, input, time,token }) {
             <button
               className="bg-button transition w-full h-12 rounded-md hover:bg-button-hover cursor-pointer text-xl"
               onClick={() => {
+                if (correctness && onLessonComplete) {
+                  onLessonComplete();
+                }
                 hideScreen();
               }}
             >
-              Next
+              {correctness ? "Next Level" : "Try Again"}
             </button>
           </div>
         </div>
