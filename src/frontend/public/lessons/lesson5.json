@@ -1,24 +1,25 @@
 {
   "name": "Level 5: BMI Kalkulátor",
-  "description": "Spočítej BMI (Body Mass Index). Vstupem je váha v kilogramech. Výška je fixní 1.75 metrů. Vzorec: váha / (výška * výška). Výsledek zaokrouhli na celé číslo.",
+  "levelDescription": "Spočítej BMI (Body Mass Index). Vstupem je váha v kilogramech. Výška je fixní 1.75 metrů. Vzorec: váha / (výška * výška). Výsledek zaokrouhli na celé číslo.",
   "nodes": [
     {
       "id": "n1",
       "type": "input",
       "position": { "x": 100, "y": 200 },
       "data": {
-        "label": "Váha (kg) ⚖️",
+        "label": "Váha (kg)",
         "input": 70
       },
       "code": "vaha = {original_input}\nprint(f\"Tvá váha je {vaha} kg\")\nreturn vaha",
       "sourcePosition": "right",
-      "targetPosition": "left"
+      "targetPosition": "left",
+      "input": 70
     },
     {
       "id": "n2",
       "position": { "x": 400, "y": 200 },
       "data": { "label": "BMI Kalkulátor" },
-      "code": "# Proměnná 'input_value' obsahuje váhu v kg\n# Výška: 1.75 metrů (fixní)\n# Vzorec: váha / (výška * výška)\n# Nezapomeň zaokrouhlit na celé číslo pomocí round()\n\n# TODO: Oprav výpočet BMI\nvyska = 1.75\nbmi = 0\n\nreturn bmi",
+      "code": "# Proměnná 'vaha' obsahuje váhu v kg\nvaha = input_value\n\n# Výška: 1.75 metrů (fixní)\n# Vzorec: váha / (výška * výška)\n# Nezapomeň zaokrouhlit na celé číslo pomocí round()\n\n# TODO: Oprav výpočet BMI\nvyska = 1.75\nbmi = 0\n\nreturn bmi",
       "sourcePosition": "right",
       "targetPosition": "left"
     },
@@ -26,17 +27,8 @@
       "id": "output",
       "type": "output",
       "position": { "x": 700, "y": 200 },
-      "data": { "label": "Tvé BMI 📊" },
-      "code": "print(f\"Tvé BMI je: {input_value}\")\nprint(input_value)",
-      "sourcePosition": "right",
-      "targetPosition": "left"
-    },
-    {
-      "id": "test",
-      "type": "default",
-      "position": { "x": 100, "y": 350 },
-      "data": { "label": "Testovací scénáře" },
-      "code": "[{\"input\":\"70\", \"output\":\"23\"}, {\"input\":\"80\", \"output\":\"26\"}, {\"input\":\"55\", \"output\":\"18\"}, {\"input\":\"100\", \"output\":\"33\"}]",
+      "data": { "label": "Tvé BMI" },
+      "code": "# Verifikace: váha / (výška * výška), zaokrouhleno\nbmi = input_value\nvyska = 1.75\nexpected = round(original_input_value / (vyska * vyska))\nprint(f\"Tvůj výsledek: {bmi}\")\nprint(f\"Očekávaná hodnota: {expected}\")\nif expected == bmi:\n    print(1)\nelse:\n    print(0)",
       "sourcePosition": "right",
       "targetPosition": "left"
     }

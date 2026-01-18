@@ -10,75 +10,40 @@
         "y": 200
       },
       "data": {
-        "label": "Počet piv 🍺",
-        "input": 3
+        "label": "ID zaměstnance",
+        "input": 2
       },
-      "code": "return {original_input}",
+      "code": "id_zamestnance = {original_input}\nprint(f\"ID zaměstnance k vyhození: {id_zamestnance}\")\nreturn id_zamestnance",
       "sourcePosition": "right",
       "targetPosition": "left",
-      "input": "11",
-      "measured": {
-        "width": 150,
-        "height": 70
-      },
-      "selected": true
+      "input": 2
     },
     {
       "id": "n2",
       "position": {
-        "x": 397,
-        "y": 214
+        "x": 400,
+        "y": 200
       },
       "data": {
         "label": "Vyhazovač 3000"
       },
-      "code": "id_vyhozeneho_zamestnance = input_value\n\nzamestnanci = [\"Karel J.\", \"Petr P.\", \"Pavel P.\", \"Rastislav V.\", \"David K.\"]\n\n# Pokud není id větší než počet zaměstnanců\n# Toto z nějakého důvodu funguje jen pokud je id jiné než počet zaměstnanců. Oprav to.\n# Mělo by to kontrolovat, jestli je id menší než délka listu.\n#                                                            - Šéf\nif len(zamestnanci) != id_vyhozeneho_zamestnance:\n  print(f\"Vyhazuji zaměstnance: {zamestnanci[id_vyhozeneho_zamestnance]}\")\n  del zamestnanci[id_vyhozeneho_zamestnance]\n\nreturn zamestnanci",
+      "code": "# Proměnná 'id_zamestnance' obsahuje ID zaměstnance k vyhození\nid_vyhozeneho_zamestnance = input_value\n\nzamestnanci = [\"Karel J.\", \"Petr P.\", \"Pavel P.\", \"Rastislav V.\", \"David K.\"]\n\n# Pokud není id větší než počet zaměstnanců\n# Toto z nějakého důvodu funguje jen pokud je id jiné než počet zaměstnanců. Oprav to.\n# Mělo by to kontrolovat, jestli je id menší než délka listu.\n#                                                            - Šéf\nif len(zamestnanci) != id_vyhozeneho_zamestnance:\n  print(f\"Vyhazuji zaměstnance: {zamestnanci[id_vyhozeneho_zamestnance]}\")\n  del zamestnanci[id_vyhozeneho_zamestnance]\n\nreturn zamestnanci",
       "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      },
-      "selected": false,
-      "dragging": false
+      "targetPosition": "left"
     },
     {
       "id": "output",
       "type": "output",
       "position": {
-        "x": 391,
-        "y": 339
+        "x": 700,
+        "y": 200
       },
       "data": {
         "label": "Output"
       },
-      "code": "zamestnanci = [\"Karel J.\", \"Petr P.\", \"Pavel P.\", \"Rastislav V.\", \"David K.\"]\n\nif len(zamestnanci) >= original_input_value:\n  del zamestnanci[original_input_value]\n\nif zamestnanci == input_value:\n  print(1)\nelse:\n  print(0)",
+      "code": "# Verifikace: zkontrolujeme, zda byl správně odstraněn zaměstnanec\nzbyly_zamestnanci = input_value\nzamestnanci = [\"Karel J.\", \"Petr P.\", \"Pavel P.\", \"Rastislav V.\", \"David K.\"]\nexpected = zamestnanci.copy()\n\nif original_input_value < len(expected):\n    del expected[original_input_value]\n\nprint(f\"Tvůj výsledek: {zbyly_zamestnanci}\")\nprint(f\"Očekávaná hodnota: {expected}\")\nif expected == zbyly_zamestnanci:\n    print(1)\nelse:\n    print(0)",
       "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      },
-      "selected": false,
-      "dragging": false
-    },
-    {
-      "id": "test",
-      "type": "default",
-      "position": {
-        "x": 100,
-        "y": 350
-      },
-      "data": {
-        "label": "Testovací scénáře"
-      },
-      "code": "[{\"input\":\"1\", \"output\":\"65\"}, {\"input\":\"2\", \"output\":\"120\"}, {\"input\":\"5\", \"output\":\"285\"}, {\"input\":\"0\", \"output\":\"10\"}]",
-      "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      }
+      "targetPosition": "left"
     }
   ],
   "edges": [
@@ -95,8 +60,5 @@
       "animated": true
     }
   ],
-  "tags": [
-    "creator-mode",
-    "2026-01-15T07:27:18.897Z"
-  ]
+  "tags": ["listy", "indexy", "podminky"]
 }

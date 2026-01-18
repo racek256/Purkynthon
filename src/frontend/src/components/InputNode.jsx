@@ -1,15 +1,9 @@
 import { Position, Handle } from "@xyflow/react";
-import { useCallback } from "react";	
 
-export default function CustomNode(data) {
-	const onChange = useCallback((evt) => {
-		console.log(`input was changed to: ${evt.target.value}`)
-		data.data.setInput(evt.target.value)	
-  }, []);
+export default function InputNode(data) {
   return (
-    <div className="custom-node flex flex-col ">
-      <div className="text-lg">Input:</div>
-        <input id="text" name="text" placeholder="Enter input value" defaultValue={data.data.input}  onChange={onChange} className="nodrag border rounded-xs border-black ps-2" />
+    <div className="custom-node flex flex-col">
+      <div className="text-lg">Input: {data.data.input}</div>
       {(data.type == "default") | (data.type == "input") ? (
         <Handle
           style={{

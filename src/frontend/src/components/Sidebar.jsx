@@ -3,7 +3,7 @@ import SettingsIcon from "../assets/settings_icon.svg";
 import { useState } from "react";
 import Settings from "./Settings.jsx";
 
-export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, userName = "User" }) {
+export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, userName = "User", isAdmin = false, onPrevLesson, onNextLesson, totalLessons = 5 }) {
   const [showSettings, setShowSettings] = useState(false);
 
   return (
@@ -15,7 +15,37 @@ export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, 
             <span className="font-bold text-2xl truncate">
               {userName}
             </span>
-            <p>Lekce {lessonNumber}</p>
+            <div className="flex items-center gap-2">
+              {isAdmin && (
+                <button
+                  onClick={onPrevLesson}
+                  disabled={lessonNumber <= 1}
+                  className={`w-6 h-6 flex items-center justify-center rounded text-sm font-bold transition ${
+                    lessonNumber <= 1 
+                      ? "bg-gray-600 text-gray-400 cursor-not-allowed" 
+                      : "bg-button hover:bg-button-hover cursor-pointer"
+                  }`}
+                  title="Předchozí lekce"
+                >
+                  &lt;
+                </button>
+              )}
+              <p>Lekce {lessonNumber}</p>
+              {isAdmin && (
+                <button
+                  onClick={onNextLesson}
+                  disabled={lessonNumber >= totalLessons}
+                  className={`w-6 h-6 flex items-center justify-center rounded text-sm font-bold transition ${
+                    lessonNumber >= totalLessons 
+                      ? "bg-gray-600 text-gray-400 cursor-not-allowed" 
+                      : "bg-button hover:bg-button-hover cursor-pointer"
+                  }`}
+                  title="Další lekce"
+                >
+                  &gt;
+                </button>
+              )}
+            </div>
           </div>
         </div>
         <button 
@@ -39,4 +69,3 @@ export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, 
     </div>
   );
 }
-
