@@ -1,23 +1,18 @@
 {
   "name": "Level 1: Zaměstnavatel pivoholik",
-  "levelDescription": "Tvůj zaměstnavatel si rád po (i při) práci chodí na pivo. Potřebuje program, který mu spočítá, kolik celkem zaplatí za určitý počet chyb. Inženýři před tebou se snažili tento program udělat, ale neúspěšně. Oprav jejich kód.",
+  "levelDescription": "Tvůj zaměstnavatel si rád po (i při) práci chodí na pivo. Potřebuje program, který mu spočítá, kolik celkem zaplatí za určitý počet piv. Inženýři před tebou se snažili tento program udělat, ale neúspěšně. Oprav jejich kód.",
   "nodes": [
     {
       "id": "n1",
       "type": "input",
       "position": { "x": 100, "y": 200 },
       "data": {
-        "label": "Input",
+        "label": "Počet piv",
         "input": 10
       },
-      "code": "input_value = {original_input}\nprint(f\"Na lístku je čárek: {input_value}\")\nreturn input_value",
+      "code": "pocet_piv = {original_input}\nprint(f\"Na lístku je čárek: {pocet_piv}\")\nreturn pocet_piv",
       "sourcePosition": "right",
       "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 70
-      },
-      "selected": false,
       "input": 10
     },
     {
@@ -29,7 +24,7 @@
       "data": {
         "label": "Procesor (CHYBA)"
       },
-      "code": "pocet_piv = input_value\n\n# Jedno pivo stojí 40Kč\ncena_piva = 40\n\n# Tento řádek vrací špatné výsledky, oprav ho\ncena_vsech_piv = cena_piva / pocet_piv\n\nreturn cena_vsech_piv",
+      "code": "# Proměnná 'pocet_piv' obsahuje počet piv z inputu\npocet_piv = input_value\n\n# Jedno pivo stojí 40Kč\ncena_piva = 40\n\n# Tento řádek vrací špatné výsledky, oprav ho\ncena_vsech_piv = cena_piva / pocet_piv\n\nreturn cena_vsech_piv",
       "sourcePosition": "right",
       "targetPosition": "left"
     },
@@ -43,26 +38,7 @@
       "data": {
         "label": "Output"
       },
-      "code": "print(f\"Výsledná hodnota: {input_value}\") \nif original_input_value == input_value:\n  print(\"1\")\nelse:\n  print(\"0\")",
-      "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      },
-      "selected": true
-    },
-    {
-      "id": "test",
-      "type": "default",
-      "position": {
-        "x": 100,
-        "y": 300
-      },
-      "data": {
-        "label": "Test case"
-      },
-      "code": "[{\"input\":\"0\", \"output\":\"32\"}, {\"input\":\"10\", \"output\":\"50\"}, {\"input\":\"25\", \"output\":\"77\"}, {\"input\":\"100\", \"output\":\"212\"}]",
+      "code": "# Verifikace: počet piv * cena piva (40 Kč)\ncelkova_cena = input_value\nexpected = original_input_value * 40\nprint(f\"Tvůj výsledek: {celkova_cena}\")\nprint(f\"Očekávaná hodnota: {expected}\")\nif expected == celkova_cena:\n    print(1)\nelse:\n    print(0)",
       "sourcePosition": "right",
       "targetPosition": "left"
     }
@@ -81,8 +57,5 @@
       "animated": true
     }
   ],
-  "tags": [
-    "creator-mode",
-    "2026-01-14T13:03:45.457Z"
-  ]
+  "tags": ["pivo", "nasobeni", "zaklady"]
 }

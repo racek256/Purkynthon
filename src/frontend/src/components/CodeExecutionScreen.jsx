@@ -46,6 +46,7 @@ export default function Terminal({ hide, graph, input, activate }) {
   const [displayOutput, setDisplayOutput] = useState(false);
   const [displayTerm, setDisplayTerm] = useState(false);
   const [output, setOutput] = useState();
+  const [isCorrect, setIsCorrect] = useState(null);
   // State for terminal height - default to 1/3 of screen
   const [height, setHeight] = useState(35);
   // State for tracking resize drag
@@ -91,6 +92,12 @@ export default function Terminal({ hide, graph, input, activate }) {
       const data = await processCode();
       console.log(data);
       setOutput(data);
+      
+      // Check if verification passed (returnValue is "1")
+      if (data?.returnValue) {
+        const result = data.returnValue.trim();
+        setIsCorrect(result === "1");
+      }
     }
     some();
   }, []);
@@ -173,7 +180,7 @@ className={`overflow-y-auto absolute bottom-0 left-0 w-full z-9999 ${
           <p
             className={`bg-runner-output transition-400 ${!displayOutput ? "opacity-0" : "opacity-100"} max-h-32 h-max overflow-y-auto  transition-all rounded-xl p-4 text-runner-text`}
           >
-            {output.logs.split("\n").map((line, i) => (
+            {output.logs.split("\n").filter((line, i, arr) => i !== arr.length - 1 || (line.trim() !== "1" && line.trim() !== "0")).map((line, i) => (
               <span key={i}>
                 {line}
                 <br />
@@ -184,16 +191,26 @@ className={`overflow-y-auto absolute bottom-0 left-0 w-full z-9999 ${
       ) : (
         <></>
       )}
-      <p
-        className={`text-gray-300 text-3xl ${!displayOutput ? "opacity-0" : "opacity-100"} my-2 `}
-      >
-        Output:
-      </p>
-      <p
-        className={`bg-runner-output transition-400 ${!displayOutput ? "opacity-0" : "opacity-100"}  transition-all rounded-xl p-4 text-runner-text`}
-      >
-        {output?.returnValue}
-      </p>
+      
+      {/* Verification Result */}
+      {displayOutput && isCorrect !== null && (
+        <div className={`flex items-center gap-3 my-4 p-4 rounded-xl ${isCorrect ? "bg-green-500/20 border border-green-500" : "bg-red-500/20 border border-red-500"}`}>
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isCorrect ? "bg-green-500" : "bg-red-500"}`}>
+            {isCorrect ? (
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            )}
+          </div>
+          <span className={`text-2xl font-bold ${isCorrect ? "text-green-400" : "text-red-400"}`}>
+            {isCorrect ? "Správně! Tvé řešení je korektní." : "Špatně! Zkus to znovu."}
+          </span>
+        </div>
+      )}
 
       <button
         className="bg-button absolute right-5 top-5  w-max p-4 m-2  flex items-center  transition   rounded-xl hover:bg-button-hover cursor-pointer text-xl"

@@ -192,3 +192,22 @@ async def get_current_lesson(user_id: int):
         return {"success": True, "lesson_number": user[0] + 1}
     else:
         return {"success": False, "message": "User not found"}
+
+
+@router.get("/leaderboard")
+async def get_leaderboard():
+    """Get the leaderboard with all users sorted by score"""
+    conn = sqlite3.connect(DB_FILE)
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT id, username, score, level FROM users ORDER BY score DESC LIMIT 50"
+    )
+    users = cur.fetchall()
+    conn.close()
+
+    leaderboard = [
+        {"user_id": user[0], "username": user[1], "score": user[2], "level": user[3]}
+        for user in users
+    ]
+
+    return {"success": True, "leaderboard": leaderboard}

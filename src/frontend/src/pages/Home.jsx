@@ -53,6 +53,7 @@ function Home() {
   const [buttonActive, setButtonActive] = useState(false)
   const [currentLessonNumber, setCurrentLessonNumber] = useState(1)
   const [userName, setUserName] = useState("")
+  const [isAdmin, setIsAdmin] = useState(false)
 
   const navigate = useNavigate();
   function logout() {
@@ -82,20 +83,13 @@ function Home() {
           navigate("/login");
         } else {
           setUserName(response.username || "User");
+          // Check if user is admin
+          setIsAdmin(response.is_admin === true || response.username === "admin");
         }
       }
     }
     callMe();
   }, []);
-
-  useEffect(() => {
-    if (nodes.length > 0 && input != undefined) {
-      const nodesClone = [...nodes];
-      nodesClone[0].input = input;
-      setNodes(nodesClone);
-      console.log(nodes);
-    }
-  }, [input]);
 
   useEffect(() => {
     async function initLevel() {
@@ -105,16 +99,12 @@ function Home() {
       const data = await loadCurrentLesson(token);
       console.log(data);
 
-      // Store ALL nodes (including test nodes) in state
-      // For now the script expects the first node to be input
-      //  TODO:: fixit
-
-      data.nodes[0].data.setInput = setInput;
+      // Store ALL nodes in state
       setNodes(data.nodes);
       setInput(data.nodes[0].data.input);
       setEdges(data.edges);
       setLevelName(data.name);
-      setLevelDescription(data.description);
+      setLevelDescription(data.levelDescription || data.description);
       setCurrentLessonNumber(data.lessonNumber || 1);
       setStartTime(Date.now()); // Reset start time when loading new lesson
     }
@@ -278,11 +268,11 @@ function Home() {
         ...node,
         data: { ...node.data, onLabelChange: updateNodeLabel },
       }))
-    : filteredNodesForDisplay;
-  function getTestNode(nodes) {
-    const data = nodes.filter((node) => node.id === "test");
-    return JSON.parse(data[0].code);
-  }
+    : filteredNodesForDisplay.map((node) => ({
+        ...node,
+        // Make input/output nodes non-selectable for normal users
+        selectable: node.type !== "input" && node.type !== "output",
+      }));
 
   const addBlankNode = () => {
     const newNode = {
@@ -299,13 +289,52 @@ function Home() {
     setNodes((nds) => [...nds, newNode]);
   };
 
+  // Admin functions to change lessons
+  const goToPrevLesson = async () => {
+    if (currentLessonNumber > 1) {
+      const prevLesson = await loadLessonByNumber(currentLessonNumber - 1);
+      setNodes(prevLesson.nodes);
+      setInput(prevLesson.nodes[0].data.input);
+      setEdges(prevLesson.edges);
+      setLevelName(prevLesson.name);
+      setLevelDescription(prevLesson.levelDescription || prevLesson.description);
+      setCurrentLessonNumber(currentLessonNumber - 1);
+      setStartTime(Date.now());
+      setButtonActive(false);
+    }
+  };
+
+  const goToNextLesson = async () => {
+    if (currentLessonNumber < TOTAL_LESSONS) {
+      const nextLesson = await loadLessonByNumber(currentLessonNumber + 1);
+      setNodes(nextLesson.nodes);
+      setInput(nextLesson.nodes[0].data.input);
+      setEdges(nextLesson.edges);
+      setLevelName(nextLesson.name);
+      setLevelDescription(nextLesson.levelDescription || nextLesson.description);
+      setCurrentLessonNumber(currentLessonNumber + 1);
+      setStartTime(Date.now());
+      setButtonActive(false);
+    }
+  };
+
   return (
     <div
       className={`${theme} h-dvh overflow-x-clip overflow-y-hidden w-full max-w-full`}
     >
       <div className="bg-bg h-dvh w-full max-w-full overflow-hidden">
         <div className="flex w-full max-w-full">
-          <Sidebar logout={logout} selectTheme={updateTheme} theme={theme} lessonNumber={currentLessonNumber} userName={userName} />
+          <Sidebar 
+            logout={logout} 
+            selectTheme={updateTheme} 
+            theme={theme} 
+            lessonNumber={currentLessonNumber} 
+            userName={userName}
+            isAdmin={isAdmin}
+            onPrevLesson={goToPrevLesson}
+            onNextLesson={goToNextLesson}
+            totalLessons={TOTAL_LESSONS}
+          />
           <div className="flex flex-col h-dvh w-full min-w-0">
             <Navbar
               name={creatorMode ? levelName : name}
@@ -471,7 +500,6 @@ function Home() {
             setNextScren(false);
           }}
           graph={{ nodes, connections: edges }}
-          tests={getTestNode(nodes)}
           input={input}
 		  time={startTime}
 		  token={cookies.session.token}
@@ -480,12 +508,11 @@ function Home() {
             // Load the next lesson after completion
             if (currentLessonNumber < TOTAL_LESSONS) {
               const nextLesson = await loadLessonByNumber(currentLessonNumber + 1);
-              nextLesson.nodes[0].data.setInput = setInput;
               setNodes(nextLesson.nodes);
               setInput(nextLesson.nodes[0].data.input);
               setEdges(nextLesson.edges);
               setLevelName(nextLesson.name);
-              setLevelDescription(nextLesson.description);
+              setLevelDescription(nextLesson.levelDescription || nextLesson.description);
               setCurrentLessonNumber(currentLessonNumber + 1);
               setStartTime(Date.now());
               setButtonActive(false);
