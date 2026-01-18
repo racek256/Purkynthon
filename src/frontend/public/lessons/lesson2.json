@@ -27,7 +27,7 @@
       "data": {
         "label": "Vyhazovač 3000"
       },
-      "code": "# Proměnná 'id_zamestnance' obsahuje ID zaměstnance k vyhození\nid_vyhozeneho_zamestnance = input_value\n\nzamestnanci = [\"Karel J.\", \"Petr P.\", \"Pavel P.\", \"Rastislav V.\", \"David K.\"]\n\n# Pokud není id větší než počet zaměstnanců\n# Toto z nějakého důvodu funguje jen pokud je id jiné než počet zaměstnanců. Oprav to.\n# Mělo by to kontrolovat, jestli je id menší než délka listu.\n#                                                            - Šéf\nif len(zamestnanci) != id_vyhozeneho_zamestnance:\n  print(f\"Vyhazuji zaměstnance: {zamestnanci[id_vyhozeneho_zamestnance]}\")\n  del zamestnanci[id_vyhozeneho_zamestnance]\n\nreturn zamestnanci",
+      "code": "# Proměnná 'id_zamestnance' obsahuje ID zaměstnance k vyhození\nid_vyhozeneho_zamestnance = input_value\n\nzamestnanci = [\"Karel J.\", \"Petr P.\", \"Pavel P.\", \"Rastislav V.\", \"David K.\"]\n\n# Pokud není id větší než počet zaměstnanců\n# Toto z nějakého důvodu funguje jen pokud je id stejné jako počet zaměstnanců. Oprav to.\n# Mělo by to kontrolovat, jestli je id menší než délka listu.\n#                                                            - Šéf\nif len(zamestnanci) == id_vyhozeneho_zamestnance:\n  print(f\"Vyhazuji zaměstnance: {zamestnanci[id_vyhozeneho_zamestnance]}\")\n  del zamestnanci[id_vyhozeneho_zamestnance]\n\nreturn zamestnanci",
       "sourcePosition": "right",
       "targetPosition": "left"
     },
