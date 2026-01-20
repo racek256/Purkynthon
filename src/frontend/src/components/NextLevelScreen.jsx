@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function NextLevel({ hide, graph, input, time, token, lessonNumber = 1, onLessonComplete }) {
+  const { t } = useTranslation();
   const [finishTime] = useState(Date.now() - time);
   const [dataSent, setDataSent] = useState(false);
   const [leaderboard, setLeaderboard] = useState([]);
@@ -191,14 +193,14 @@ export default function NextLevel({ hide, graph, input, time, token, lessonNumbe
               src={correctness ? "https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif" : "https://media.tenor.com/JYyzR_1h77MAAAAi/angry-emoji.gif"}
             />
             <div className="text-white text-3xl">
-              {isLoading ? "Ověřuji..." : correctness ? "Skvělá práce!" : "Zkus to znovu!"}
+              {isLoading ? t('nextLevel.verifying') : correctness ? t('nextLevel.greatWork') : t('nextLevel.tryAgain')}
             </div>
           </div>
           <div className="flex-col text-white h-full">
             {/* Verification Result */}
             <div className="flex border-white border-y text-3xl py-4 text-white overflow-x-auto">
               {isLoading ? (
-                <div className="flex-1 text-center">Ověřuji řešení...</div>
+                <div className="flex-1 text-center">{t('nextLevel.verifying')}</div>
               ) : (
                 <div className={`flex-1 text-center flex items-center justify-center gap-3 ${correctness ? "text-green-400" : "text-red-400"}`}>
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${correctness ? "bg-green-500" : "bg-red-500"}`}>
@@ -212,28 +214,28 @@ export default function NextLevel({ hide, graph, input, time, token, lessonNumbe
                       </svg>
                     )}
                   </div>
-                  {correctness ? "Správně!" : "Špatně!"}
+                  {correctness ? t('nextLevel.correct') : t('nextLevel.wrong')}
                 </div>
               )}
             </div>
             {correctness ? (
               <div>
                 <div className="text-white text-3xl py-4 border-y border-white">
-                  Čas:{" "}
+                  {t('nextLevel.time')}{" "}
                   {Math.floor(finishTime / 3600000) > 0 ? `${Math.floor(finishTime / 3600000)}h ` : ""}
                   {Math.floor((finishTime % 3600000) / 60000)}m {Math.floor((finishTime % 60000) / 1000)}s
                 </div>
-                <div className="text-white text-3xl py-4 border-b border-white">Skóre: {scoreCalculator3000()}</div>
+                <div className="text-white text-3xl py-4 border-b border-white">{t('nextLevel.score')}: {scoreCalculator3000()}</div>
               </div>
             ) : (
               <div className="flex items-center justify-center py-8">
-                <div className="text-3xl">{isLoading ? "" : "Tvé řešení není správné"}</div>
+                <div className="text-3xl">{isLoading ? "" : t('nextLevel.solutionIncorrect')}</div>
               </div>
             )}
           </div>
         </div>
         <div className="border border-white border-l rounded-r-xl w-5/16 h-full flex-col p-2 overflow-y-hidden">
-          <div className="text-white text-xl font-bold mb-2 px-2">Leaderboard</div>
+          <div className="text-white text-xl font-bold mb-2 px-2">{t('nextLevel.leaderboard')}</div>
           <div className="h-[calc(100%-6rem)] overflow-y-auto">
             {sortedLeaderboard.length > 0 ? (
               sortedLeaderboard.map((e, i) => {
@@ -249,7 +251,7 @@ export default function NextLevel({ hide, graph, input, time, token, lessonNumbe
                 );
               })
             ) : (
-              <div className="text-white text-center py-4">Načítání...</div>
+              <div className="text-white text-center py-4">{t('nextLevel.loading')}</div>
             )}
           </div>
           <div className="flex-1 mt-2">
@@ -262,7 +264,7 @@ export default function NextLevel({ hide, graph, input, time, token, lessonNumbe
                 hideScreen();
               }}
             >
-              {correctness ? "Next Level" : "Try Again"}
+              {correctness ? t('nextLevel.nextLevel') : t('nextLevel.tryAgainButton')}
             </button>
           </div>
         </div>

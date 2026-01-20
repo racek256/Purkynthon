@@ -1,0 +1,100 @@
+
+{
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "language": "Language",
+    "logout": "Logout",
+    "close": "Close",
+    "languages": {
+      "en": "English",
+      "cs": "Czech"
+    }
+  },
+  "login": {
+    "title": "Login To Purkynthon",
+    "username": "Username",
+    "password": "Password",
+    "loggingIn": "Logging in...",
+    "loginButton": "Login",
+    "errors": {
+      "connectionError": "Cannot connect to server.",
+      "invalidCredentials": "Invalid username or password"
+    }
+  },
+  "sidebar": {
+    "lesson": "Lesson",
+    "previousLesson": "Previous lesson",
+    "nextLesson": "Next lesson"
+  },
+  "navbar": {
+    "employer": "Employer"
+  },
+  "home": {
+    "runCode": "Run Code",
+    "submit": "Submit",
+    "addNode": "Add Node",
+    "selectNode": "Select node to display code"
+  },
+  "nextLevel": {
+    "verifying": "Verifying...",
+    "greatWork": "Great work!",
+    "tryAgain": "Try again!",
+    "correct": "Correct!",
+    "wrong": "Wrong!",
+    "time": "Time:",
+    "score": "Score:",
+    "solutionIncorrect": "Your solution is not correct",
+    "loading": "Loading...",
+    "nextLevel": "Next Level",
+    "tryAgainButton": "Try Again",
+    "leaderboard": "Leaderboard"
+  },
+  "codeExecution": {
+    "logs": "Logs:",
+    "close": "Close",
+    "correct": "Correct! Your solution is correct.",
+    "incorrect": "Wrong! Try again.",
+    "loadingMessages": [
+      "Your code is cooking our servers",
+      "Our servers are cooking your code",
+      "Executing your code",
+      "Creating a black hole",
+      "Dividing by 0 to run your code",
+      "My calculations indicate a 98.7% probability of catastrophic system failure if this continues.",
+      "Aligning flux capacitors… please wait",
+      "Detected multiple leviathan-class bugs",
+      "Defusing bugs on the site",
+      "You may not rest now, there are bugs in your code",
+      "The only thing they fear is your code",
+      "The right code in the wrong place",
+      "We know, it's not a bug, it's a feature",
+      "Emergency meeting: we have to execute some code",
+      "Nicely done, Agent",
+      "Server CPU temperature: 98402750°C",
+      "Running your spaghetti code",
+      "Making a coin flip if your code will work",
+      "Rewriting reality to fit your algorithm",
+      "Convincing AI to cooperate",
+      "Counting to infinity",
+      "Where are the fire extinguishers?",
+      "Errors exceed acceptable thresholds",
+      "GG, nice code",
+      "You feel an evil presence of bugs watching you",
+      "The spirits are pleased with your code",
+      "The code must grow",
+      "Code support: offline",
+      "Reacting to your code in 1 word: hell nah",
+      "Sometimes, your genius is almost, frightening",
+      "Probability of success: 12%",
+      "Coding your execution",
+      "Silence, machine. Horrible code is running",
+      "We is cooking you code, pls wait"
+    ]
+  },
+  "stupidAI": {
+    "title": "Dumb AI",
+    "subtitle": "(this AI is probably dumber than you)",
+    "placeholder": "Type your message..."
+  }
+}

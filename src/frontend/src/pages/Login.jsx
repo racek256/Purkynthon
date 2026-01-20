@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 function Login() {
+  const { t } = useTranslation();
   const [cookies, setCookies] = useCookies(["session"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +15,7 @@ function Login() {
     <div className="h-dvh w-screen mocha bg-gradient-to-br from-login-start to-login-end flex items-center justify-center">
       <div className="bg-login-popup w-full max-w-md min-w-80 rounded-2xl shadow-2xl p-8 mx-4 border border-white/10 backdrop-blur-sm">
         <h1 className="text-3xl font-bold text-center text-text-dark mb-8">
-          Login To Purkynthon
+          {t('login.title')}
         </h1>
 
         <form className="space-y-5" onSubmit={async (e) => {
@@ -34,7 +36,7 @@ function Login() {
                 );
 
                 if (!data.ok) {
-                  setError("Cannot connect to server.");
+                  setError(t('login.errors.connectionError'));
                   setIsLoading(false);
                   return;
                 }
@@ -51,18 +53,18 @@ function Login() {
                   );
                   navigate("/");
                 } else {
-                  setError("Invalid username or password");
+                  setError(t('login.errors.invalidCredentials'));
                   setPassword("");
                 }
               } catch (err) {
-                setError("Cannot connect to server.");
+                setError(t('login.errors.connectionError'));
               }
 
               setIsLoading(false);
             }}>
           <div>
             <label className="text-text-dark text-sm font-medium mb-2 block">
-              Username
+              {t('login.username')}
             </label>
             <input
               value={username}
@@ -74,7 +76,7 @@ function Login() {
 
           <div>
             <label className="text-text-dark text-sm font-medium mb-2 block">
-              Password
+              {t('login.password')}
             </label>
             <input
               value={password}
@@ -96,7 +98,7 @@ function Login() {
             disabled={isLoading}
             className="w-full py-3 px-4 bg-login-button hover:bg-login-button-hover active:scale-[0.98] transition-all cursor-pointer mt-5 rounded-lg font-medium text-black disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? t('login.loggingIn') : t('login.loginButton')}
           </button>
 	  <p className="text-white text-xl text-center">user: admin password: brambora</p>
         </form>

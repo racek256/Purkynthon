@@ -1,7 +1,9 @@
 import User from "../assets/user_icon.svg";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar({name,description,creatorMode,onNameChange,onDescriptionChange}) {
+  const { t } = useTranslation();
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [tempName, setTempName] = useState(name);
@@ -98,7 +100,7 @@ export default function Navbar({name,description,creatorMode,onNameChange,onDesc
       <div className="flex items-center border-l border-border p-4 shrink-0 max-w-[50%]">
         <img className="rounded-full border border-white shrink-0 w-18 h-18" src={User} />
         <div className="min-w-0 ml-2 flex flex-col justify-center">
-          <h1 className="text-text-light text-2xl p-2 pb-0 truncate">Zaměstnavatel</h1>
+          <h1 className="text-text-light text-2xl p-2 pb-0 truncate">{t('navbar.employer')}</h1>
           <div className="rounded-xl border-3 border-black h-6 w-full max-w-80 m-2 overflow-hidden relative">
             <div className="w-1/2 bg-gradient-to-r from-ctp-green-600 to-ctp-red-900 h-full "></div>
           </div>
