@@ -3,7 +3,9 @@ import SendIcon from "../assets/send_icon.svg";
 import ArrowUP from "../assets/arrow_up_icon.svg";
 import ArrowDown from "../assets/arrow_down_icon.svg";
 import Markdown from "react-markdown";
+import { useTranslation } from "react-i18next";
 export default function StupidAI({ expanded, setExpanded, isEditor }) {
+  const { t } = useTranslation();
   const [history, updateHistory] = useState([
     {
       role: "system",
@@ -55,9 +57,9 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
 
       <div className="bg-bg w-full flex flex-col p-4 pt-0 flex-1 overflow-hidden min-h-0">
         <div className="w-full border-ai-border bg-ai-bg border-2 rounded-full h-12 flex justify-between items-center flex-shrink-0">
-          <h1 className="font-bold text-2xl mx-4 text-text-light">Dumb AI</h1>
-          <p className="text-lg mx-4 text-text-light">
-            PS: this AI is probably dumber than you
+          <h1 className="font-bold text-2xl mx-4 text-text-light">{t('stupidAI.title')}</h1>
+          <p className="text-m mx-4 text-text-light italic">
+            {t('stupidAI.subtitle')}
           </p>
         </div>
 
@@ -89,7 +91,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
               className="p-3  h-12 rounded-xl w-full bg-ai-input resize-none text-black"
               value={currentText}
               onChange={(e) => updateText(e.target.value)}
-              placeholder="Type your message..."
+              placeholder={t('stupidAI.placeholder')}
               rows={1}
               onKeyDown={(e) => {
                 if (

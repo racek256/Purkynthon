@@ -1,0 +1,100 @@
+
+{
+  "settings": {
+    "title": "Nastavení",
+    "theme": "Motiv",
+    "language": "Jazyk",
+    "logout": "Odhlásit se",
+    "close": "Zavřít",
+    "languages": {
+      "en": "Angličtina",
+      "cs": "Čeština"
+    }
+  },
+  "login": {
+    "title": "Přihlásit se do Purkynthonu",
+    "username": "Uživatelské jméno",
+    "password": "Heslo",
+    "loggingIn": "Přihlašování...",
+    "loginButton": "Přihlásit se",
+    "errors": {
+      "connectionError": "Nelze se připojit k serveru.",
+      "invalidCredentials": "Neplatné uživatelské jméno nebo heslo"
+    }
+  },
+  "sidebar": {
+    "lesson": "Lekce",
+    "previousLesson": "Předchozí lekce",
+    "nextLesson": "Další lekce"
+  },
+  "navbar": {
+    "employer": "Zaměstnavatel"
+  },
+  "home": {
+    "runCode": "Spustit kód",
+    "submit": "Odeslat",
+    "addNode": "Přidat nuzel",
+    "selectNode": "Vyberte uzel pro zobrazení kódu"
+  },
+  "nextLevel": {
+    "verifying": "Ověřuji...",
+    "greatWork": "Skvělá práce!",
+    "tryAgain": "Zkus to znovu!",
+    "correct": "Správně!",
+    "wrong": "Špatně!",
+    "time": "Čas:",
+    "score": "Skóre:",
+    "solutionIncorrect": "Tvé řešení není správné",
+    "loading": "Načítání...",
+    "nextLevel": "Další úroveň",
+    "tryAgainButton": "Zkusit znovu",
+    "leaderboard": "Žebříček"
+  },
+  "codeExecution": {
+    "logs": "Logy:",
+    "close": "Zavřít",
+    "correct": "Správně! Tvé řešení je korektní.",
+    "incorrect": "Špatně! Zkus to znovu.",
+    "loadingMessages": [
+      "Tvůj kód vaří naše servery",
+      "Naše servery vaří tvůj kód",
+      "Spouštím tvůj kód",
+      "Vytvářím černou díru",
+      "Dělím nulou",
+      "Mé výpočty ukazují 98,7% pravděpodobnost katastrofálního selhání systému pokud to bude pokračovat",
+      "Zarovnávám tokové kondenzátory",
+      "Detekováno více chyb třídy leviathan",
+      "Zneškodňuji chyby na webu",
+      "Teď nemůžeš odpočívat, ve tvém kódu jsou chyby",
+      "Jediné, čeho se bojí, je tvůj kód",
+      "Správný kód na špatném místě",
+      "Víme, není to chyba, je to funkce",
+      "Nouzová porada: musíme spustit nějaký kód",
+      "Dobrá práce, agente",
+      "Teplota procesoru serveru: 98402750 °C",
+      "Spouštím tvůj špagetový kód",
+      "Házím mincí, jestli tvůj kód poběží",
+      "Přepisuji realitu, aby odpovídala tvému algoritmu",
+      "Přesvědčuji AI ke spolupráci",
+      "Počítám do nekonečna",
+      "Kde jsou hasicí přístroje?",
+      "Chyby překročily povolené limity",
+      "GG, dobrej kód",
+      "Cítíš zlou přítomnost bugů, které tě sledují",
+      "Duchové jsou s tvým kódem spokojeni",
+      "Kód musí růst",
+      "Podpora kódu: offline",
+      "Reakce na tvůj kód jedním slovem: ani náhodou",
+      "Někdy je tvůj génius, skoro děsivý",
+      "Pravděpodobnost úspěchu: 12 %",
+      "Kóduji tvé spuštění",
+      "Ticho, stroji. Spouští se hrozný kód",
+      "Vaříme tvůj kód, prosím čekej"
+    ]
+  },
+  "stupidAI": {
+    "title": "Hloupá AI",
+    "subtitle": "(tato AI je pravděpodobně hloupější než ty)",
+    "placeholder": "Napiš svou zprávu..."
+  }
+}

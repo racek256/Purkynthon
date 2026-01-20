@@ -2,8 +2,10 @@ import UserIcon from "../assets/user_icon.svg";
 import SettingsIcon from "../assets/settings_icon.svg";
 import { useState } from "react";
 import Settings from "./Settings.jsx";
+import { useTranslation } from "react-i18next";
 
 export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, userName = "User", isAdmin = false, onPrevLesson, onNextLesson, totalLessons = 5 }) {
+  const { t } = useTranslation();
   const [showSettings, setShowSettings] = useState(false);
 
   return (
@@ -25,12 +27,12 @@ export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, 
                       ? "bg-gray-600 text-gray-400 cursor-not-allowed" 
                       : "bg-button hover:bg-button-hover cursor-pointer"
                   }`}
-                  title="Předchozí lekce"
+                  title={t('sidebar.previousLesson')}
                 >
                   &lt;
                 </button>
               )}
-              <p>Lekce {lessonNumber}</p>
+              <p>{t('sidebar.lesson')} {lessonNumber}</p>
               {isAdmin && (
                 <button
                   onClick={onNextLesson}
@@ -40,7 +42,7 @@ export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, 
                       ? "bg-gray-600 text-gray-400 cursor-not-allowed" 
                       : "bg-button hover:bg-button-hover cursor-pointer"
                   }`}
-                  title="Další lekce"
+                  title={t('sidebar.nextLesson')}
                 >
                   &gt;
                 </button>

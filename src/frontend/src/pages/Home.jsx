@@ -20,6 +20,7 @@ import InputNode from "../components/InputNode.jsx";
 import EditableNode from "../components/EditableNode.jsx";
 import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
+import { useTranslation } from "react-i18next";
 
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
@@ -30,6 +31,7 @@ const edgeTypes = {
 };
 
 function Home() {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(true);
   const [cookies, setCookies] = useCookies();
   const [selectedNodes, setSelectedNodes] = useState([]);
@@ -381,7 +383,7 @@ function Home() {
                       className="m-2 rounded-xl p-4 text-xl hover:bg-button-hover transition-all bg-button"
                       onClick={addBlankNode}
                     >
-                      Add Node
+                      {t('home.addNode')}
                     </button>
                   )}
                   <button
@@ -416,15 +418,16 @@ function Home() {
                       setShowTerm(true);
                     }}
                   >
-                    Run Code
+                    {t('home.runCode')}
                   </button>
                   <button
-                    className={`m-2 rounded-xl p-4 text-xl ${buttonActive ? "hover:bg-button-hover transition-all bg-button cursor-pointer" : "bg-gray-300 pointer-events-none cursor-not-allowed  "} `}
+                    className={`m-2 rounded-xl p-4 text-xl transition-all ${buttonActive ? "bg-button hover:bg-button-hover cursor-pointer" : "bg-gray-700 cursor-not-allowed opacity-50"} `}
                     onClick={() => {
                       setNextScren(true);
                     }}
+                    disabled={!buttonActive}
                   >
-                    Submit
+                    {t('home.submit')}
                   </button>
                 </div>
               </div>
@@ -474,7 +477,7 @@ function Home() {
                     <div
                       className={`flex items-center justify-center ${expanded ? "h-0 overflow-hidden" : "h-full"} text-4xl text-ctp-mauve-900`}
                     >
-                      Select node to display code
+                      {t('home.selectNode')}
                     </div>
                   )}
                 </div>
