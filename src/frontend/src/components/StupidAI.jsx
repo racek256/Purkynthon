@@ -43,9 +43,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
   }
 
   return (
-    <div
-      className={`flex flex-col ${!isEditor ? "h-[calc(100dvh-5rem)]" : "h-[calc((100dvh-5rem)/2)]"}   items-center max-h-full overflow-hidden`}
-    >
+    <div className="flex h-full flex-col items-center overflow-hidden">
       <div
         className="h-8 min-h-8 rounded-t-xl w-32 bg-ctp-surface1 hover:bg-ctp-surface2 cursor-pointer flex-shrink-0 flex justify-center"
         onClick={() => setExpanded(!expanded)}
