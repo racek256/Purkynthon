@@ -152,6 +152,11 @@ function Home() {
     setSelectedNodes(selectedNodesArray || []);
   }, []);
 
+  const selectedNode =
+    selectedNodes.length === 1
+      ? nodes.find((node) => node.id === selectedNodes[0]?.id)
+      : null;
+
   useOnSelectionChange({
     onChange,
   });
@@ -449,24 +454,18 @@ function Home() {
                 <div
                   className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "flex-1"} overflow-hidden`}
                 >
-                  {selectedNodes &&
-                  selectedNodes.length === 1 &&
-                  selectedNodes[0] &&
-                  selectedNodes[0].type != "input" | creatorMode &&
-                  selectedNodes[0].type != "output"  | creatorMode ? (
+                  {selectedNode &&
+                  selectedNode.type != "input" | creatorMode &&
+                  selectedNode.type != "output"  | creatorMode ? (
                     <CodeEditor
-                      value={selectedNodes[0].code}
-                      title={selectedNodes[0].data?.label || "Code Editor"}
+                      value={selectedNode.code || ""}
+                      title={selectedNode.data?.label || "Code Editor"}
                       onChange={(val) => {
                         console.log("key press in editor");
-                        const nodesClone = [...nodes];
-                        const index = nodesClone.findIndex(
-                          (n) => selectedNodes[0].id === n.id,
+                        const nodesClone = nodes.map((node) =>
+                          node.id === selectedNode.id ? { ...node, code: val } : node,
                         );
-                        if (index !== -1) {
-                          nodesClone[index].code = val;
-                          setNodes(nodesClone);
-                        }
+                        setNodes(nodesClone);
                       }}
                     />
                   ) : (
