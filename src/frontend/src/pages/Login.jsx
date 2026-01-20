@@ -100,7 +100,6 @@ function Login() {
           >
             {isLoading ? t('login.loggingIn') : t('login.loginButton')}
           </button>
-	  <p className="text-white text-xl text-center">user: admin password: brambora</p>
         </form>
       </div>
     </div>
