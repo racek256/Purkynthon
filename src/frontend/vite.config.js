@@ -6,6 +6,11 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server:{
-	  allowedHosts:['dev.racek.qzz.io', 'localhost', 'dev.racek.qzz.io/login']
+	  allowedHosts:['dev.racek.qzz.io', 'localhost', 'dev.racek.qzz.io/login'],
+    hmr: {
+      host: 'dev.racek.qzz.io',
+      protocol: 'wss',
+      clientPort: 443,
+    },
   }
 })
