@@ -22,9 +22,8 @@ import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
 import { useTranslation } from "react-i18next";
 
-import CodeMirror from "@uiw/react-codemirror";
-import { python } from "@codemirror/lang-python";
 import { loadCurrentLesson, loadLessonByNumber, TOTAL_LESSONS } from "../components/lessons/lessonLoader.js";
+import CodeEditor from "../components/CodeEditor.jsx";
 
 const edgeTypes = {
   default: CustomEdge,
@@ -443,7 +442,7 @@ function Home() {
               </div>
 
               <div
-                className="flex flex-col h-full border-l border-white overflow-hidden"
+                className="flex flex-col h-full  border-white overflow-hidden"
                 style={{ width: `${100 - splitPosition}%` }}
               >
                 {/* EDITOR */}
@@ -455,13 +454,10 @@ function Home() {
                   selectedNodes[0] &&
                   selectedNodes[0].type != "input" | creatorMode &&
                   selectedNodes[0].type != "output"  | creatorMode ? (
-                    <CodeMirror
+                    <CodeEditor
                       value={selectedNodes[0].code}
-                      height="100%"
-                      theme="dark"
-                      className="h-full"
-                      extensions={[python()]}
-                      onChange={(val, viewUpdate) => {
+                      title={selectedNodes[0].data?.label || "Code Editor"}
+                      onChange={(val) => {
                         console.log("key press in editor");
                         const nodesClone = [...nodes];
                         const index = nodesClone.findIndex(
@@ -474,11 +470,12 @@ function Home() {
                       }}
                     />
                   ) : (
-                    <div
-                      className={`flex items-center justify-center ${expanded ? "h-0 overflow-hidden" : "h-full"} text-4xl text-ctp-mauve-900`}
-                    >
-                      {t('home.selectNode')}
-                    </div>
+                    <CodeEditor
+                      value=""
+                      editable={false}
+                      placeholder="Select node to display code"
+                      title="Code Editor"
+                    />
                   )}
                 </div>
 
