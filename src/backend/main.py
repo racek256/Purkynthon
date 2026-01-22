@@ -8,6 +8,7 @@ import uvicorn
 import io
 import contextlib
 from modules.db import router
+from modules.discord_logger import DiscordLogger
 
 global_output_memory: Dict[str, Any] = {}
 
@@ -28,6 +29,8 @@ async def run_graph(request: GraphRequest):
     log_capture = io.StringIO()
 
     try:
+        DiscordLogger.send("running", "Code Execution Started", "Running graph execution", "general")
+        
         # actually fr ong spawn a new stdout
         with contextlib.redirect_stdout(log_capture):
             blocks = load_blocks_from_json(request.graph, global_output_memory)
@@ -38,6 +41,8 @@ async def run_graph(request: GraphRequest):
         logs = "\n".join(logs_text[:-1]) if len(logs_text) > 1 else ""
         return_value = logs_text[-1] if logs_text else str(result)
 
+        DiscordLogger.send("running", "Code Execution Completed", f"Execution successful\nReturn value: {return_value[:100]}", "success")
+        
         return GraphResponse(
             success=True,
             logs=logs,
@@ -45,6 +50,7 @@ async def run_graph(request: GraphRequest):
         )
 
     except Exception as e:
+        DiscordLogger.send("running", "Code Execution Failed", f"Error: {str(e)}", "error")
         return GraphResponse(
             success=False,
             logs=log_capture.getvalue(),
@@ -56,6 +62,8 @@ async def exec_one(request: ExecOnceRequest):
     log_capt = io.StringIO()
 
     try:
+        DiscordLogger.send("running", "Single Block Execution Started", "Executing single block", "general")
+        
         with contextlib.redirect_stdout(log_capt):
             result = Block(request, "0", "test", {"input_value": "plinK"}, global_output_memory).execute()
 
@@ -64,12 +72,15 @@ async def exec_one(request: ExecOnceRequest):
         logs = "\n".join(logs_text[:-1]) if len(logs_text) > 1 else ""
         return_value = logs_text[-1] if logs_text else str(result)
 
+        DiscordLogger.send("running", "Single Block Execution Completed", f"Execution successful\nReturn value: {return_value[:100]}", "success")
+        
         return GraphResponse(
             success=True,
             logs=logs,
             returnValue=return_value
         )
     except Exception as e:
+        DiscordLogger.send("running", "Single Block Execution Failed", f"Error: {str(e)}", "error")
         return GraphResponse(
             success = False,
             logs = log_capt.getvalue(),
@@ -79,15 +90,27 @@ async def exec_one(request: ExecOnceRequest):
 
 @app.post("/api/chat", response_model=ChatResponseModel)
 async def chatwithAI(data: ChatRequest):
-    response: ChatResponse = client.chat(
-        model='gemma3:1b-it-qat',
-        messages=data.history
-    )
-    
-    return ChatResponseModel(message=response.message.content) if response.message.content else ""
+    try:
+        DiscordLogger.send("ai", "AI Chat Request", f"Processing chat request", "general")
+        
+        response: ChatResponse = client.chat(
+            model='gemma3:1b-it-qat',
+            messages=data.history
+        )
+        
+        DiscordLogger.send("ai", "AI Chat Response", "Chat completed successfully", "success")
+        
+        return ChatResponseModel(message=response.message.content) if response.message.content else ""
+    except Exception as e:
+        DiscordLogger.send("ai", "AI Chat Error", f"Error: {str(e)}", "error")
+        raise
 
 
 if __name__ == "__main__":
+    print("Sending startup test messages to Discord webhooks...")
+    DiscordLogger.send_startup_tests()
+    print("Test messages sent. Starting server...")
+    
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
