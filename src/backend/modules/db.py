@@ -5,7 +5,7 @@ import os
 import jwt  # pip install pyjwt
 import datetime
 from datetime import timedelta
-from passlib.hash import bcrypt
+import bcrypt
 from modules.standard_stuff import LoginData, JWT, LessonData
 from modules.discord_logger import DiscordLogger
 
@@ -63,8 +63,22 @@ async def get_user(user: LoginData):
     user_data = cur.fetchone()
     conn.close()
     if user_data:
-        print("user exist checking password")
-        if bcrypt.verify(user.password, user_data[2]):
+        # Use direct bcrypt to avoid passlib backend issues
+        password_verified = False
+        try:
+            if bcrypt.checkpw(user.password.encode('utf-8'), user_data[2].encode('utf-8')):
+                password_verified = True
+        except ValueError as e:
+            # Try with passlib as fallback for existing hashes
+            from passlib.hash import bcrypt as passlib_bcrypt
+            truncated_password = user.password[:72]
+            try:
+                if passlib_bcrypt.verify(truncated_password, user_data[2]):
+                    password_verified = True
+            except Exception:
+                pass
+        
+        if password_verified:
             print("generating JWT")
             jwt_token = create_access_token(user_data[0], user_data[1])
             DiscordLogger.send("login", "User Login Success", f"User '{user.username}' logged in successfully", "success")
@@ -87,7 +101,7 @@ async def register_user(user: LoginData):
     try:
         cur.execute(
             "INSERT INTO users (username, password) VALUES (?, ?)",
-            (user.username, bcrypt.hash(user.password)),
+            (user.username, bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')),
         )
         conn.commit()
     except sqlite3.IntegrityError:
