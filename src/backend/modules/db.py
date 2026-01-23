@@ -7,6 +7,7 @@ import datetime
 from datetime import timedelta
 import bcrypt
 from modules.standard_stuff import LoginData, JWT, LessonData
+from modules.discord_logger import DiscordLogger
 
 SECRET_KEY = "This is our super secret key nobody will hack into our security HAHAHA you cant hack us you can try but you will fail because of this super secret key"  # directly commited into a public repo btw
 ALGORITHM = "HS256"
@@ -80,11 +81,14 @@ async def get_user(user: LoginData):
         if password_verified:
             print("generating JWT")
             jwt_token = create_access_token(user_data[0], user_data[1])
+            DiscordLogger.send("login", "User Login Success", f"User '{user.username}' logged in successfully", "success")
             return {"success": True, "jwt_token": jwt_token}
         else:
             print("Password was incorrect")
+            DiscordLogger.send("login", "Login Failed", f"User '{user.username}' failed login - incorrect password", "fail")
             return {"success": False, "message": "password was incorrect"}
     else:
+        DiscordLogger.send("login", "Login Failed", f"User '{user.username}' failed login - user does not exist", "fail")
         return {"success": False, "message": "user doesnt exist"}
 
 
@@ -102,11 +106,13 @@ async def register_user(user: LoginData):
         conn.commit()
     except sqlite3.IntegrityError:
         conn.close()
+        DiscordLogger.send("login", "Registration Failed", f"User '{user.username}' registration failed - username already exists", "fail")
         raise HTTPException(status_code=400, detail="Username already exists")
     user_id = cur.lastrowid
     conn.close()
     # Generate JWT_token
     jwt_token = create_access_token(user_id, user.username)
+    DiscordLogger.send("login", "User Registration Success", f"User '{user.username}' registered successfully", "success")
     return {"success": True, "jwt_token": jwt_token}
 
 
@@ -124,6 +130,7 @@ async def finish_lesson(data: LessonData):
 
         if already_finished:
             conn.close()
+            DiscordLogger.send("submitting", "Lesson Submission Failed", f"User {data.user_id} already completed lesson {data.lesson_id}", "fail")
             return {"success": False, "message": "Lesson already completed"}
 
         # Create new row into table finished_lessons
@@ -145,10 +152,12 @@ async def finish_lesson(data: LessonData):
             "UPDATE users SET score = (?), level = (?) WHERE id=(?)",
             (new_score, new_level, data.user_id),
         )
+        DiscordLogger.send("submitting", "Lesson Completed", f"User {data.user_id} completed lesson {data.lesson_id}\nScore: {data.score}\nTime: {data.time}s\nNew level: {new_level}", "success")
     except Exception as e:
         print(f"Something bad happend: {e}")
         conn.commit()
         conn.close()
+        DiscordLogger.send("submitting", "Lesson Submission Error", f"Error submitting lesson for user {data.user_id}: {str(e)}", "error")
         raise HTTPException(
             status_code=400, detail="Error something id Eroooooor aaaaaaaaaaaaaahh"
         )
