@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Dict, List, Any
 
 return_statement_sub_name: str = "resultxyzplink"
-ollama_client_ip: str = "http://192.168.0.125:11434"
+ollama_client_ip: str = "http://100.106.120.85:11434"
 
 def get_return_statement_sub() -> str:
     return f"{return_statement_sub_name} = "

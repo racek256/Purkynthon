@@ -29,8 +29,6 @@ async def run_graph(request: GraphRequest):
     log_capture = io.StringIO()
 
     try:
-        DiscordLogger.send("running", "Code Execution Started", "Running graph execution", "general")
-        
         # actually fr ong spawn a new stdout
         with contextlib.redirect_stdout(log_capture):
             blocks = load_blocks_from_json(request.graph, global_output_memory)
@@ -41,7 +39,14 @@ async def run_graph(request: GraphRequest):
         logs = "\n".join(logs_text[:-1]) if len(logs_text) > 1 else ""
         return_value = logs_text[-1] if logs_text else str(result)
 
-        DiscordLogger.send("running", "Code Execution Completed", f"Execution successful\nReturn value: {return_value[:100]}", "success")
+        # Prepare detailed log message
+        graph_str = str(request.graph)[:500]
+        logs_str = logs[:500] if logs else "No logs"
+        outcome_str = return_value[:500] if return_value else "No return value"
+        
+        log_message = f"**Graph Code:**\n```json\n{graph_str}\n```\n**Logs:**\n```\n{logs_str}\n```\n**Outcome:**\n```\n{outcome_str}\n```"
+        
+        DiscordLogger.send("running", "Code Execution Completed", log_message, "success")
         
         return GraphResponse(
             success=True,
@@ -50,7 +55,9 @@ async def run_graph(request: GraphRequest):
         )
 
     except Exception as e:
-        DiscordLogger.send("running", "Code Execution Failed", f"Error: {str(e)}", "error")
+        error_logs = log_capture.getvalue()[:500]
+        error_message = f"**Error:**\n```\n{str(e)}\n```\n**Logs:**\n```\n{error_logs}\n```"
+        DiscordLogger.send("running", "Code Execution Failed", error_message, "error")
         return GraphResponse(
             success=False,
             logs=log_capture.getvalue(),
@@ -62,8 +69,6 @@ async def exec_one(request: ExecOnceRequest):
     log_capt = io.StringIO()
 
     try:
-        DiscordLogger.send("running", "Single Block Execution Started", "Executing single block", "general")
-        
         with contextlib.redirect_stdout(log_capt):
             result = Block(request, "0", "test", {"input_value": "plinK"}, global_output_memory).execute()
 
@@ -72,7 +77,14 @@ async def exec_one(request: ExecOnceRequest):
         logs = "\n".join(logs_text[:-1]) if len(logs_text) > 1 else ""
         return_value = logs_text[-1] if logs_text else str(result)
 
-        DiscordLogger.send("running", "Single Block Execution Completed", f"Execution successful\nReturn value: {return_value[:100]}", "success")
+        # Prepare detailed log message
+        code_str = request.code[:500] if request.code else "No code"
+        logs_str = logs[:500] if logs else "No logs"
+        outcome_str = return_value[:500] if return_value else "No return value"
+        
+        log_message = f"**Code:**\n```python\n{code_str}\n```\n**Logs:**\n```\n{logs_str}\n```\n**Outcome:**\n```\n{outcome_str}\n```"
+        
+        DiscordLogger.send("running", "Single Block Execution Completed", log_message, "success")
         
         return GraphResponse(
             success=True,
@@ -80,7 +92,10 @@ async def exec_one(request: ExecOnceRequest):
             returnValue=return_value
         )
     except Exception as e:
-        DiscordLogger.send("running", "Single Block Execution Failed", f"Error: {str(e)}", "error")
+        error_logs = log_capt.getvalue()[:500]
+        code_str = request.code[:500] if request.code else "No code"
+        error_message = f"**Code:**\n```python\n{code_str}\n```\n**Error:**\n```\n{str(e)}\n```\n**Logs:**\n```\n{error_logs}\n```"
+        DiscordLogger.send("running", "Single Block Execution Failed", error_message, "error")
         return GraphResponse(
             success = False,
             logs = log_capt.getvalue(),
@@ -91,25 +106,36 @@ async def exec_one(request: ExecOnceRequest):
 @app.post("/api/chat", response_model=ChatResponseModel)
 async def chatwithAI(data: ChatRequest):
     try:
-        DiscordLogger.send("ai", "AI Chat Request", f"Processing chat request", "general")
+        # Get the last user message from history
+        user_message = ""
+        if data.history and len(data.history) > 0:
+            last_msg = data.history[-1]
+            if isinstance(last_msg, dict) and 'content' in last_msg:
+                user_message = last_msg['content'][:500]
+            else:
+                user_message = str(last_msg)[:500]
         
         response: ChatResponse = client.chat(
             model='gemma3:1b-it-qat',
             messages=data.history
         )
         
-        DiscordLogger.send("ai", "AI Chat Response", "Chat completed successfully", "success")
+        ai_response = response.message.content[:500] if response.message.content else "No response"
+        
+        log_message = f"**User Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
+        DiscordLogger.send("ai", "AI Chat Completed", log_message, "success")
         
         return ChatResponseModel(message=response.message.content) if response.message.content else ""
     except Exception as e:
-        DiscordLogger.send("ai", "AI Chat Error", f"Error: {str(e)}", "error")
+        error_message = f"**Error:**\n```\n{str(e)}\n```"
+        DiscordLogger.send("ai", "AI Chat Error", error_message, "error")
         raise
 
 
 if __name__ == "__main__":
-    print("Sending startup test messages to Discord webhooks...")
+    print("Discord webhook starting")
     DiscordLogger.send_startup_tests()
-    print("Test messages sent. Starting server...")
+    print("Discord webhook started sucessfully")
     
     uvicorn.run(
         "main:app",
