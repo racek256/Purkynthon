@@ -12,6 +12,7 @@ from modules.discord_logger import DiscordLogger
 from fastapi import Header, HTTPException
 import jwt
 from modules.db import SECRET_KEY, ALGORITHM
+from fastapi.responses import JSONResponse
 
 global_output_memory: Dict[str, Any] = {}
 
@@ -27,18 +28,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def get_username_from_header(authorization: str | None) -> str:
+def get_username_from_header(authorization: str | None) -> str | JSONResponse:
     if not authorization:
-        raise HTTPException(status_code=401, content={"message": "Missing token"})
+        return JSONResponse(status_code=401, content={"message": "Missing token"})
     token = authorization[7:] if authorization.lower().startswith("bearer ") else authorization
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("username")
         if not username:
-            raise HTTPException(status_code=401, content={"message": "Missing token"})
+            return JSONResponse(status_code=401, content={"message": "Invalid token"})
         return username
     except jwt.PyJWTError:
-        raise HTTPException(status_code=401, content={"message": "Missing token"})
+        return JSONResponse(status_code=401, content={"message": "Invalid token"})
 
 
 @app.post("/run-graph", response_model=GraphResponse)
