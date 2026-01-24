@@ -140,7 +140,7 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
             messages=data.history
         )
         
-        ai_response = response.message.content[:5000] if response.message.content else "No response"
+        ai_response = response.message.content[:4000] if response.message.content else "No response"
         
         log_message = f"**User '{username}' Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
         DiscordLogger.send("ai", "AI Chat Completed", log_message, "success")
