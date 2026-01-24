@@ -9,6 +9,9 @@ import io
 import contextlib
 from modules.db import router
 from modules.discord_logger import DiscordLogger
+from fastapi import Header, HTTPException
+import jwt
+from modules.db import SECRET_KEY, ALGORITHM
 
 global_output_memory: Dict[str, Any] = {}
 
@@ -23,6 +26,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def get_username_from_header(authorization: str | None) -> str:
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing token")
+    token = authorization[7:] if authorization.lower().startswith("bearer ") else authorization
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username = payload.get("username")
+        if not username:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return username
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
 
 @app.post("/run-graph", response_model=GraphResponse)
 async def run_graph(request: GraphRequest):
@@ -101,10 +118,10 @@ async def exec_one(request: ExecOnceRequest):
             logs = log_capt.getvalue(),
             returnValue = str(e)
         )
-    
 
 @app.post("/api/chat", response_model=ChatResponseModel)
-async def chatwithAI(data: ChatRequest):
+async def chatwithAI(data: ChatRequest, authorization: str | None = Header(default=None)):
+    username = get_username_from_header(authorization)
     try:
         # Get the last user message from history
         user_message = ""
@@ -122,7 +139,7 @@ async def chatwithAI(data: ChatRequest):
         
         ai_response = response.message.content[:500] if response.message.content else "No response"
         
-        log_message = f"**User Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
+        log_message = f"**User {username} Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
         DiscordLogger.send("ai", "AI Chat Completed", log_message, "success")
         
         return ChatResponseModel(message=response.message.content) if response.message.content else ""
