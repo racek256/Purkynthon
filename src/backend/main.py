@@ -58,13 +58,13 @@ async def run_graph(request: GraphRequest):
         return_value = logs_text[-1] if logs_text else str(result)
 
         # Prepare detailed log message
-        graph_str = str(request.graph)[:500]
-        logs_str = logs[:500] if logs else "No logs"
-        outcome_str = return_value[:500] if return_value else "No return value"
+        graph_str = str(request.graph)
+        logs_str = logs if logs else "No logs"
+        outcome_str = return_value if return_value else "No return value"
         
         log_message = f"**Graph Code:**\n```json\n{graph_str}\n```\n**Logs:**\n```\n{logs_str}\n```\n**Outcome:**\n```\n{outcome_str}\n```"
         
-        DiscordLogger.send("running", "Code Execution Completed", log_message, "success")
+        DiscordLogger.send("running", "Code Execution Completed", log_message, "success", request.username)
         
         return GraphResponse(
             success=True,
@@ -73,9 +73,9 @@ async def run_graph(request: GraphRequest):
         )
 
     except Exception as e:
-        error_logs = log_capture.getvalue()[:500]
+        error_logs = log_capture.getvalue()
         error_message = f"**Error:**\n```\n{str(e)}\n```\n**Logs:**\n```\n{error_logs}\n```"
-        DiscordLogger.send("running", "Code Execution Failed", error_message, "error")
+        DiscordLogger.send("running", "Code Execution Failed", error_message, "error", request.username)
         return GraphResponse(
             success=False,
             logs=log_capture.getvalue(),
@@ -96,13 +96,13 @@ async def exec_one(request: ExecOnceRequest):
         return_value = logs_text[-1] if logs_text else str(result)
 
         # Prepare detailed log message
-        code_str = request.code[:500] if request.code else "No code"
-        logs_str = logs[:500] if logs else "No logs"
-        outcome_str = return_value[:500] if return_value else "No return value"
+        code_str = request.code if request.code else "No code"
+        logs_str = logs if logs else "No logs"
+        outcome_str = return_value if return_value else "No return value"
         
         log_message = f"**Code:**\n```python\n{code_str}\n```\n**Logs:**\n```\n{logs_str}\n```\n**Outcome:**\n```\n{outcome_str}\n```"
         
-        DiscordLogger.send("running", "Single Block Execution Completed", log_message, "success")
+        DiscordLogger.send("running", "Single Block Execution Completed", log_message, "success", request.username)
         
         return GraphResponse(
             success=True,
@@ -110,10 +110,10 @@ async def exec_one(request: ExecOnceRequest):
             returnValue=return_value
         )
     except Exception as e:
-        error_logs = log_capt.getvalue()[:500]
-        code_str = request.code[:500] if request.code else "No code"
+        error_logs = log_capt.getvalue()
+        code_str = request.code if request.code else "No code"
         error_message = f"**Code:**\n```python\n{code_str}\n```\n**Error:**\n```\n{str(e)}\n```\n**Logs:**\n```\n{error_logs}\n```"
-        DiscordLogger.send("running", "Single Block Execution Failed", error_message, "error")
+        DiscordLogger.send("running", "Single Block Execution Failed", error_message, "error", request.username)
         return GraphResponse(
             success = False,
             logs = log_capt.getvalue(),
@@ -131,16 +131,16 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
         if data.history and len(data.history) > 0:
             last_msg = data.history[-1]
             if isinstance(last_msg, dict) and 'content' in last_msg:
-                user_message = last_msg['content'][:500]
+                user_message = last_msg['content']
             else:
-                user_message = str(last_msg)[:500]
+                user_message = str(last_msg)
         
         response: ChatResponse = client.chat(
             model='gemma3:1b-it-qat',
             messages=data.history
         )
         
-        ai_response = response.message.content[:500] if response.message.content else "No response"
+        ai_response = response.message.content if response.message.content else "No response"
         
         log_message = f"**User '{username}' Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
         DiscordLogger.send("ai", "AI Chat Completed", log_message, "success")
@@ -148,7 +148,7 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
         return ChatResponseModel(message=response.message.content) if response.message.content else ""
     except Exception as e:
         error_message = f"**Error:**\n```\n{str(e)}\n```"
-        DiscordLogger.send("ai", "AI Chat Error", error_message, "error")
+        DiscordLogger.send("ai", "AI Chat Error", error_message, "error", data.username)
         raise
 
 
