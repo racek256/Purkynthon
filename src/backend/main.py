@@ -29,16 +29,16 @@ app.add_middleware(
 
 def get_username_from_header(authorization: str | None) -> str:
     if not authorization:
-        raise HTTPException(status_code=401, detail="Missing token")
+        raise HTTPException(status_code=401, content={"message": "Missing token"})
     token = authorization[7:] if authorization.lower().startswith("bearer ") else authorization
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("username")
         if not username:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise HTTPException(status_code=401, content={"message": "Missing token"})
         return username
     except jwt.PyJWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, content={"message": "Missing token"})
 
 
 @app.post("/run-graph", response_model=GraphResponse)
@@ -139,7 +139,7 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
         
         ai_response = response.message.content[:500] if response.message.content else "No response"
         
-        log_message = f"**User {username} Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
+        log_message = f"**User '{username}' Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
         DiscordLogger.send("ai", "AI Chat Completed", log_message, "success")
         
         return ChatResponseModel(message=response.message.content) if response.message.content else ""
