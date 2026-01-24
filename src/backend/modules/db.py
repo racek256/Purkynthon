@@ -152,7 +152,7 @@ async def finish_lesson(data: LessonData):
             "UPDATE users SET score = (?), level = (?) WHERE id=(?)",
             (new_score, new_level, data.user_id),
         )
-        DiscordLogger.send("submitting", "Lesson Completed", f"User {data.user_id} completed lesson {data.lesson_id}\nScore: {data.score}\nTime: {data.time}s\nNew level: {new_level}", "success")
+        DiscordLogger.send("submitting", "Lesson Completed", f"User {data.user_id} completed lesson {data.lesson_id}\nScore: {data.score}\nTime: {int(data.time / 1000)}s\nNew level: {new_level}", "success")
     except Exception as e:
         print(f"Something bad happend: {e}")
         conn.commit()

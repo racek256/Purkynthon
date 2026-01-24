@@ -4,6 +4,7 @@ import ArrowUP from "../assets/arrow_up_icon.svg";
 import ArrowDown from "../assets/arrow_down_icon.svg";
 import Markdown from "react-markdown";
 import { useTranslation } from "react-i18next";
+import { useCookies } from "react-cookie";
 export default function StupidAI({ expanded, setExpanded, isEditor }) {
   const { t } = useTranslation();
   const [history, updateHistory] = useState([
@@ -19,7 +20,8 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     },
   ]);
   const [currentText, updateText] = useState("");
-
+  const [cookies] = useCookies(["session"]);
+  const token = cookies?.session?.token;
   async function askAI(question) {
     const newChat = [...history];
     newChat.push({ role: "user", content: question });
@@ -33,6 +35,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
       }),
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
       },
     });
     const response = await data.json();
