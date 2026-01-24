@@ -123,6 +123,8 @@ async def exec_one(request: ExecOnceRequest):
 @app.post("/api/chat", response_model=ChatResponseModel)
 async def chatwithAI(data: ChatRequest, authorization: str | None = Header(default=None)):
     username = get_username_from_header(authorization)
+    if isinstance(username, JSONResponse):
+        return username
     try:
         # Get the last user message from history
         user_message = ""
