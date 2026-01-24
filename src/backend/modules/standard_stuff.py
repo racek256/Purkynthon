@@ -16,6 +16,7 @@ def get_ollama_client_ip() -> str:
 # main.py
 class GraphRequest(BaseModel):
     graph: Dict[str, Any]  # i like my json raw
+    username: str = "Unknown"
 
 class GraphResponse(BaseModel):
     success: bool
@@ -24,9 +25,11 @@ class GraphResponse(BaseModel):
 
 class ExecOnceRequest(BaseModel):
     code: str
+    username: str = "Unknown"
 
 class ChatRequest(BaseModel):
     history: List[Any]
+    username: str = "Unknown"
 
 class ChatResponseModel(BaseModel):
     message: str

@@ -1,14 +1,23 @@
 import requests
+import json
+import os
 from typing import Literal
 from datetime import datetime
 
 class DiscordLogger:
-    WEBHOOKS = {
-        "ai": "https://discord.com/api/webhooks/1463795204061532321/gjzmmAPq1rBIThQCX_9cBRBqmvu2c9JOCG96EpPC8kH_FX5A4ibV-bXgwcyQz1cnqEDl",
-        "login": "https://discord.com/api/webhooks/1463794980450598993/1OWbCh5V6bnu0MqhIeFvjRgpsUuDg9WuuK515jdKWJA_Ook-HcsGDyyeEMN4vfA8BZ2h",
-        "running": "https://discord.com/api/webhooks/1463795108372811952/ZjSjPeKNU5tEkPtm03x1EhmXSUZv2xWtukv-nzz5q2h-kWYJTHrPx3mKt2WJpiOjxRzm",
-        "submitting": "https://discord.com/api/webhooks/1463795157299363882/8DxmQozNGSgNMAS8uE9yKpH2OoSGRClC2v6VLxxg4uUFbdGhaLlITLOsmMh6YifFO1GA"
-    }
+    WEBHOOKS = {}
+    
+    # Load webhooks from JSON file
+    @staticmethod
+    def _load_webhooks():
+        config_path = os.path.join(os.path.dirname(__file__), "..", "discord_webhooks.json")
+        try:
+            with open(config_path, "r") as f:
+                config = json.load(f)
+                DiscordLogger.WEBHOOKS = config.get("webhooks", {})
+        except Exception as e:
+            print(f"Failed to load webhook config: {e}")
+            DiscordLogger.WEBHOOKS = {}
     
     COLORS = {
         "general": 0x3498db,  # blue
@@ -22,10 +31,22 @@ class DiscordLogger:
         webhook_type: Literal["ai", "login", "running", "submitting"],
         title: str,
         description: str,
-        color_type: Literal["general", "success", "fail", "error"] = "general"
+        color_type: Literal["general", "success", "fail", "error"] = "general",
+        username: str = "Unknown"
     ):
-        webhook_url = DiscordLogger.WEBHOOKS[webhook_type]
+        if not DiscordLogger.WEBHOOKS:
+            DiscordLogger._load_webhooks()
+            
+        webhook_url = DiscordLogger.WEBHOOKS.get(webhook_type)
+        if not webhook_url:
+            print(f"Webhook URL for '{webhook_type}' not found")
+            return
+            
         color = DiscordLogger.COLORS[color_type]
+        
+        # Add username to title if provided
+        if username != "Unknown":
+            title = f"{title} - User: {username}"
         
         embed = {
             "title": title,
