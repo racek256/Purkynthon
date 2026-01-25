@@ -1,22 +1,22 @@
 {
-  "name": "Level 1: Zaměstnavatel pivoholik",
-  "levelDescription": "Tvůj zaměstnavatel si rád po (i při) práci chodí na pivo. Potřebuje program, který mu spočítá, kolik celkem zaplatí za určitý počet piv. Inženýři před tebou se snažili tento program udělat, ale neúspěšně. Oprav jejich kód.",
+  "name": "Level 3: Vláček",
+  "levelDescription": "Tvůj šéf je fanatik na vlaky a nutně potřebuje, abys poskládal následujcí kód za sebe, aby vypadal jako vagóny ve vlaku. Dávej pozor, aby byly bloky kódu spojené ve správném pořadí.",
   "nodes": [
     {
       "id": "n1",
       "type": "input",
       "position": {
-        "x": -180.8423463420654,
-        "y": 216.63327096280446
+        "x": -330.4426417509301,
+        "y": 95.60800590623722
       },
       "data": {
-        "label": "Sleva v %",
-        "input": 10
+        "label": "Věta",
+        "input": "Věta"
       },
       "code": "base_string = \"miluju vlaky, fr ong mega že ale\"\nprint(f\"Původní string: {base_string}\")\nreturn base_string",
       "sourcePosition": "right",
       "targetPosition": "left",
-      "input": 10,
+      "input": "věta",
       "measured": {
         "width": 150,
         "height": 50
@@ -28,13 +28,13 @@
       "id": "output",
       "type": "output",
       "position": {
-        "x": 563.5142718892602,
-        "y": 226.4046299351859
+        "x": 55.341402115196445,
+        "y": 101.38962396151915
       },
       "data": {
-        "label": "Cena po slevě"
+        "label": "Output"
       },
-      "code": "def end_sentence(sentence: str) -> str:\n    return f\"{sentence}. \"\n\ntext = input_value\nexpected = f\"{end_sentence(original_input_value.upper())}{end_sentence('Protože prostě jedou na kolejích')}\"\nprint(f'Tvůj výsledek: \"{text}\"')\nprint(f'Očekávaná hodnota: \"{expected}\"')\nif expected == text:\n    print(1)\nelse:\n    print(0)",
+      "code": "def end_sentence(sentence: str) -> str:\n    return f\"{sentence}. \"\n\ntext = input_value\nexpected = f\"{end_sentence(original_input_value.upper())}{end_sentence('Protože prostě jedou na kolejích')}\"\nprint(f'Tvůj výsledek: \"{text}\"')\nprint(f'Očekávaná hodnota: \"{expected}\"')\n\nif len(full_output_memory.keys()) >= 5:\n    if expected == text:\n        print(1)\n    else:\n        print(0)\nelse:\n    print(\"\\nDůvod: Musíš použít všechny bloky!\")\n    print(0)",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
@@ -48,13 +48,13 @@
       "id": "node-reason",
       "type": "default",
       "position": {
-        "x": 40.79280922295136,
-        "y": 68.65127741503598
+        "x": -137.6551994238303,
+        "y": -112.32500235833518
       },
       "data": {
         "label": "Důvodovač 6000"
       },
-      "code": "duvod = \"Protože prostě jedou na kolejích\"\n\nreturn f\"{input_value}{duvod}\"",
+      "code": "duvod = \"Protože prostě jedou na kolejích\"\n\n# Přidá k původní větě důvod (větu uloženou v proměnné duvod)\nreturn f\"{input_value}{duvod}\"",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
@@ -68,13 +68,13 @@
       "id": "node-ender1",
       "type": "default",
       "position": {
-        "x": 40.194464733661775,
-        "y": 26.12048222359992
+        "x": -142.68348668051487,
+        "y": 17.126484613066637
       },
       "data": {
         "label": "Ukončovač vět"
       },
-      "code": "return f\"{input_value}. \"",
+      "code": "return f\"{input_value}. \" # Přidá tečku za větou",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
@@ -88,13 +88,13 @@
       "id": "node-ender2",
       "type": "default",
       "position": {
-        "x": 39.69320891147602,
-        "y": -62.03711557716664
+        "x": -140.1362909212291,
+        "y": -68.56634127252637
       },
       "data": {
         "label": "Ukončovač vět"
       },
-      "code": "return f\"{input_value}. \"",
+      "code": "return f\"{input_value}. \" # Přidá tečku za větou",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
@@ -108,13 +108,13 @@
       "id": "node-capslock",
       "type": "default",
       "position": {
-        "x": 39.061520838289056,
-        "y": -17.341213293391036
+        "x": -141.03088804457587,
+        "y": -24.71265252035849
       },
       "data": {
         "label": "CapsLockovač VĚT"
       },
-      "code": "return input_value.upper()",
+      "code": "return input_value.upper()  # Převede větu na velká písmena (\"ahoj.\" -> \"AHOJ.\")",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
@@ -127,10 +127,14 @@
   ],
   "edges": [
     {
-      "id": "e1-2",
       "source": "n1",
       "target": "output",
-      "animated": true
+      "animated": true,
+      "id": "xy-edge__n1-output"
     }
+  ],
+  "tags": [
+    "creator-mode",
+    "2026-01-25T13:51:20.234Z"
   ]
 }
