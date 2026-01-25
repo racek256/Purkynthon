@@ -42,6 +42,25 @@ def get_username_from_header(authorization: str | None) -> str | JSONResponse:
         return JSONResponse(status_code=401, content={"message": "Invalid token"})
 
 
+def format_graph_for_log(graph: Dict[str, Any]) -> str:
+    nodes = graph.get("nodes", [])
+    lines = ["Nodes:"]
+    for node in nodes:
+        node_type = node.get("type", "default")
+        label = node.get("data", {}).get("label", node.get("id", "unknown"))
+        if node_type in ("input", "output"):
+            lines.append(f"- {label} ({node_type})")
+            continue
+
+        code = node.get("code", "")
+        if "\\n" in code:
+            code = code.replace("\\n", "\n")
+        lines.append(f"- {label} (editable)")
+        lines.append(f"```python\n{code}\n```")
+
+    return "\n".join(lines)
+
+
 @app.post("/run-graph", response_model=GraphResponse)
 async def run_graph(request: GraphRequest, authorization: str | None = Header(default=None)):
     username = get_username_from_header(authorization)
@@ -62,13 +81,13 @@ async def run_graph(request: GraphRequest, authorization: str | None = Header(de
         return_value = logs_text[-1] if logs_text else str(result)
 
         # Prepare detailed log message
-        graph_str = str(request.graph)
+        graph_str = format_graph_for_log(request.graph)[:1500]
         logs_str = logs if logs else "No logs"
         outcome_str = return_value if return_value else "No return value"
         
-        log_message = f"**Graph Code:**\n```json\n{graph_str}\n```\n**Logs:**\n```\n{logs_str}\n```\n**Outcome:**\n```\n{outcome_str}\n```"
+        log_message = f"**Graph Blocks:**\n{graph_str}\n**Logs:**\n```\n{logs_str}\n```\n**Outcome:**\n```\n{outcome_str}\n```"
         
-        DiscordLogger.send("running", "Code Execution Completed", log_message, "success", request.username)
+        DiscordLogger.send("running", "Code Execution Completed", log_message, "success", username)
         
         return GraphResponse(
             success=True,
