@@ -44,7 +44,11 @@ def get_username_from_header(authorization: str | None) -> str | JSONResponse:
 
 
 @app.post("/run-graph", response_model=GraphResponse)
-async def run_graph(request: GraphRequest):
+async def run_graph(request: GraphRequest, authorization: str | None = Header(default=None)):
+    username = get_username_from_header(authorization)
+    if isinstance(username, JSONResponse):
+        return username
+    global_output_memory["username"] = username
     log_capture = io.StringIO()
 
     try:

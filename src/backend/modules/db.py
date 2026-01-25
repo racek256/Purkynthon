@@ -141,18 +141,19 @@ async def finish_lesson(data: LessonData):
         # add user his earned score
         # Get users current score and level
         res = cur.execute(
-            "SELECT score, level FROM users WHERE id=(?)", (data.user_id,)
+            "SELECT username, score, level FROM users WHERE id=(?)", (data.user_id,)
         )
         user_data = res.fetchone()
         print(user_data)
-        new_score = data.score + user_data[0]
+        username = user_data[0]
+        new_score = data.score + user_data[1]
         # Increment the user's level (move to next lesson)
-        new_level = user_data[1] + 1
+        new_level = user_data[2] + 1
         cur.execute(
             "UPDATE users SET score = (?), level = (?) WHERE id=(?)",
             (new_score, new_level, data.user_id),
         )
-        DiscordLogger.send("submitting", "Lesson Completed", f"User {data.user_id} completed lesson {data.lesson_id}\nScore: {data.score}\nTime: {int(data.time / 1000)}s\nNew level: {new_level}", "success")
+        DiscordLogger.send("submitting", "Lesson Completed", f"User '{username}' completed lesson {data.lesson_id}\nScore: {data.score}\nTime: {int(data.time / 1000)}s\nNew level: {new_level}", "success")
     except Exception as e:
         print(f"Something bad happend: {e}")
         conn.commit()
