@@ -15,7 +15,6 @@ from modules.db import SECRET_KEY, ALGORITHM
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 import json
-global_output_memory: Dict[str, Any] = {}
 
 client = Client(host=get_ollama_client_ip())
 
@@ -48,12 +47,12 @@ async def run_graph(request: GraphRequest, authorization: str | None = Header(de
     username = get_username_from_header(authorization)
     if isinstance(username, JSONResponse):
         return username
-    global_output_memory["username"] = username
     log_capture = io.StringIO()
 
     try:
         # actually fr ong spawn a new stdout
         with contextlib.redirect_stdout(log_capture):
+            global_output_memory: Dict[str, Any] = {}  # New global output memory for every run :3
             blocks = load_blocks_from_json(request.graph, global_output_memory)
             result = execute_graph(blocks["n1"], global_output_memory)
 
