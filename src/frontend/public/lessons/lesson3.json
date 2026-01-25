@@ -1,124 +1,122 @@
-[
-  {
-    "id": "n1",
-    "type": "input",
-    "position": {
-      "x": -180.8423463420654,
-      "y": 216.63327096280446
-    },
-    "data": {
-      "label": "Sleva v %",
-      "input": 10
-    },
-    "code": "base_string = \"miluju vlaky, fr ong mega že ale\"\nprint(f\"Původní string: {base_string}\")\nreturn base_string",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "input": 10,
-    "measured": {
-      "width": 150,
-      "height": 50
-    },
-    "selected": false,
-    "dragging": false
+{
+  "id": "n1",
+  "type": "input",
+  "position": {
+    "x": -180.8423463420654,
+    "y": 216.63327096280446
   },
-  {
-    "id": "output",
-    "type": "output",
-    "position": {
-      "x": 563.5142718892602,
-      "y": 226.4046299351859
-    },
-    "data": {
-      "label": "Cena po slevě"
-    },
-    "code": "def end_sentence(sentence: str) -> str:\n    return f\"{sentence}. \"\n\ntext = input_value\nexpected = f\"{end_sentence(original_input_value.upper())}{end_sentence('Protože prostě jedou na kolejích')}\"\nprint(f'Tvůj výsledek: \"{text}\"')\nprint(f'Očekávaná hodnota: \"{expected}\"')\nif expected == text:\n    print(1)\nelse:\n    print(0)",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    },
-    "selected": false,
-    "dragging": false
+  "data": {
+    "label": "Sleva v %",
+    "input": 10
   },
-  {
-    "id": "node-1769337365407",
-    "type": "default",
-    "position": {
-      "x": 40.79280922295136,
-      "y": 68.65127741503598
-    },
-    "data": {
-      "label": "Důvodovač 6000"
-    },
-    "code": "duvod = \"Protože prostě jedou na kolejích\"\n\nreturn f\"{input_value}{duvod}\"",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    },
-    "selected": false,
-    "dragging": false
+  "code": "base_string = \"miluju vlaky, fr ong mega že ale\"\nprint(f\"Původní string: {base_string}\")\nreturn base_string",
+  "sourcePosition": "right",
+  "targetPosition": "left",
+  "input": 10,
+  "measured": {
+    "width": 150,
+    "height": 50
   },
-  {
-    "id": "node-1769339739599",
-    "type": "default",
-    "position": {
-      "x": 40.194464733661775,
-      "y": 26.12048222359992
-    },
-    "data": {
-      "label": "Ukončovač vět"
-    },
-    "code": "return f\"{input_value}. \"",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    },
-    "selected": false,
-    "dragging": false
+  "selected": false,
+  "dragging": false
+},
+{
+  "id": "output",
+  "type": "output",
+  "position": {
+    "x": 563.5142718892602,
+    "y": 226.4046299351859
   },
-  {
-    "id": "node-1769339848100",
-    "type": "default",
-    "position": {
-      "x": 39.69320891147602,
-      "y": -62.03711557716664
-    },
-    "data": {
-      "label": "Ukončovač vět"
-    },
-    "code": "return f\"{input_value}. \"",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    },
-    "selected": false,
-    "dragging": false
+  "data": {
+    "label": "Cena po slevě"
   },
-  {
-    "id": "node-1769339963458",
-    "type": "default",
-    "position": {
-      "x": 39.061520838289056,
-      "y": -17.341213293391036
-    },
-    "data": {
-      "label": "CapsLockovač VĚT"
-    },
-    "code": "return input_value.upper()",
-    "sourcePosition": "right",
-    "targetPosition": "left",
-    "measured": {
-      "width": 150,
-      "height": 40
-    },
-    "selected": false,
-    "dragging": false
-  }
-]
+  "code": "def end_sentence(sentence: str) -> str:\n    return f\"{sentence}. \"\n\ntext = input_value\nexpected = f\"{end_sentence(original_input_value.upper())}{end_sentence('Protože prostě jedou na kolejích')}\"\nprint(f'Tvůj výsledek: \"{text}\"')\nprint(f'Očekávaná hodnota: \"{expected}\"')\nif expected == text:\n    print(1)\nelse:\n    print(0)",
+  "sourcePosition": "right",
+  "targetPosition": "left",
+  "measured": {
+    "width": 150,
+    "height": 40
+  },
+  "selected": false,
+  "dragging": false
+},
+{
+  "id": "node-1769337365407",
+  "type": "default",
+  "position": {
+    "x": 40.79280922295136,
+    "y": 68.65127741503598
+  },
+  "data": {
+    "label": "Důvodovač 6000"
+  },
+  "code": "duvod = \"Protože prostě jedou na kolejích\"\n\nreturn f\"{input_value}{duvod}\"",
+  "sourcePosition": "right",
+  "targetPosition": "left",
+  "measured": {
+    "width": 150,
+    "height": 40
+  },
+  "selected": false,
+  "dragging": false
+},
+{
+  "id": "node-1769339739599",
+  "type": "default",
+  "position": {
+    "x": 40.194464733661775,
+    "y": 26.12048222359992
+  },
+  "data": {
+    "label": "Ukončovač vět"
+  },
+  "code": "return f\"{input_value}. \"",
+  "sourcePosition": "right",
+  "targetPosition": "left",
+  "measured": {
+    "width": 150,
+    "height": 40
+  },
+  "selected": false,
+  "dragging": false
+},
+{
+  "id": "node-1769339848100",
+  "type": "default",
+  "position": {
+    "x": 39.69320891147602,
+    "y": -62.03711557716664
+  },
+  "data": {
+    "label": "Ukončovač vět"
+  },
+  "code": "return f\"{input_value}. \"",
+  "sourcePosition": "right",
+  "targetPosition": "left",
+  "measured": {
+    "width": 150,
+    "height": 40
+  },
+  "selected": false,
+  "dragging": false
+},
+{
+  "id": "node-1769339963458",
+  "type": "default",
+  "position": {
+    "x": 39.061520838289056,
+    "y": -17.341213293391036
+  },
+  "data": {
+    "label": "CapsLockovač VĚT"
+  },
+  "code": "return input_value.upper()",
+  "sourcePosition": "right",
+  "targetPosition": "left",
+  "measured": {
+    "width": 150,
+    "height": 40
+  },
+  "selected": false,
+  "dragging": false
+}
