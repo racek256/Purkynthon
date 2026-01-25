@@ -43,7 +43,7 @@ class Block:
             if self.id != "output":
                 exec(self.code, {"input_value": self.input_values}, output_values)
             else:
-                exec(self.code, {"original_input_value": self.output_memory["n1"], "input_value": self.input_values}, output_values)
+                exec(self.code, {"original_input_value": self.output_memory["n1"], "input_value": self.input_values, "full_output_memory": self.output_memory}, output_values)
         except Exception as e:
             raise self.exception_maker(f"Your code ran into an error: {e}", "executing")
         
