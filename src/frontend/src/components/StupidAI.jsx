@@ -23,30 +23,80 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
   const [cookies] = useCookies(["session"]);
   const token = cookies?.session?.token;
   async function askAI(question) {
-    const newChat = [...history];
-    newChat.push({ role: "user", content: question });
+    const newChat = [...history, { role: "user", content: question }];
     updateText("");
 
-    updateHistory(newChat);
-    const data = await fetch("https://aiserver.purkynthon.online/api/chat", {
+    updateHistory([...newChat, { role: "assistant", content: "" }]);
+
+    const res = await fetch("https://aiserver.purkynthon.online/api/chat", {
       method: "POST",
-      body: JSON.stringify({
-        history: newChat,
-      }),
+      body: JSON.stringify({ history: newChat }),
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { "Authorization": `Bearer ${token}` } : {})
-      },
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      }
     });
-    const response = await data.json();
-    console.log(response);
 
-    const newChat2 = [...newChat];
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = err.message || err.detail || "Request failed";
+      updateHistory((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = { role: "assistant", content: msg };
+        return next;
+      });
+      return;
+    }
 
-    newChat2.push({ role: "assistant", content: response.message });
-    updateHistory(newChat2);
+    const ct = res.headers.get("content-type") || "";
+
+    if (!ct.includes("text/event-stream")) {
+      const data = await res.json();
+      updateHistory((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = {
+          role: "assistant",
+          content: data.message || ""
+        };
+        return next;
+      });
+      return;
+    }
+
+    if (!res.body) {
+      return;
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const parts = buffer.split("\n\n");
+      buffer = parts.pop() || "";
+
+      for (const part of parts) {
+        if (part.startsWith("data: ")) {
+          const payload = JSON.parse(part.slice(6));
+          const chunk = payload.message || "";
+
+          updateHistory((prev) => {
+            const next = [...prev];
+            const last = next.length - 1;
+            next[last] = {
+              ...next[last],
+              content: next[last].content + chunk
+            };
+            return next;
+          });
+        }
+      }
+    }
   }
-
   return (
     <div className="flex h-full flex-col items-center overflow-hidden">
       <div
