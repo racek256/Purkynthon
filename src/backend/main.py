@@ -13,7 +13,8 @@ from fastapi import Header, HTTPException
 import jwt
 from modules.db import SECRET_KEY, ALGORITHM
 from fastapi.responses import JSONResponse
-
+from fastapi.responses import StreamingResponse
+import json
 global_output_memory: Dict[str, Any] = {}
 
 client = Client(host=get_ollama_client_ip())
@@ -119,38 +120,66 @@ async def exec_one(request: ExecOnceRequest):
             logs = log_capt.getvalue(),
             returnValue = str(e)
         )
-
-@app.post("/api/chat", response_model=ChatResponseModel)
+@app.post("/api/chat")
 async def chatwithAI(data: ChatRequest, authorization: str | None = Header(default=None)):
     username = get_username_from_header(authorization)
     if isinstance(username, JSONResponse):
         return username
     try:
-        # Get the last user message from history
         user_message = ""
         if data.history and len(data.history) > 0:
             last_msg = data.history[-1]
-            if isinstance(last_msg, dict) and 'content' in last_msg:
-                user_message = last_msg['content'][:1000]
+            if isinstance(last_msg, dict) and "content" in last_msg:
+                user_message = last_msg["content"][:1000]
             else:
                 user_message = str(last_msg)[:1000]
-        
-        response: ChatResponse = client.chat(
-            model='gemma3:1b-it-qat',
-            messages=data.history
-        )
-        
-        ai_response = response.message.content[:4000] if response.message.content else "No response"
-        
-        log_message = f"**User '{username}' Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
-        DiscordLogger.send("ai", "AI Chat Completed", log_message, "success")
-        
-        return ChatResponseModel(message=response.message.content) if response.message.content else ""
-    except Exception as e:
-        error_message = f"**Error:**\n```\n{str(e)}\n```"
-        DiscordLogger.send("ai", "AI Chat Error", error_message, "error", data.username)
-        raise
+        try:
+            stream = client.chat(
+                model="gemma3:4b-it-qat",
+                messages=data.history,
+                stream=True
+            )
+            first_chunk = next(stream)
+        except Exception as e:
+            error_message = f"**Error:**\n```\n{str(e)}\n```"
+            DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
+            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It’ll work again... sometime maybe :3"})
 
+        def gen():
+            full = []
+            if first_chunk and first_chunk.message and first_chunk.message.content:
+                full.append(first_chunk.message.content)
+                payload = {"message": first_chunk.message.content}
+                yield f"data: {json.dumps(payload)}\n\n"
+            for chunk in stream:
+                if chunk.message and chunk.message.content:
+                    full.append(chunk.message.content)
+                    payload = {"message": chunk.message.content}
+                    yield f"data: {json.dumps(payload)}\n\n"
+            ai_response = "".join(full)[:4000]
+            log_message = f"**User '{username}' Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
+            DiscordLogger.send("ai", "AI Chat Completed", log_message, "success")
+        return StreamingResponse(
+            gen(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no",
+                "Connection": "keep-alive",
+            },
+)
+    except Exception as e:
+        status_code = getattr(e, "status_code", None)
+        if status_code is None:
+            response = getattr(e, "response", None)
+            status_code = getattr(response, "status_code", None)
+        if status_code and status_code not in (200, 401):
+            error_message = f"**Error:**\n```\n{str(e)}\n```"
+            DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
+            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It’ll work again... sometime maybe :3"})
+        error_message = f"**Error:**\n```\n{str(e)}\n```"
+        DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
+        raise
 
 if __name__ == "__main__":
     print("Discord webhook starting")
