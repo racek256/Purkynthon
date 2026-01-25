@@ -53,47 +53,45 @@ export default function NextLevel({ hide, graph, input, time, token, lessonNumbe
     return Math.max(0, Math.round(score));
   }
 
-  // Fetch leaderboard data
+  const fetchLeaderboard = useCallback(async () => {
+    try {
+      const response = await fetch("https://aiserver.purkynthon.online/api/auth/leaderboard", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (data.success && data.leaderboard) {
+        setLeaderboard(data.leaderboard);
+      }
+    } catch (error) {
+      console.error("Failed to fetch leaderboard:", error);
+    }
+  }, []);
+
+  const getCurrentUser = useCallback(async () => {
+    try {
+      const response = await fetch("https://aiserver.purkynthon.online/api/auth/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ jwt_token: token }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setCurrentUserId(data.user_id);
+      }
+    } catch (error) {
+      console.error("Failed to get current user:", error);
+    }
+  }, [token]);
+
   useEffect(() => {
-    async function fetchLeaderboard() {
-      try {
-        const response = await fetch("https://aiserver.purkynthon.online/api/auth/leaderboard", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-        if (data.success && data.leaderboard) {
-          setLeaderboard(data.leaderboard);
-        }
-      } catch (error) {
-        console.error("Failed to fetch leaderboard:", error);
-      }
-    }
-
-    // Get current user ID
-    async function getCurrentUser() {
-      try {
-        const response = await fetch("https://aiserver.purkynthon.online/api/auth/verify", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ jwt_token: token }),
-        });
-        const data = await response.json();
-        if (data.success) {
-          setCurrentUserId(data.user_id);
-        }
-      } catch (error) {
-        console.error("Failed to get current user:", error);
-      }
-    }
-
     fetchLeaderboard();
     getCurrentUser();
-  }, [token]);
+  }, [fetchLeaderboard, getCurrentUser]);
 
   // Run verification
   useEffect(() => {
@@ -169,6 +167,8 @@ export default function NextLevel({ hide, graph, input, time, token, lessonNumbe
       });
       const lessonResponse = await lesson_data.json();
       console.log("Lesson completion response:", lessonResponse);
+
+      await fetchLeaderboard();
 
       return lessonResponse;
     } catch (error) {

@@ -28,9 +28,13 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
 
     updateHistory([...newChat, { role: "assistant", content: "" }]);
 
+    const system = history[0];
+    const recent = newChat.slice(-5);
+    const payloadHistory = system ? [system, ...recent] : recent;
+
     const res = await fetch("https://aiserver.purkynthon.online/api/chat", {
       method: "POST",
-      body: JSON.stringify({ history: newChat }),
+      body: JSON.stringify({ history: payloadHistory }),
       headers: {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {})
@@ -145,20 +149,18 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
               placeholder={t('stupidAI.placeholder')}
               rows={1}
               onKeyDown={(e) => {
-                if (
-                  e.key === "Enter" &&
-                  !e.shiftKey &&
-                  currentText.length !== 0
-                ) {
+                if (e.key === "Enter") {
                   e.preventDefault();
-                  askAI(currentText);
+                  if (currentText.trim().length !== 0) {
+                    askAI(currentText);
+                  }
                 }
               }}
             />
             <button
               className="bg-ai-send-button rounded-lg mx-2 cursor-pointer h-12 w-12 flex items-center justify-center flex-shrink-0"
               onClick={() => {
-                if (currentText.length !== 0) {
+                if (currentText.trim().length !== 0) {
                   askAI(currentText);
                 }
               }}
