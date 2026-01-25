@@ -1,6 +1,7 @@
 import Typewriter from "typewriter-effect";
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useCookies } from "react-cookie";
 
 const options = {
   delay: 10,
@@ -8,6 +9,8 @@ const options = {
 };
 export default function Terminal({ hide, graph, input, activate }) {
   const { t } = useTranslation();
+  const [cookies] = useCookies(["session"]);
+  const token = cookies?.session?.token;
   const [displayOutput, setDisplayOutput] = useState(false);
   const [displayTerm, setDisplayTerm] = useState(false);
   const [output, setOutput] = useState();
@@ -44,6 +47,7 @@ export default function Terminal({ hide, graph, input, activate }) {
         }),
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
       });
       const response = await data.json();

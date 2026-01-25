@@ -108,6 +108,7 @@ export default function NextLevel({ hide, graph, input, time, token, lessonNumbe
           }),
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
           },
         });
         const data = await response.json();
