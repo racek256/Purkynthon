@@ -5,7 +5,10 @@
     {
       "id": "n1",
       "type": "input",
-      "position": { "x": 100, "y": 200 },
+      "position": {
+        "x": 100,
+        "y": 200
+      },
       "data": {
         "label": "Délka strany",
         "input": 5
@@ -13,29 +16,106 @@
       "code": "strana = {original_input}\nprint(f\"Čtverec má stranu {strana} metrů\")\nreturn strana",
       "sourcePosition": "right",
       "targetPosition": "left",
-      "input": 5
+      "input": 5,
+      "measured": {
+        "width": 150,
+        "height": 50
+      }
     },
     {
       "id": "n2",
-      "position": { "x": 400, "y": 200 },
-      "data": { "label": "Výpočet obsahu" },
-      "code": "# Proměnná 'strana' obsahuje délku strany čtverce\nstrana = input_value\n\n# Vzorec pro obsah čtverce: strana * strana\n\n# TODO: Oprav výpočet obsahu\nobsah = strana\n\nreturn obsah",
+      "position": {
+        "x": 362,
+        "y": 203
+      },
+      "data": {
+        "label": "Výpočet obsahu"
+      },
+      "code": "pocet_zamestnancu = input_value[\"node-1769367178764\"]\npocet_novych_zamestnancu = input_value[\"n1\"]\n\n# Tady by se měl vrátit(return) součet počtu zaměstnanců a nových zaměstnanců, ale chrrrmimimimi",
       "sourcePosition": "right",
-      "targetPosition": "left"
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false,
+      "dragging": false
     },
     {
       "id": "output",
       "type": "output",
-      "position": { "x": 700, "y": 200 },
-      "data": { "label": "Obsah" },
+      "position": {
+        "x": 700,
+        "y": 200
+      },
+      "data": {
+        "label": "Obsah"
+      },
       "code": "# Verifikace: strana * strana\nobsah = input_value\nexpected = original_input_value * original_input_value\nprint(f\"Tvůj výsledek: {obsah} m2\")\nprint(f\"Očekávaná hodnota: {expected} m2\")\nif expected == obsah:\n    print(1)\nelse:\n    print(0)",
       "sourcePosition": "right",
-      "targetPosition": "left"
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      }
+    },
+    {
+      "id": "node-1769367178764",
+      "type": "default",
+      "position": {
+        "x": 94.97395734538009,
+        "y": 318.60564865869594
+      },
+      "data": {
+        "label": "New Node"
+      },
+      "code": "return 69 # Máme 69 zaměstnanců",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "node-1769367576397",
+      "type": "default",
+      "position": {
+        "x": 583.8076072119957,
+        "y": 128.4323939430957
+      },
+      "data": {
+        "label": "New Node"
+      },
+      "code": "pocet_celkovych_zamestnancu = input_value\nlist_zamestnancu = []\n\n# toto by mělo být podle \nfor i in range(zamestnanci):\n  list_zamestnancu.append(f\"zamestnance_{i}\")\n\nreturn list_zamestnancu",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": true,
+      "dragging": false
     }
   ],
   "edges": [
-    { "id": "e1-2", "source": "n1", "target": "n2", "animated": true },
-    { "id": "e2-3", "source": "n2", "target": "output", "animated": true }
+    {
+      "source": "n1",
+      "target": "n2",
+      "animated": true,
+      "id": "xy-edge__n1-n2"
+    },
+    {
+      "source": "node-1769367178764",
+      "target": "n2",
+      "animated": true,
+      "id": "xy-edge__node-1769367178764-n2"
+    }
   ],
-  "tags": ["geometrie", "ctverec", "obsah"]
+  "tags": [
+    "creator-mode",
+    "2026-01-25T19:05:49.273Z"
+  ]
 }

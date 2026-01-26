@@ -1,20 +1,20 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Any, Dict, List, cast
 from ollama import ChatResponse, Client
 from modules.block_class import Block, load_blocks_from_json, execute_graph
-from modules.standard_stuff import get_ollama_client_hosts, get_next_ollama_client_host, GraphRequest, GraphResponse, ExecOnceRequest, ChatRequest, ChatResponseModel
+from modules.standard_stuff import get_ollama_client_hosts, get_next_ollama_client_host, get_ollama_client_ip, GraphRequest, GraphResponse, ExecOnceRequest, ChatRequest, ChatResponseModel, ThemeChangeRequest, LogoutRequest, UserStatusUpdate
+
 import uvicorn
 import io
 import contextlib
-from modules.db import router
-from modules.discord_logger import DiscordLogger
-from fastapi import Header, HTTPException
-import jwt
-from modules.db import SECRET_KEY, ALGORITHM
-from fastapi.responses import JSONResponse
-from fastapi.responses import StreamingResponse
 import json
+import jwt
+from modules.db import router, SECRET_KEY, ALGORITHM
+from modules.discord_logger import DiscordLogger
+from modules.user_tracker import UserTracker
+from modules.discord_bot import DiscordBot
 
 app = FastAPI()
 app.include_router(router, prefix="/api/auth", tags=["users"])
@@ -182,7 +182,7 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
         except Exception as e:
             error_message = f"**Error:**\n```\n{str(e)}\n```"
             DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
-            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It’ll work again... sometime maybe :3"})
+            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It'll work again... sometime maybe :3"})
 
         def gen():
             full = []
@@ -215,15 +215,43 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
         if status_code and status_code not in (200, 401):
             error_message = f"**Error:**\n```\n{str(e)}\n```"
             DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
-            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It’ll work again... sometime maybe :3"})
+            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It'll work again... sometime maybe :3"})
         error_message = f"**Error:**\n```\n{str(e)}\n```"
         DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
         raise
 
+@app.post("/api/theme")
+async def change_theme(data: ThemeChangeRequest):
+    """Log theme changes to Discord"""
+    DiscordLogger.log_theme_change(data.username, data.theme)
+    UserTracker.update_user(data.username, theme=data.theme)
+    return {"success": True, "message": "Theme change logged"}
+
+@app.post("/api/logout")
+async def logout(data: LogoutRequest):
+    """Log user logout to Discord"""
+    DiscordLogger.send("login", "User Logout", f"User logged out successfully", "general", data.username)
+    UserTracker.update_user(data.username, logged_in=False)
+    return {"success": True, "message": "Logout logged"}
+
+@app.post("/api/user/status")
+async def update_user_status(data: UserStatusUpdate):
+    """Update user status in the Discord chart"""
+    UserTracker.update_user(
+        username=data.username,
+        logged_in=data.logged_in,
+        points=data.points,
+        theme=data.theme
+    )
+    return {"success": True, "message": "User status updated"}
+
 if __name__ == "__main__":
-    print("Discord webhook starting")
-    DiscordLogger.send_startup_tests()
-    print("Discord webhook started sucessfully")
+    print("Starting Discord bot...")
+    DiscordBot.start()
+    print("Discord bot started successfully")
+    
+    print("Sending test message...")
+    DiscordLogger.send_startup_test("system")
     
     uvicorn.run(
         "main:app",

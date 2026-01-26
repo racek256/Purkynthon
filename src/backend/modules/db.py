@@ -8,6 +8,7 @@ from datetime import timedelta
 import bcrypt
 from modules.standard_stuff import LoginData, JWT, LessonData
 from modules.discord_logger import DiscordLogger
+from modules.user_tracker import UserTracker
 
 SECRET_KEY = "This is our super secret key nobody will hack into our security HAHAHA you cant hack us you can try but you will fail because of this super secret key"  # directly commited into a public repo btw
 ALGORITHM = "HS256"
@@ -82,6 +83,16 @@ async def get_user(user: LoginData):
             print("generating JWT")
             jwt_token = create_access_token(user_data[0], user_data[1])
             DiscordLogger.send("login", "User Login Success", f"User '{user.username}' logged in successfully", "success")
+            
+            # Get user score for tracker
+            conn = sqlite3.connect(DB_FILE)
+            cur = conn.cursor()
+            cur.execute("SELECT score FROM users WHERE username=?", (user.username,))
+            score_data = cur.fetchone()
+            conn.close()
+            score = score_data[0] if score_data else 0
+            
+            UserTracker.update_user(user.username, logged_in=True, points=score)
             return {"success": True, "jwt_token": jwt_token}
         else:
             print("Password was incorrect")
@@ -113,6 +124,7 @@ async def register_user(user: LoginData):
     # Generate JWT_token
     jwt_token = create_access_token(user_id, user.username)
     DiscordLogger.send("login", "User Registration Success", f"User '{user.username}' registered successfully", "success")
+    UserTracker.update_user(user.username, logged_in=True, points=0)
     return {"success": True, "jwt_token": jwt_token}
 
 
