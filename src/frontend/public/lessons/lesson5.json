@@ -26,8 +26,8 @@
     {
       "id": "n2",
       "position": {
-        "x": 311,
-        "y": 381
+        "x": 295,
+        "y": 255
       },
       "data": {
         "label": "Třídíč: PC komponenty"
@@ -39,7 +39,7 @@
         "width": 150,
         "height": 58
       },
-      "selected": true,
+      "selected": false,
       "dragging": false
     },
     {
@@ -59,11 +59,51 @@
         "width": 150,
         "height": 40
       }
+    },
+    {
+      "id": "node-1769462346079",
+      "type": "default",
+      "position": {
+        "x": 296.7052108915592,
+        "y": 166.73450973473845
+      },
+      "data": {
+        "label": "Třídič: Dokumenty"
+      },
+      "code": "dokumenty = [\"Protokoly Nexusu\", \"Listina vyhozených zaměstnanců\",\n             \"Smluvní listiny\", \"Účtenky z McDonalds\"]\nlist_veci = input_value\n\nroztrideny_list_dokumentu = []\n\n# Projdi každou věcí z listu věcí\nfor vec in list_veci:\n  # Pokud je tato věc v pc komponentech\n  if vec in pc_komponenty:\n    # Zařaď ji do roztříděného listu\n    roztrideny_list_dokumentu.append(vec)\n\nreturn roztrideny_list_dokumentu",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "node-1769463155063",
+      "type": "default",
+      "position": {
+        "x": 475.52223133608413,
+        "y": 211.26754781085424
+      },
+      "data": {
+        "label": "Třídíč: zbytek"
+      },
+      "code": "# Write your code here\n\nreturn None",
+      "sourcePosition": "right",
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      },
+      "selected": true,
+      "dragging": false
     }
   ],
   "edges": [],
   "tags": [
     "creator-mode",
-    "2026-01-26T20:54:12.094Z"
+    "2026-01-26T21:43:29.987Z"
   ]
 }
