@@ -8,11 +8,8 @@ ollama_client_ip: str = "http://100.106.120.85:11434"
 ollama_client_ip_secondary: str = "http://192.168.0.125:11434"
 _ollama_rr_index: int = 0
 _ollama_rr_lock = Lock()
-<<<<<<< HEAD
 _ollama_health_path = "/api/tags"
 _ollama_health_timeout_s = 1.0
-=======
->>>>>>> 958006ac1499ada971bbb14bfd2afa93799c2609
 
 def get_return_statement_sub() -> str:
     return f"{return_statement_sub_name} = "
@@ -103,8 +100,3 @@ class UserStatusUpdate(BaseModel):
     logged_in: bool = None
     points: int = None
     theme: str = None
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 958006ac1499ada971bbb14bfd2afa93799c2609
