@@ -47,7 +47,15 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
       const err = await res.json().catch(() => ({}));
       const msg = err.message || err.detail || "Request failed";
       setIsLoading(false);
+<<<<<<< HEAD
       updateHistory([...newChat, { role: "assistant", content: msg }]);
+=======
+      updateHistory((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = { role: "assistant", content: msg };
+        return next;
+      });
+>>>>>>> 958006ac1499ada971bbb14bfd2afa93799c2609
       return;
     }
 
@@ -56,9 +64,15 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     if (!ct.includes("text/event-stream")) {
       const data = await res.json();
       setIsLoading(false);
+<<<<<<< HEAD
       updateHistory([
         ...newChat,
         {
+=======
+      updateHistory((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = {
+>>>>>>> 958006ac1499ada971bbb14bfd2afa93799c2609
           role: "assistant",
           content: data.message || ""
         }
@@ -88,8 +102,12 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
         if (part.startsWith("data: ")) {
           const payload = JSON.parse(part.slice(6));
           const chunk = payload.message || "";
+<<<<<<< HEAD
           const isFirstChunk = !streamingStarted;
           if (isFirstChunk) {
+=======
+          if (!streamingStarted) {
+>>>>>>> 958006ac1499ada971bbb14bfd2afa93799c2609
             setIsLoading(false);
             streamingStarted = true;
           }

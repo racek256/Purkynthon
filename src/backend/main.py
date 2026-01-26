@@ -263,6 +263,13 @@ async def update_user_status(data: UserStatusUpdate):
     return {"success": True, "message": "User status updated"}
 
 if __name__ == "__main__":
+<<<<<<< HEAD
+=======
+    # Register signal handlers
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+>>>>>>> 958006ac1499ada971bbb14bfd2afa93799c2609
     uvicorn.run(
         "main:app",
         host="0.0.0.0",

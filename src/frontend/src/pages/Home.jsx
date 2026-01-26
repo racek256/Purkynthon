@@ -545,8 +545,12 @@ function Home() {
 		  time={startTime}
 		  token={cookies.session.token}
           lessonNumber={currentLessonNumber}
+<<<<<<< HEAD
           totalLessons={totalLessons}
           isFinalLesson={currentLessonNumber >= totalLessons}
+=======
+          isFinalLesson={currentLessonNumber >= TOTAL_LESSONS}
+>>>>>>> 958006ac1499ada971bbb14bfd2afa93799c2609
           onFinalComplete={() => {
             setShowFinish(true);
             refreshUserScore();

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+=======
+import { useState, useEffect, useCallback, useRef } from "react";
+>>>>>>> 958006ac1499ada971bbb14bfd2afa93799c2609
 import { useTranslation } from "react-i18next";
 import { calculateLessonScore, normalizeScore } from "../utils/score.js";
 
