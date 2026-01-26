@@ -31,7 +31,7 @@ class UserTracker:
     
     @staticmethod
     def update_user(username: str, logged_in: bool = None, points: int = None, theme: str = None):
-        """Update a user's status and log to their channel"""
+        """Update a user's status and update channel description"""
         if username not in UserTracker.users:
             UserTracker.users[username] = {
                 "logged_in": False,
@@ -51,6 +51,7 @@ class UserTracker:
         
         user["last_activity"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         
-        # Send status update to user's channel
-        status_message = UserTracker._generate_user_status(username)
-        DiscordBot.send_log(username, "Status Updated", status_message, "blue")
+        # Update bot's user status cache and channel description
+        update_logged_in = logged_in if logged_in is not None else user["logged_in"]
+        update_theme = theme if theme is not None else user["theme"]
+        DiscordBot.update_user_status(username, logged_in=update_logged_in, theme=update_theme)

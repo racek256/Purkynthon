@@ -7,7 +7,6 @@ import sqlite3
 from typing import Dict, Optional
 from datetime import datetime
 import threading
-from dotenv import load_dotenv
 
 class DiscordBot:
     """Discord bot that creates and manages user-specific logging channels"""
@@ -15,6 +14,7 @@ class DiscordBot:
     bot: Optional[commands.Bot] = None
     guild: Optional[discord.Guild] = None
     user_channels: Dict[str, discord.TextChannel] = {}
+    user_stats: Dict[str, Dict] = {}  # Cache for user stats
     token: str = ""
     guild_id: int = 0
     _loop: Optional[asyncio.AbstractEventLoop] = None
@@ -22,18 +22,13 @@ class DiscordBot:
     
     @staticmethod
     def _load_config():
-        """Load bot configuration from .env file"""
-        env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
-        load_dotenv(env_path)
-        
+        """Load bot configuration from JSON file"""
+        config_path = os.path.join(os.path.dirname(__file__), "..", "discord_bot_config.json")
         try:
-            DiscordBot.token = os.getenv("DISCORD_BOT_TOKEN", "")
-            DiscordBot.guild_id = int(os.getenv("DISCORD_GUILD_ID", "0"))
-            
-            if not DiscordBot.token:
-                print("Warning: DISCORD_BOT_TOKEN not found in .env file")
-            if not DiscordBot.guild_id:
-                print("Warning: DISCORD_GUILD_ID not found in .env file")
+            with open(config_path, "r") as f:
+                config = json.load(f)
+                DiscordBot.token = config.get("bot_token", "")
+                DiscordBot.guild_id = int(config.get("guild_id", "0"))
         except Exception as e:
             print(f"Failed to load bot config: {e}")
     
@@ -107,6 +102,8 @@ class DiscordBot:
                 if username not in DiscordBot.user_channels:
                     print(f"Creating channel for user: {username}")
                     await DiscordBot._get_or_create_channel(username)
+                # Update channel description for all users
+                await DiscordBot._update_channel_description(username)
             
             print(f"Channel setup complete. Total channels: {len(DiscordBot.user_channels)}")
         except Exception as e:
@@ -213,5 +210,98 @@ class DiscordBot:
         
         try:
             await channel.send(embed=embed)
+            # Update channel description after sending log
+            await DiscordBot._update_channel_description(username)
         except Exception as e:
             print(f"Failed to send message to {username}'s channel: {e}")
+    
+    @staticmethod
+    def _get_user_stats_from_db(username: str) -> Dict:
+        """Get user statistics from database"""
+        db_path = os.path.join(os.path.dirname(__file__), "..", "db.db")
+        if not os.path.exists(db_path):
+            return {}
+        
+        try:
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+            
+            # Get user data
+            cur.execute("SELECT id, score, level FROM users WHERE username=?", (username,))
+            user_data = cur.fetchone()
+            
+            if not user_data:
+                conn.close()
+                return {}
+            
+            user_id, score, level = user_data
+            
+            # Get finished lessons count
+            cur.execute("SELECT COUNT(*) FROM finished_lessons WHERE user_id=?", (user_id,))
+            lessons_finished = cur.fetchone()[0]
+            
+            conn.close()
+            
+            return {
+                "score": score,
+                "level": level,
+                "lessons_finished": lessons_finished,
+                "last_updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+            }
+        except Exception as e:
+            print(f"Failed to get user stats for {username}: {e}")
+            return {}
+    
+    @staticmethod
+    async def _update_channel_description(username: str):
+        """Update channel topic/description with user stats"""
+        if username not in DiscordBot.user_channels:
+            return
+        
+        channel = DiscordBot.user_channels[username]
+        
+        # Get user stats
+        stats = DiscordBot._get_user_stats_from_db(username)
+        if not stats:
+            return
+        
+        # Check if user is logged in (from user_stats cache)
+        logged_in_status = "🟢 Online" if DiscordBot.user_stats.get(username, {}).get("logged_in", False) else "🔴 Offline"
+        theme = DiscordBot.user_stats.get(username, {}).get("theme", "Unknown")
+        
+        # Build description
+        description = (
+            f"📊 Activity logs for {username}\n"
+            f"{logged_in_status}\n"
+            f"🎯 Points: {stats['score']}\n"
+            f"📚 Level: {stats['level']}\n"
+            f"✅ Lessons Finished: {stats['lessons_finished']}\n"
+            f"🎨 Theme: {theme}\n"
+            f"⏰ Updated: {stats['last_updated']}"
+        )
+        
+        try:
+            await channel.edit(topic=description)
+        except Exception as e:
+            print(f"Failed to update channel description for {username}: {e}")
+    
+    @staticmethod
+    def update_user_status(username: str, logged_in: bool = None, theme: str = None):
+        """Update user status cache"""
+        if username not in DiscordBot.user_stats:
+            DiscordBot.user_stats[username] = {
+                "logged_in": False,
+                "theme": "Unknown"
+            }
+        
+        if logged_in is not None:
+            DiscordBot.user_stats[username]["logged_in"] = logged_in
+        if theme is not None:
+            DiscordBot.user_stats[username]["theme"] = theme
+        
+        # Schedule channel description update
+        if DiscordBot._loop:
+            asyncio.run_coroutine_threadsafe(
+                DiscordBot._update_channel_description(username),
+                DiscordBot._loop
+            )
