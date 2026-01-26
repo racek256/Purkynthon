@@ -3,6 +3,7 @@ from typing import Dict, List, Any
 from threading import Lock
 import requests
 
+allowed_modules: List[str] = ["random"]
 return_statement_sub_name: str = "resultxyzplink"
 ollama_client_ip: str = "http://100.106.120.85:11434"
 ollama_client_ip_secondary: str = "http://192.168.0.125:11434"
@@ -10,6 +11,9 @@ _ollama_rr_index: int = 0
 _ollama_rr_lock = Lock()
 _ollama_health_path = "/api/tags"
 _ollama_health_timeout_s = 1.0
+
+def get_allowed_modules() -> str:
+    return allowed_modules
 
 def get_return_statement_sub() -> str:
     return f"{return_statement_sub_name} = "

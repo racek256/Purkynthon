@@ -1,5 +1,5 @@
 from typing import Tuple
-from modules.standard_stuff import get_return_statement_sub
+from modules.standard_stuff import get_return_statement_sub, get_allowed_modules
 
 
 def replace_final_return(text: str, replacement: str) -> str:
@@ -41,10 +41,11 @@ def check_code_validity(input: str) -> Tuple[str, bool, int]:
     for line_num, line in enumerate(input.split("\n")):
         if get_return_statement_sub() in line:
             return (f"{get_return_statement_sub()} can't be used in your code, since it conflicts with internal processes.", False, line_num)
-
-        for word in line.split():
-            if not start_and_ends_with_quotes(word) and word.strip() == "import":
-                return ("import (importing libraries is not allowed)", False, line_num)
+        
+        if not line.split()[1] in get_allowed_modules():
+            for word in line.split():
+                if not start_and_ends_with_quotes(word) and word.strip() == "import":
+                    return ("import (importing libraries is not allowed)", False, line_num)
     return ("", True, 0)
 
 
