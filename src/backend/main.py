@@ -5,7 +5,8 @@ from typing import Any, Dict, List, cast
 from contextlib import asynccontextmanager
 from ollama import ChatResponse, Client
 from modules.block_class import Block, load_blocks_from_json, execute_graph
-from modules.standard_stuff import get_ollama_client_ip, GraphRequest, GraphResponse, ExecOnceRequest, ChatRequest, ChatResponseModel, ThemeChangeRequest, LogoutRequest, UserStatusUpdate
+from modules.standard_stuff import get_ollama_client_hosts, get_next_ollama_client_host, get_ollama_client_ip, GraphRequest, GraphResponse, ExecOnceRequest, ChatRequest, ChatResponseModel, ThemeChangeRequest, LogoutRequest, UserStatusUpdate
+
 import uvicorn
 import io
 import contextlib
@@ -17,8 +18,6 @@ from modules.db import router, SECRET_KEY, ALGORITHM
 from modules.discord_logger import DiscordLogger
 from modules.user_tracker import UserTracker
 from modules.discord_bot import DiscordBot
-
-client = Client(host=get_ollama_client_ip())
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -77,6 +76,30 @@ def format_graph_for_log(graph: Dict[str, Any]) -> str:
         lines.append(f"```python\n{code}\n```")
 
     return "\n".join(lines)
+
+
+def get_ollama_chat_stream(history: List[Any], model: str):
+    hosts = get_ollama_client_hosts()
+    if not hosts:
+        raise ValueError("No Ollama client hosts configured")
+    primary_host = get_next_ollama_client_host()
+    ordered_hosts = [primary_host] + [host for host in hosts if host != primary_host]
+    last_error = None
+    for host in ordered_hosts:
+        try:
+            client = Client(host=host)
+            stream = client.chat(
+                model=model,
+                messages=history,
+                stream=True
+            )
+            first_chunk = next(stream)
+            return stream, first_chunk
+        except Exception as e:
+            last_error = e
+    if last_error:
+        raise last_error
+    raise RuntimeError("No Ollama client hosts configured")
 
 
 @app.post("/run-graph", response_model=GraphResponse)
@@ -174,12 +197,7 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
             else:
                 user_message = str(last_msg)[:1000]
         try:
-            stream = client.chat(
-                model="gemma3:4b-it-qat",
-                messages=data.history,
-                stream=True
-            )
-            first_chunk = next(stream)
+            stream, first_chunk = get_ollama_chat_stream(data.history, "gemma3:4b-it-qat")
         except Exception as e:
             error_message = f"**Error:**\n```\n{str(e)}\n```"
             DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
