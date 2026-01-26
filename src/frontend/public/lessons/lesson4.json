@@ -13,25 +13,26 @@
         "label": "Délka strany",
         "input": 5
       },
-      "code": "strana = {original_input}\nprint(f\"Čtverec má stranu {strana} metrů\")\nreturn strana",
+      "code": "strana = {original_input}\nprint(f\"Počet nových zaměstnanců: {strana}\")\nreturn strana",
       "sourcePosition": "right",
       "targetPosition": "left",
       "input": 5,
       "measured": {
         "width": 150,
         "height": 50
-      }
+      },
+      "selected": false
     },
     {
       "id": "n2",
       "position": {
-        "x": 362,
-        "y": 203
+        "x": 376.97996658681933,
+        "y": 321.5914021456531
       },
       "data": {
         "label": "Výpočet počtu zaměstnanců"
       },
-      "code": "pocet_zamestnancu = input_value[\"node-1769367178764\"]  # Počet původních zaměstnanců\npocet_novych_zamestnancu = input_value[\"n1\"]  # Input\n\n# Tady by se měl vrátit(return) součet počtu zaměstnanců a nových zaměstnanců, \n# ale chrrrmimimimi",
+      "code": "pocet_zamestnancu = input_value[\"node-1769367178764\"]  # Počet původních zaměstnanců\npocet_novych_zamestnancu = input_value[\"n1\"]  # Input\n\n# Tady by se měl vrátit(return) součet počtu zaměstnanců a nových zaměstnanců, \n# ale chrrrmimimimi\n",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
@@ -51,14 +52,14 @@
       "data": {
         "label": "Output"
       },
-      "code": "list_reseni = input_value\n\nlist_correct = []\nfor i in range(full_output_memory[\"node-1769367178764\"] + full_output_memory[\"n1\"]):\n  list_correct.append(f\"zamestnance_{i}\")\n  \nprint(f\"Tvůj výsledek: {list_reseni[0:5]}...{list_reseni[-5:]}\")\nprint(f\"Očekávaná hodnota: {list_correct[0:5]}...{list_correct[-5:]}\")\n\nif len(full_output_memory.keys()) >= 5:\n  if list_reseni == list_correct:\n      print(1)\n  else:\n      print(0)\nelse:\n  print(\"Všechny bloky musí být zapojeny\")\n  print(0)",
+      "code": "list_reseni = input_value\n\nif not \"output\" in full_output_memory.keys():\n  list_correct = []\n  for i in range(full_output_memory[\"node-1769367178764\"] + full_output_memory[\"n1\"]):\n    list_correct.append(f\"zamestnance_{i}\")\n    \n  print(f\"Tvůj výsledek: {list_reseni[0:2]}...{list_reseni[-2:]}\")\n  print(f\"Očekávaná hodnota: {list_correct[0:2]}...{list_correct[-2:]}\")\n  \n  if len(full_output_memory.keys()) >= 4:\n    if list_reseni == list_correct:\n        print(1)\n    else:\n        print(0)\n  else:\n    print(\"Všechny bloky musí být zapojeny\")\n    print(0)\n  \nreturn 0",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
         "width": 150,
         "height": 40
       },
-      "selected": true,
+      "selected": false,
       "dragging": false
     },
     {
@@ -85,13 +86,13 @@
       "id": "node-1769367576397",
       "type": "default",
       "position": {
-        "x": 580.8076072119957,
-        "y": 196.4323939430957
+        "x": 492.17613823998124,
+        "y": 120.28423046009738
       },
       "data": {
         "label": "Vytvářeč listu zaměstnanců"
       },
-      "code": "pocet_celkovych_zamestnancu = input_value\nlist_zamestnancu = []\n\n# range by měl být celkový počet zaměstnanců, teďka to nefunguje\n# vyřešte to někdo, já jdu spinkat\nfor i in range(zamestnanci):\n  list_zamestnancu.append(f\"zamestnance_{i}\")\n\nreturn list_zamestnancu",
+      "code": "pocet_celkovych_zamestnancu = input_value\nlist_zamestnancu = []\n\n# range by měl být celkový počet zaměstnanců, teďka to nefunguje\n# vyřešte to někdo, já jdu spinkat\nfor i in range(zamestnanci):\n  list_zamestnancu.append(f\"zamestnanec_{i}\")\n\nreturn list_zamestnancu",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
@@ -104,12 +105,6 @@
   ],
   "edges": [
     {
-      "source": "n1",
-      "target": "n2",
-      "animated": true,
-      "id": "xy-edge__n1-n2"
-    },
-    {
       "source": "node-1769367178764",
       "target": "n2",
       "animated": true,
@@ -118,6 +113,6 @@
   ],
   "tags": [
     "creator-mode",
-    "2026-01-26T18:03:05.963Z"
+    "2026-01-26T19:37:54.288Z"
   ]
 }
