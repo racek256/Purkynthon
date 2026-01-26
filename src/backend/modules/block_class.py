@@ -55,7 +55,7 @@ class Block:
                 out = None
             
             self.output_memory[self.id] = out
-
+            self.executed = True
             return out
 
     def get_output_nodes(self) -> Optional[List[Self]]:
