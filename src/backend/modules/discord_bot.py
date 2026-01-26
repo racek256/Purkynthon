@@ -7,6 +7,7 @@ import sqlite3
 from typing import Dict, Optional
 from datetime import datetime
 import threading
+from dotenv import load_dotenv
 
 class DiscordBot:
     """Discord bot that creates and manages user-specific logging channels"""
@@ -21,13 +22,18 @@ class DiscordBot:
     
     @staticmethod
     def _load_config():
-        """Load bot configuration from JSON file"""
-        config_path = os.path.join(os.path.dirname(__file__), "..", "discord_bot_config.json")
+        """Load bot configuration from .env file"""
+        env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+        load_dotenv(env_path)
+        
         try:
-            with open(config_path, "r") as f:
-                config = json.load(f)
-                DiscordBot.token = config.get("bot_token", "")
-                DiscordBot.guild_id = int(config.get("guild_id", "0"))
+            DiscordBot.token = os.getenv("DISCORD_BOT_TOKEN", "")
+            DiscordBot.guild_id = int(os.getenv("DISCORD_GUILD_ID", "0"))
+            
+            if not DiscordBot.token:
+                print("Warning: DISCORD_BOT_TOKEN not found in .env file")
+            if not DiscordBot.guild_id:
+                print("Warning: DISCORD_GUILD_ID not found in .env file")
         except Exception as e:
             print(f"Failed to load bot config: {e}")
     
