@@ -28,7 +28,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     updateText("");
     setIsLoading(true);
 
-    updateHistory([...newChat, { role: "assistant", content: "" }]);
+    updateHistory(newChat);
 
     const system = history[0];
     const recent = newChat.slice(-5);
@@ -47,11 +47,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
       const err = await res.json().catch(() => ({}));
       const msg = err.message || err.detail || "Request failed";
       setIsLoading(false);
-      updateHistory((prev) => {
-        const next = [...prev];
-        next[next.length - 1] = { role: "assistant", content: msg };
-        return next;
-      });
+      updateHistory([...newChat, { role: "assistant", content: msg }]);
       return;
     }
 
@@ -60,14 +56,13 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     if (!ct.includes("text/event-stream")) {
       const data = await res.json();
       setIsLoading(false);
-      updateHistory((prev) => {
-        const next = [...prev];
-        next[next.length - 1] = {
+      updateHistory([
+        ...newChat,
+        {
           role: "assistant",
           content: data.message || ""
-        };
-        return next;
-      });
+        }
+      ]);
       return;
     }
 
@@ -93,12 +88,16 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
         if (part.startsWith("data: ")) {
           const payload = JSON.parse(part.slice(6));
           const chunk = payload.message || "";
-          if (!streamingStarted) {
+          const isFirstChunk = !streamingStarted;
+          if (isFirstChunk) {
             setIsLoading(false);
             streamingStarted = true;
           }
 
           updateHistory((prev) => {
+            if (isFirstChunk) {
+              return [...newChat, { role: "assistant", content: chunk }];
+            }
             const next = [...prev];
             const last = next.length - 1;
             next[last] = {

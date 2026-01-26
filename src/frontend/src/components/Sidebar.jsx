@@ -3,10 +3,17 @@ import SettingsIcon from "../assets/settings_icon.svg";
 import { useState } from "react";
 import Settings from "./Settings.jsx";
 import { useTranslation } from "react-i18next";
+import { calculateProgressScore, normalizeScore } from "../utils/score.js";
 
-export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, userName = "User", isAdmin = false, onPrevLesson, onNextLesson, totalLessons = 5 }) {
+export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, userName = "User", isAdmin = false, onPrevLesson, onNextLesson, totalLessons = 1, score }) {
   const { t } = useTranslation();
   const [showSettings, setShowSettings] = useState(false);
+  const displayScore = typeof score === "number"
+    ? normalizeScore(score)
+    : calculateProgressScore({
+        completedLessons: Math.max(0, (Number(lessonNumber) || 1) - 1),
+        totalLessons,
+      });
 
   return (
     <div className="fixed bottom-0 left-0 z-50">
@@ -48,6 +55,7 @@ export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, 
                 </button>
               )}
             </div>
+            <p className="text-sm">{t('sidebar.score')}: {displayScore}</p>
           </div>
         </div>
         <button 
