@@ -1,9 +1,6 @@
 __pycache__
 .venv
-<<<<<<< HEAD
-=======
 venv
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 
 # Logs
 logs

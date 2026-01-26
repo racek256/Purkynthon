@@ -1,26 +1,3 @@
-<<<<<<< HEAD
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from typing import Any, Dict, List, cast
-from ollama import ChatResponse, Client
-from modules.block_class import Block, load_blocks_from_json, execute_graph
-from modules.standard_stuff import get_ollama_client_ip, GraphRequest, GraphResponse, ExecOnceRequest, ChatRequest, ChatResponseModel
-import uvicorn
-import io
-import contextlib
-from modules.db import router
-from modules.discord_logger import DiscordLogger
-from fastapi import Header, HTTPException
-import jwt
-from modules.db import SECRET_KEY, ALGORITHM
-from fastapi.responses import JSONResponse
-from fastapi.responses import StreamingResponse
-import json
-
-client = Client(host=get_ollama_client_ip())
-
-app = FastAPI()
-=======
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -59,7 +36,6 @@ async def lifespan(app: FastAPI):
     DiscordBot.shutdown()
 
 app = FastAPI(lifespan=lifespan)
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 app.include_router(router, prefix="/api/auth", tags=["users"])
 app.add_middleware(
     CORSMiddleware,
@@ -102,8 +78,6 @@ def format_graph_for_log(graph: Dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-<<<<<<< HEAD
-=======
 def get_ollama_chat_stream(history: List[Any], model: str):
     hosts = get_ollama_client_hosts()
     if not hosts:
@@ -128,7 +102,6 @@ def get_ollama_chat_stream(history: List[Any], model: str):
     raise RuntimeError("No Ollama client hosts configured")
 
 
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 @app.post("/run-graph", response_model=GraphResponse)
 async def run_graph(request: GraphRequest, authorization: str | None = Header(default=None)):
     username = get_username_from_header(authorization)
@@ -224,24 +197,11 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
             else:
                 user_message = str(last_msg)[:1000]
         try:
-<<<<<<< HEAD
-            stream = client.chat(
-                model="gemma3:4b-it-qat",
-                messages=data.history,
-                stream=True
-            )
-            first_chunk = next(stream)
-        except Exception as e:
-            error_message = f"**Error:**\n```\n{str(e)}\n```"
-            DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
-            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It’ll work again... sometime maybe :3"})
-=======
             stream, first_chunk = get_ollama_chat_stream(data.history, "gemma3:4b-it-qat")
         except Exception as e:
             error_message = f"**Error:**\n```\n{str(e)}\n```"
             DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
             return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It'll work again... sometime maybe :3"})
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 
         def gen():
             full = []
@@ -274,21 +234,11 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
         if status_code and status_code not in (200, 401):
             error_message = f"**Error:**\n```\n{str(e)}\n```"
             DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
-<<<<<<< HEAD
-            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It’ll work again... sometime maybe :3"})
-=======
             return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It'll work again... sometime maybe :3"})
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
         error_message = f"**Error:**\n```\n{str(e)}\n```"
         DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
         raise
 
-<<<<<<< HEAD
-if __name__ == "__main__":
-    print("Discord webhook starting")
-    DiscordLogger.send_startup_tests()
-    print("Discord webhook started sucessfully")
-=======
 @app.post("/api/theme")
 async def change_theme(data: ThemeChangeRequest):
     """Log theme changes to Discord"""
@@ -324,7 +274,6 @@ if __name__ == "__main__":
     # Register signal handlers
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
     
     uvicorn.run(
         "main:app",

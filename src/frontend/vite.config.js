@@ -5,8 +5,6 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-<<<<<<< HEAD
-=======
   resolve: {
     dedupe: [
       '@codemirror/state',
@@ -19,7 +17,6 @@ export default defineConfig({
       'codemirror',
     ],
   },
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   server:{
 	  allowedHosts:['dev.racek.qzz.io', 'localhost', 'dev.racek.qzz.io/login'],
     hmr: {

@@ -58,11 +58,7 @@ html, body, #root {
   --color-ai-border: var(--color-ctp-mauve-600); /* border of nearly all AI elements */
   --color-ai-bg: var(--color-ctp-mauve-950);  /* background of AI elements */
   --color-ai-assistant-message: var(--color-ctp-green-600); /* message from AI */ 				 /* Please fix this one */
-<<<<<<< HEAD
-  --color-ai-user-message: var(--color-red-500); /*   message from User - */      				 /* Please fix this one */
-=======
   --color-ai-user-message: var(--color-ctp-green-600); /*   message from User - */      				 /* Please fix this one */
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   --color-ai-input: var(--color-ctp-base);  /* color of the input bar */
   --color-ai-send-button: var(--color-green-600); /* color of the send button */
 }
@@ -94,21 +90,12 @@ html, body, #root {
   --color-sidebar-theme-selector: #f0f0f0;
 
   /* Stupid-AI */
-<<<<<<< HEAD
-  --color-ai-border: var(--color-ctp-mauve-600); /* border of nearly all AI elements */
-  --color-ai-bg: var(--color-ctp-mauve-950);  /* background of AI elements */
-  --color-ai-assistant-message: var(--color-ctp-green-600); /* message from AI */ 
-  --color-ai-user-message: var(--color-red-300); /*   message from User*/
-  --color-ai-input: var(--color-ctp-base);  /* color of the input bar */
-  --color-ai-send-button: var(--color-green-600); /* color of the send button */
-=======
   --color-ai-border: #dedede; /* border of nearly all AI elements */
   --color-ai-bg: #ffffff;  /* background of AI elements */
   --color-ai-assistant-message: #dedede; /* message from AI */ 
   --color-ai-user-message: #dedede; /*   message from User*/
   --color-ai-input: #dedede;  /* color of the input bar */
   --color-ai-send-button: #dedede; /* color of the send button */
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 }
 
 /*Ocean theme (asi predelat vypada dogshit jako vsechno ostatniho tady pomoc hodina vytvarky aaaaaaaaaaaaaaaaaaaaaaa)*/

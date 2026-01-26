@@ -20,19 +20,13 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     },
   ]);
   const [currentText, updateText] = useState("");
-<<<<<<< HEAD
-=======
   const [isLoading, setIsLoading] = useState(false);
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   const [cookies] = useCookies(["session"]);
   const token = cookies?.session?.token;
   async function askAI(question) {
     const newChat = [...history, { role: "user", content: question }];
     updateText("");
-<<<<<<< HEAD
-=======
     setIsLoading(true);
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 
     updateHistory([...newChat, { role: "assistant", content: "" }]);
 
@@ -52,10 +46,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       const msg = err.message || err.detail || "Request failed";
-<<<<<<< HEAD
-=======
       setIsLoading(false);
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
       updateHistory((prev) => {
         const next = [...prev];
         next[next.length - 1] = { role: "assistant", content: msg };
@@ -68,10 +59,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
 
     if (!ct.includes("text/event-stream")) {
       const data = await res.json();
-<<<<<<< HEAD
-=======
       setIsLoading(false);
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
       updateHistory((prev) => {
         const next = [...prev];
         next[next.length - 1] = {
@@ -84,20 +72,14 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     }
 
     if (!res.body) {
-<<<<<<< HEAD
-=======
       setIsLoading(false);
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
       return;
     }
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
-<<<<<<< HEAD
-=======
     let streamingStarted = false;
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 
     while (true) {
       const { value, done } = await reader.read();
@@ -111,13 +93,10 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
         if (part.startsWith("data: ")) {
           const payload = JSON.parse(part.slice(6));
           const chunk = payload.message || "";
-<<<<<<< HEAD
-=======
           if (!streamingStarted) {
             setIsLoading(false);
             streamingStarted = true;
           }
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 
           updateHistory((prev) => {
             const next = [...prev];
@@ -131,10 +110,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
         }
       }
     }
-<<<<<<< HEAD
-=======
     setIsLoading(false);
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   }
   return (
     <div className="flex h-full flex-col items-center overflow-hidden">
@@ -173,8 +149,6 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
                   <div key={index}></div>
                 ),
               )}
-<<<<<<< HEAD
-=======
               {isLoading ? (
                 <div className="w-full mb-4">
                   <div className="p-4 rounded-xl text-lg max-w-[80%] bg-ai-assistant-message">
@@ -186,7 +160,6 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
                   </div>
                 </div>
               ) : null}
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
             </div>
           </div>
 

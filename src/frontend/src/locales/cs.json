@@ -92,8 +92,6 @@
       "Vaříme tvůj kód, prosím čekej"
     ]
   },
-<<<<<<< HEAD
-=======
   "finish": {
     "title": "Gratulujeme k dokončení Purkynthonu.",
     "subtitle": "404 Text nebyl nalezen.",
@@ -121,7 +119,6 @@
     "finishButton": "Dokončit",
     "player": "Programátor"
   },
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   "stupidAI": {
     "title": "Hloupá AI",
     "subtitle": "(tato AI je pravděpodobně hloupější než ty)",

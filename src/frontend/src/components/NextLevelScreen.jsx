@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import { useState, useEffect, useCallback } from "react";
-import { useTranslation } from "react-i18next";
-
-export default function NextLevel({ hide, graph, input, time, token, lessonNumber = 1, onLessonComplete }) {
-=======
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -18,7 +12,6 @@ export default function NextLevel({
   isFinalLesson = false,
   onFinalComplete,
 }) {
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   const { t } = useTranslation();
   const [finishTime] = useState(Date.now() - time);
   const [dataSent, setDataSent] = useState(false);
@@ -29,27 +22,13 @@ export default function NextLevel({
   const [closing, setClosing] = useState(false);
   const [correctness, setCorrectness] = useState(null); // null = loading, true = correct, false = wrong
   const [isLoading, setIsLoading] = useState(true);
-<<<<<<< HEAD
-
-  function hideScreen() {
-=======
   const finalTriggeredRef = useRef(false);
 
   const hideScreen = useCallback(() => {
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
     setDisplayed(false);
     setTimeout(() => {
       hide();
     }, 150);
-<<<<<<< HEAD
-  }
-
-  const handleKeyDown = useCallback((e) => {
-    if (e.key === "Escape") {
-      hideScreen();
-    }
-  }, []);
-=======
   }, [hide]);
 
   const triggerFinalComplete = useCallback(() => {
@@ -68,7 +47,6 @@ export default function NextLevel({
     },
     [hideScreen],
   );
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 
   useEffect(() => {
     if (!closing) {
@@ -84,8 +62,6 @@ export default function NextLevel({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     if (!isFinalLesson || isLoading || correctness !== true) return;
     if (finalTriggeredRef.current) return;
@@ -96,7 +72,6 @@ export default function NextLevel({
     return () => clearTimeout(timer);
   }, [correctness, hideScreen, isFinalLesson, isLoading, triggerFinalComplete]);
 
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       hideScreen();
@@ -316,30 +291,21 @@ export default function NextLevel({
             <button
               className="bg-button transition w-full h-12 rounded-md hover:bg-button-hover cursor-pointer text-xl"
               onClick={() => {
-<<<<<<< HEAD
-                if (correctness && onLessonComplete) {
-                  onLessonComplete();
-=======
                 if (correctness) {
                   if (isFinalLesson) {
                     triggerFinalComplete();
                   } else if (onLessonComplete) {
                     onLessonComplete();
                   }
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
                 }
                 hideScreen();
               }}
             >
-<<<<<<< HEAD
-              {correctness ? t('nextLevel.nextLevel') : t('nextLevel.tryAgainButton')}
-=======
               {correctness
                 ? isFinalLesson
                   ? t("finish.finishButton")
                   : t("nextLevel.nextLevel")
                 : t("nextLevel.tryAgainButton")}
->>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
             </button>
           </div>
         </div>
