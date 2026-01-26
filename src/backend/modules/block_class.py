@@ -117,7 +117,7 @@ def execute_graph(block, global_output_memory: Dict[str, Any]):
         if len(nxt.input_nodes) > 1:
             input_keys = {node.id for node in nxt.input_nodes}
             for node in nxt.input_nodes:
-                if node.id not in global_output_memory:
+                if node.id not in global_output_memory.keys():
                     execute_graph(node, global_output_memory)
             nxt.input_values = {k: v for k, v in global_output_memory.items() if k in input_keys}
         else:
