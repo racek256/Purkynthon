@@ -114,20 +114,26 @@ def execute_graph(block, global_output_memory: Dict[str, Any]):
 
     # First: make sure all input nodes are executed
     if block.input_nodes:
-        input_values = {}
-
-        for node in block.input_nodes:
+        if len(block.input_nodes) == 1:
+            # Single input: pass through raw value
+            node = block.input_nodes[0]
             value = execute_graph(node, global_output_memory)
-            input_values[node.id] = value
-
-        block.input_values = input_values
+            block.input_values = value
+        else:
+            # Multiple inputs: build dict
+            input_values = {}
+            for node in block.input_nodes:
+                value = execute_graph(node, global_output_memory)
+                input_values[node.id] = value
+            block.input_values = input_values
 
     # Now execute this block exactly once
     result = block.execute()
     global_output_memory[block.id] = result
 
-    # Then propagate forward (optional, depending on your design)
+    # Then propagate forward
     for nxt in block.output_nodes:
         execute_graph(nxt, global_output_memory)
 
     return result
+
