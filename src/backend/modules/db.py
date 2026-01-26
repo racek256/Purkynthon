@@ -202,6 +202,52 @@ async def verify_jwt(data: JWT):
         return {"success": False, "message": "Invalid token"}
 
 
+@router.post("/finish-summary")
+async def finish_summary(data: JWT):
+    try:
+        payload = jwt.decode(data.jwt_token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = int(payload["sub"])
+
+        conn = sqlite3.connect(DB_FILE)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, username, level, score FROM users WHERE id=?", (user_id,)
+        )
+        user = cur.fetchone()
+
+        if not user:
+            conn.close()
+            return {"success": False, "message": "User not found"}
+
+        cur.execute(
+            "SELECT lesson_id, earned_score, time_to_finish FROM finished_lessons WHERE user_id=? ORDER BY id DESC LIMIT 1",
+            (user_id,),
+        )
+        last_lesson = cur.fetchone()
+        conn.close()
+
+        last_data = None
+        if last_lesson:
+            last_data = {
+                "lesson_id": last_lesson[0],
+                "earned_score": last_lesson[1],
+                "time_to_finish": last_lesson[2],
+            }
+
+        return {
+            "success": True,
+            "user_id": user[0],
+            "username": user[1],
+            "level": user[2],
+            "score": user[3],
+            "last_lesson": last_data,
+        }
+    except jwt.ExpiredSignatureError:
+        return {"success": False, "message": "Token has expired"}
+    except jwt.InvalidTokenError:
+        return {"success": False, "message": "Invalid token"}
+
+
 @router.get("/lessons/current")
 async def get_current_lesson(user_id: int):
     """Get the current lesson number for a user (next unfinished lesson)"""
