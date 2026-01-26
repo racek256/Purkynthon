@@ -29,14 +29,14 @@
         "y": 203
       },
       "data": {
-        "label": "Výpočet obsahu"
+        "label": "Výpočet počtu zaměstnanců"
       },
-      "code": "pocet_zamestnancu = input_value[\"node-1769367178764\"]\npocet_novych_zamestnancu = input_value[\"n1\"]\n\n# Tady by se měl vrátit(return) součet počtu zaměstnanců a nových zaměstnanců, ale chrrrmimimimi",
+      "code": "pocet_zamestnancu = input_value[\"node-1769367178764\"]  # Počet původních zaměstnanců\npocet_novych_zamestnancu = input_value[\"n1\"]  # Input\n\n# Tady by se měl vrátit(return) součet počtu zaměstnanců a nových zaměstnanců, \n# ale chrrrmimimimi",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
         "width": 150,
-        "height": 40
+        "height": 58
       },
       "selected": false,
       "dragging": false
@@ -45,36 +45,38 @@
       "id": "output",
       "type": "output",
       "position": {
-        "x": 700,
+        "x": 762,
         "y": 200
       },
       "data": {
-        "label": "Obsah"
+        "label": "Output"
       },
-      "code": "# Verifikace: strana * strana\nobsah = input_value\nexpected = original_input_value * original_input_value\nprint(f\"Tvůj výsledek: {obsah} m2\")\nprint(f\"Očekávaná hodnota: {expected} m2\")\nif expected == obsah:\n    print(1)\nelse:\n    print(0)",
+      "code": "list_reseni = input_value\n\nlist_correct = []\nfor i in range(full_output_memory[\"node-1769367178764\"] + full_output_memory[\"n1\"]):\n  list_correct.append(f\"zamestnance_{i}\")\n  \nprint(f\"Tvůj výsledek: {list_reseni[0:5]}...{list_reseni[-5:]}\")\nprint(f\"Očekávaná hodnota: {list_correct[0:5]}...{list_correct[-5:]}\")\n\nif len(full_output_memory.keys()) >= 5:\n  if list_reseni == list_correct:\n      print(1)\n  else:\n      print(0)\nelse:\n  print(\"Všechny bloky musí být zapojeny\")\n  print(0)",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
         "width": 150,
         "height": 40
-      }
+      },
+      "selected": true,
+      "dragging": false
     },
     {
       "id": "node-1769367178764",
       "type": "default",
       "position": {
-        "x": 94.97395734538009,
-        "y": 318.60564865869594
+        "x": 120.97395734538009,
+        "y": 305.60564865869594
       },
       "data": {
-        "label": "New Node"
+        "label": "Původní počet zaměstnanců"
       },
       "code": "return 69 # Máme 69 zaměstnanců",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
         "width": 150,
-        "height": 40
+        "height": 58
       },
       "selected": false,
       "dragging": false
@@ -83,20 +85,20 @@
       "id": "node-1769367576397",
       "type": "default",
       "position": {
-        "x": 583.8076072119957,
-        "y": 128.4323939430957
+        "x": 580.8076072119957,
+        "y": 196.4323939430957
       },
       "data": {
-        "label": "New Node"
+        "label": "Vytvářeč listu zaměstnanců"
       },
-      "code": "pocet_celkovych_zamestnancu = input_value\nlist_zamestnancu = []\n\n# toto by mělo být podle \nfor i in range(zamestnanci):\n  list_zamestnancu.append(f\"zamestnance_{i}\")\n\nreturn list_zamestnancu",
+      "code": "pocet_celkovych_zamestnancu = input_value\nlist_zamestnancu = []\n\n# range by měl být celkový počet zaměstnanců, teďka to nefunguje\n# vyřešte to někdo, já jdu spinkat\nfor i in range(zamestnanci):\n  list_zamestnancu.append(f\"zamestnance_{i}\")\n\nreturn list_zamestnancu",
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
         "width": 150,
-        "height": 40
+        "height": 58
       },
-      "selected": true,
+      "selected": false,
       "dragging": false
     }
   ],
@@ -116,6 +118,6 @@
   ],
   "tags": [
     "creator-mode",
-    "2026-01-25T19:05:49.273Z"
+    "2026-01-26T18:03:05.963Z"
   ]
 }
