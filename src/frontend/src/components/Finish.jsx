@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Typewriter from "typewriter-effect";
 import { useTranslation } from "react-i18next";
+import { calculateProgressScore, normalizeScore } from "../utils/score.js";
 
 const typewriterOptions = {
   delay: 10,
@@ -112,14 +113,16 @@ export default function Finish({
   const scoreTarget = useMemo(() => {
     const backendScore = backendSummary?.score;
     if (typeof backendScore === "number") {
-      return Math.max(0, Math.round(backendScore));
+      return normalizeScore(backendScore);
     }
     if (typeof score === "number") {
-      return Math.max(0, Math.round(score));
+      return normalizeScore(score);
     }
-    const seconds = finishTime / 1000;
-    return Math.max(0, Math.round(1000 - seconds * 2));
-  }, [backendSummary, score, finishTime]);
+    return calculateProgressScore({
+      completedLessons: lessonNumber,
+      totalLessons,
+    });
+  }, [backendSummary, score, lessonNumber, totalLessons]);
 
   useEffect(() => {
     if (!showStats) return;

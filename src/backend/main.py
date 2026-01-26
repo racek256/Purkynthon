@@ -12,8 +12,6 @@ import io
 import contextlib
 import json
 import jwt
-import signal
-import sys
 from modules.db import router, SECRET_KEY, ALGORITHM
 from modules.discord_logger import DiscordLogger
 from modules.user_tracker import UserTracker
@@ -264,17 +262,7 @@ async def update_user_status(data: UserStatusUpdate):
     )
     return {"success": True, "message": "User status updated"}
 
-def signal_handler(sig, frame):
-    """Handle SIGINT and SIGTERM signals"""
-    print("\nReceived shutdown signal, cleaning up...")
-    DiscordBot.shutdown()
-    sys.exit(0)
-
 if __name__ == "__main__":
-    # Register signal handlers
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-    
     uvicorn.run(
         "main:app",
         host="0.0.0.0",

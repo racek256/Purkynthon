@@ -4,6 +4,7 @@ import json
 import os
 import asyncio
 import sqlite3
+import re
 from typing import Dict, Optional
 from datetime import datetime
 import threading
@@ -19,7 +20,14 @@ class DiscordBot:
     guild_id: int = 0
     _loop: Optional[asyncio.AbstractEventLoop] = None
     _ready = False
+    _shutdown_started = False
     
+    @staticmethod
+    def _username_to_channel(username: str) -> str:
+        slug = re.sub(r"[^a-z0-9-]", "-", username.lower())
+        slug = re.sub(r"-+", "-", slug).strip("-")
+        return slug
+
     @staticmethod
     def _load_config():
         """Load bot configuration from JSON file"""
@@ -77,9 +85,9 @@ class DiscordBot:
         # Load existing channels
         for channel in DiscordBot.guild.text_channels:
             if channel.name.startswith("user-"):
-                username = channel.name[5:]  # Remove "user-" prefix
-                DiscordBot.user_channels[username] = channel
-                print(f"Found existing channel for user: {username}")
+                slug = channel.name[5:]  # Remove "user-" prefix
+                DiscordBot.user_channels[slug] = channel
+                print(f"Found existing channel for user: {slug}")
         
         # Get all users from the database
         db_path = os.path.join(os.path.dirname(__file__), "..", "db.db")
@@ -94,18 +102,36 @@ class DiscordBot:
             users = cur.fetchall()
             conn.close()
             
+            db_usernames = {DiscordBot._username_to_channel(user_row[0]) for user_row in users}
             print(f"Found {len(users)} users in database")
+
+            removed = 0
+            prune_orphans = os.getenv("DISCORD_PRUNE_ORPHAN_CHANNELS", "false").lower() == "true"
+            if prune_orphans:
+                for slug, channel in list(DiscordBot.user_channels.items()):
+                    if slug not in db_usernames:
+                        try:
+                            print(f"Deleting channel for removed user: {slug}")
+                            await channel.delete(reason="User removed from database")
+                            DiscordBot.user_channels.pop(slug, None)
+                            removed += 1
+                        except Exception as e:
+                            print(f"Failed to delete channel for {slug}: {e}")
             
             # Create channels for users that don't have one
+            existing_channel_names = {name.lower() for name in DiscordBot.user_channels.keys()}
             for user_row in users:
                 username = user_row[0]
-                if username not in DiscordBot.user_channels:
+                slug = DiscordBot._username_to_channel(username)
+                if slug not in existing_channel_names:
                     print(f"Creating channel for user: {username}")
                     await DiscordBot._get_or_create_channel(username)
                 # Update channel description for all users
                 await DiscordBot._update_channel_description(username)
             
-            print(f"Channel setup complete. Total channels: {len(DiscordBot.user_channels)}")
+            print(
+                f"Channel setup complete. Total channels: {len(DiscordBot.user_channels)} (removed: {removed})"
+            )
         except Exception as e:
             print(f"Failed to load users from database: {e}")
     
@@ -114,12 +140,20 @@ class DiscordBot:
         """Run the bot in a separate thread"""
         DiscordBot._loop = asyncio.new_event_loop()
         asyncio.set_event_loop(DiscordBot._loop)
-        DiscordBot._loop.run_until_complete(DiscordBot._setup_bot())
+        try:
+            DiscordBot._loop.run_until_complete(DiscordBot._setup_bot())
+        finally:
+            DiscordBot._ready = False
+            if DiscordBot._loop and not DiscordBot._loop.is_closed():
+                DiscordBot._loop.close()
+            DiscordBot._loop = None
     
     @staticmethod
     def start():
         """Start the Discord bot in a background thread"""
         DiscordBot._load_config()
+        DiscordBot._shutdown_started = False
+        DiscordBot._ready = False
         bot_thread = threading.Thread(target=DiscordBot._run_bot, daemon=True)
         bot_thread.start()
         print("Discord bot thread started")
@@ -136,15 +170,31 @@ class DiscordBot:
         """Properly shutdown the bot and close connections"""
         if DiscordBot.bot:
             await DiscordBot.bot.close()
+        DiscordBot._ready = False
     
     @staticmethod
     def shutdown():
         """Shutdown the Discord bot gracefully"""
-        if DiscordBot._loop and DiscordBot.bot:
-            asyncio.run_coroutine_threadsafe(
-                DiscordBot._shutdown(),
-                DiscordBot._loop
-            ).result(timeout=5)
+        if DiscordBot._shutdown_started:
+            return
+        DiscordBot._shutdown_started = True
+
+        if not DiscordBot._loop or not DiscordBot.bot:
+            return
+        if DiscordBot._loop.is_closed() or not DiscordBot._loop.is_running():
+            return
+
+        future = asyncio.run_coroutine_threadsafe(
+            DiscordBot._shutdown(),
+            DiscordBot._loop
+        )
+        try:
+            future.result(timeout=5)
+        except TimeoutError:
+            print("Discord bot shutdown timed out, cancelling...")
+            future.cancel()
+        except Exception as e:
+            print(f"Discord bot shutdown error: {e}")
     
     @staticmethod
     async def _get_or_create_channel(username: str) -> Optional[discord.TextChannel]:
@@ -153,18 +203,19 @@ class DiscordBot:
             print("Bot not connected to guild")
             return None
         
+        slug = DiscordBot._username_to_channel(username)
         # Check if channel already exists
-        if username in DiscordBot.user_channels:
-            return DiscordBot.user_channels[username]
+        if slug in DiscordBot.user_channels:
+            return DiscordBot.user_channels[slug]
         
         # Create new channel
-        channel_name = f"user-{username.lower()}"
+        channel_name = f"user-{slug}"
         try:
             channel = await DiscordBot.guild.create_text_channel(
                 channel_name,
                 topic=f"Activity logs for {username}"
             )
-            DiscordBot.user_channels[username] = channel
+            DiscordBot.user_channels[slug] = channel
             print(f"Created channel for user: {username}")
             return channel
         except Exception as e:

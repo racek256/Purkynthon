@@ -24,6 +24,7 @@
   },
   "sidebar": {
     "lesson": "Lesson",
+    "score": "Score",
     "previousLesson": "Previous lesson",
     "nextLesson": "Next lesson"
   },

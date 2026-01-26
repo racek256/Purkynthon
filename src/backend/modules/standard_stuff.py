@@ -1,12 +1,15 @@
 from pydantic import BaseModel
 from typing import Dict, List, Any
 from threading import Lock
+import requests
 
 return_statement_sub_name: str = "resultxyzplink"
 ollama_client_ip: str = "http://100.106.120.85:11434"
 ollama_client_ip_secondary: str = "http://192.168.0.125:11434"
 _ollama_rr_index: int = 0
 _ollama_rr_lock = Lock()
+_ollama_health_path = "/api/tags"
+_ollama_health_timeout_s = 1.0
 
 def get_return_statement_sub() -> str:
     return f"{return_statement_sub_name} = "
@@ -23,14 +26,30 @@ def get_ollama_client_hosts() -> List[str]:
         hosts.append(ollama_client_ip_secondary)
     return hosts
 
+def _is_ollama_healthy(host: str) -> bool:
+    if not host:
+        return False
+    url = f"{host.rstrip('/')}{_ollama_health_path}"
+    try:
+        response = requests.get(url, timeout=_ollama_health_timeout_s)
+        return response.status_code == 200
+    except requests.RequestException:
+        return False
+
 def get_next_ollama_client_host() -> str:
     hosts = get_ollama_client_hosts()
     if not hosts:
         raise ValueError("No Ollama client hosts configured")
+    primary = ollama_client_ip
+    pool = hosts
+    if primary and not _is_ollama_healthy(primary):
+        pool = [host for host in hosts if host != primary]
+    if not pool:
+        return primary
     global _ollama_rr_index
     with _ollama_rr_lock:
-        host = hosts[_ollama_rr_index % len(hosts)]
-        _ollama_rr_index = (_ollama_rr_index + 1) % len(hosts)
+        host = pool[_ollama_rr_index % len(pool)]
+        _ollama_rr_index = (_ollama_rr_index + 1) % len(pool)
     return host
 
 # main.py
@@ -81,5 +100,3 @@ class UserStatusUpdate(BaseModel):
     logged_in: bool = None
     points: int = None
     theme: str = None
-
-

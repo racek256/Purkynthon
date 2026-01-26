@@ -23,7 +23,8 @@ import NextLevel from "../components/NextLevelScreen.jsx";
 import Terminal from "../components/CodeExecutionScreen.jsx";
 import { useTranslation } from "react-i18next";
 
-import { loadCurrentLesson, loadLessonByNumber, TOTAL_LESSONS } from "../components/lessons/lessonLoader.js";
+import { getTotalLessons, loadCurrentLesson, loadLessonByNumber } from "../components/lessons/lessonLoader.js";
+import { normalizeScore } from "../utils/score.js";
 import CodeEditor from "../components/CodeEditor.jsx";
 
 const edgeTypes = {
@@ -55,8 +56,10 @@ function Home() {
   const [startTime, setStartTime] = useState(Date.now())
   const [buttonActive, setButtonActive] = useState(false)
   const [currentLessonNumber, setCurrentLessonNumber] = useState(1)
+  const [totalLessons, setTotalLessons] = useState(1)
   const [userName, setUserName] = useState("")
   const [isAdmin, setIsAdmin] = useState(false)
+  const [userScore, setUserScore] = useState(0)
 
   const navigate = useNavigate();
   function logout() {
@@ -65,6 +68,28 @@ function Home() {
   }
 
   // verify login
+  const refreshUserScore = useCallback(async () => {
+    if (!cookies?.session?.token) return;
+    try {
+      const data = await fetch(
+        "https://aiserver.purkynthon.online/api/auth/verify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ jwt_token: cookies.session.token }),
+        },
+      );
+      const response = await data.json();
+      if (response?.success) {
+        setUserScore(normalizeScore(response.score));
+      }
+    } catch (error) {
+      console.error("Failed to refresh user score", error);
+    }
+  }, [cookies?.session?.token]);
+
   useEffect(() => {
     async function callMe() {
       if (!cookies?.session?.token) {
@@ -86,6 +111,7 @@ function Home() {
           navigate("/login");
         } else {
           setUserName(response.username || "User");
+          setUserScore(normalizeScore(response.score));
           // Check if user is admin
           setIsAdmin(response.is_admin === true || response.username === "admin");
         }
@@ -98,8 +124,10 @@ function Home() {
     async function initLevel() {
       const token = cookies?.session?.token;
       if (!token) return;
-      
-      const data = await loadCurrentLesson(token);
+
+      const resolvedTotal = await getTotalLessons();
+      setTotalLessons(resolvedTotal);
+      const data = await loadCurrentLesson(token, resolvedTotal);
       console.log(data);
 
       // Store ALL nodes in state
@@ -313,7 +341,7 @@ function Home() {
   };
 
   const goToNextLesson = async () => {
-    if (currentLessonNumber < TOTAL_LESSONS) {
+    if (currentLessonNumber < totalLessons) {
       const nextLesson = await loadLessonByNumber(currentLessonNumber + 1);
       setNodes(nextLesson.nodes);
       setInput(nextLesson.nodes[0].data.input);
@@ -336,7 +364,7 @@ function Home() {
         userName={userName}
         startTime={startTime}
         lessonNumber={currentLessonNumber}
-        totalLessons={TOTAL_LESSONS}
+        totalLessons={totalLessons}
         nodes={nodes}
         edges={edges}
         token={cookies?.session?.token}
@@ -352,7 +380,8 @@ function Home() {
             isAdmin={isAdmin}
             onPrevLesson={goToPrevLesson}
             onNextLesson={goToNextLesson}
-            totalLessons={TOTAL_LESSONS}
+            totalLessons={totalLessons}
+            score={userScore}
           />
           <div className="flex flex-col h-dvh w-full min-w-0">
             <Navbar
@@ -516,13 +545,15 @@ function Home() {
 		  time={startTime}
 		  token={cookies.session.token}
           lessonNumber={currentLessonNumber}
-          isFinalLesson={currentLessonNumber >= TOTAL_LESSONS}
+          totalLessons={totalLessons}
+          isFinalLesson={currentLessonNumber >= totalLessons}
           onFinalComplete={() => {
             setShowFinish(true);
+            refreshUserScore();
           }}
           onLessonComplete={async () => {
             // Load the next lesson after completion
-            if (currentLessonNumber < TOTAL_LESSONS) {
+            if (currentLessonNumber < totalLessons) {
               const nextLesson = await loadLessonByNumber(currentLessonNumber + 1);
               setNodes(nextLesson.nodes);
               setInput(nextLesson.nodes[0].data.input);
@@ -532,6 +563,7 @@ function Home() {
               setCurrentLessonNumber(currentLessonNumber + 1);
               setStartTime(Date.now());
               setButtonActive(false);
+              refreshUserScore();
             }
           }}
         />

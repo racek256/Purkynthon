@@ -12,6 +12,7 @@ from modules.user_tracker import UserTracker
 
 SECRET_KEY = "This is our super secret key nobody will hack into our security HAHAHA you cant hack us you can try but you will fail because of this super secret key"  # directly commited into a public repo btw
 ALGORITHM = "HS256"
+MAX_SCORE = 34
 
 router = APIRouter()
 
@@ -28,6 +29,20 @@ if not os.path.exists(DB_FILE):
         cur.executescript(f.read())
     conn.commit()
     conn.close()
+
+
+def ensure_hidden_column():
+    conn = sqlite3.connect(DB_FILE)
+    cur = conn.cursor()
+    cur.execute("PRAGMA table_info(users)")
+    columns = {row[1] for row in cur.fetchall()}
+    if "hidden" not in columns:
+        cur.execute("ALTER TABLE users ADD COLUMN hidden INTEGER DEFAULT 0")
+        conn.commit()
+    conn.close()
+
+
+ensure_hidden_column()
 
 
 def create_access_token(
@@ -146,9 +161,10 @@ async def finish_lesson(data: LessonData):
             return {"success": False, "message": "Lesson already completed"}
 
         # Create new row into table finished_lessons
+        lesson_score = max(0, int(data.score))
         cur.execute(
             "INSERT INTO finished_lessons (lesson_id, user_id, earned_score, time_to_finish) VALUES (?, ?,?,?)",
-            (data.lesson_id, data.user_id, data.score, data.time),
+            (data.lesson_id, data.user_id, lesson_score, data.time),
         )
         # add user his earned score
         # Get users current score and level
@@ -158,14 +174,14 @@ async def finish_lesson(data: LessonData):
         user_data = res.fetchone()
         print(user_data)
         username = user_data[0]
-        new_score = data.score + user_data[1]
+        new_score = min(MAX_SCORE, lesson_score + user_data[1])
         # Increment the user's level (move to next lesson)
         new_level = user_data[2] + 1
         cur.execute(
             "UPDATE users SET score = (?), level = (?) WHERE id=(?)",
             (new_score, new_level, data.user_id),
         )
-        DiscordLogger.send("submitting", "Lesson Completed", f"User '{username}' completed lesson {data.lesson_id}\nScore: {data.score}\nTime: {int(data.time / 1000)}s\nNew level: {new_level}", "success")
+        DiscordLogger.send("submitting", "Lesson Completed", f"User '{username}' completed lesson {data.lesson_id}\nScore: {lesson_score}\nTime: {int(data.time / 1000)}s\nNew level: {new_level}", "success")
     except Exception as e:
         print(f"Something bad happend: {e}")
         conn.commit()
@@ -204,7 +220,7 @@ async def verify_jwt(data: JWT):
                 "user_id": user_id,
                 "username": user[1],
                 "level": user[2],
-                "score": user[3],
+                "score": min(user[3], MAX_SCORE),
             }
         else:
             return {"success": False, "message": "User no longer exists"}
@@ -251,7 +267,7 @@ async def finish_summary(data: JWT):
             "user_id": user[0],
             "username": user[1],
             "level": user[2],
-            "score": user[3],
+            "score": min(user[3], MAX_SCORE),
             "last_lesson": last_data,
         }
     except jwt.ExpiredSignatureError:
@@ -282,13 +298,19 @@ async def get_leaderboard():
     conn = sqlite3.connect(DB_FILE)
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, username, score, level FROM users ORDER BY score DESC LIMIT 50"
+        "SELECT id, username, score, level FROM users WHERE username != ? AND (hidden IS NULL OR hidden = 0) ORDER BY score DESC LIMIT 50",
+        ("admin",),
     )
     users = cur.fetchall()
     conn.close()
 
     leaderboard = [
-        {"user_id": user[0], "username": user[1], "score": user[2], "level": user[3]}
+        {
+            "user_id": user[0],
+            "username": user[1],
+            "score": min(user[2], MAX_SCORE),
+            "level": user[3],
+        }
         for user in users
     ]
 

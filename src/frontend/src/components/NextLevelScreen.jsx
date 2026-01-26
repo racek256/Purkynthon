@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { calculateLessonScore, normalizeScore } from "../utils/score.js";
 
 export default function NextLevel({
   hide,
@@ -8,6 +9,7 @@ export default function NextLevel({
   time,
   token,
   lessonNumber = 1,
+  totalLessons = 1,
   onLessonComplete,
   isFinalLesson = false,
   onFinalComplete,
@@ -78,12 +80,10 @@ export default function NextLevel({
     }
   };
 
-  function scoreCalculator3000() {
-    let score = 1000;
-    const seconds = finishTime / 1000;
-    score = score - seconds * 2;
-    return Math.max(0, Math.round(score));
-  }
+  const lessonScore = useMemo(
+    () => calculateLessonScore({ finishTimeMs: finishTime, totalLessons }),
+    [finishTime, totalLessons],
+  );
 
   const fetchLeaderboard = useCallback(async () => {
     try {
@@ -184,12 +184,12 @@ export default function NextLevel({
       });
       const response = await user_data.json();
 
-      const data = JSON.stringify({
-        user_id: response.user_id,
-        score: scoreCalculator3000(),
-        time: finishTime,
-        lesson_id: lessonNumber,
-      });
+        const data = JSON.stringify({
+          user_id: response.user_id,
+          score: lessonScore,
+          time: finishTime,
+          lesson_id: lessonNumber,
+        });
 
       const lesson_data = await fetch("https://aiserver.purkynthon.online/api/auth/finished_lesson", {
         method: "POST",
@@ -258,7 +258,7 @@ export default function NextLevel({
                   {Math.floor(finishTime / 3600000) > 0 ? `${Math.floor(finishTime / 3600000)}h ` : ""}
                   {Math.floor((finishTime % 3600000) / 60000)}m {Math.floor((finishTime % 60000) / 1000)}s
                 </div>
-                <div className="text-white text-3xl py-4 border-b border-white">{t('nextLevel.score')}: {scoreCalculator3000()}</div>
+                <div className="text-white text-3xl py-4 border-b border-white">{t('nextLevel.score')}: {lessonScore}</div>
               </div>
             ) : (
               <div className="flex items-center justify-center py-8">
@@ -279,7 +279,7 @@ export default function NextLevel({
                     className={`my-2 p-3 rounded-lg flex items-center justify-between ${isCurrentUser ? "bg-leaderboard-color-active" : "bg-leaderboard-color"}`}
                   >
                     <div className="text-xl truncate">{`${i + 1}. ${e.username || e.name}`}</div>
-                    <div className="text-xl">{e.score || 0}</div>
+                    <div className="text-xl">{normalizeScore(e.score)}</div>
                   </div>
                 );
               })
