@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Any, Dict, List, cast
@@ -19,6 +20,46 @@ import json
 client = Client(host=get_ollama_client_ip())
 
 app = FastAPI()
+=======
+from fastapi import FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
+from typing import Any, Dict, List, cast
+from contextlib import asynccontextmanager
+from ollama import ChatResponse, Client
+from modules.block_class import Block, load_blocks_from_json, execute_graph
+from modules.standard_stuff import get_ollama_client_hosts, get_next_ollama_client_host, get_ollama_client_ip, GraphRequest, GraphResponse, ExecOnceRequest, ChatRequest, ChatResponseModel, ThemeChangeRequest, LogoutRequest, UserStatusUpdate
+
+import uvicorn
+import io
+import contextlib
+import json
+import jwt
+import signal
+import sys
+from modules.db import router, SECRET_KEY, ALGORITHM
+from modules.discord_logger import DiscordLogger
+from modules.user_tracker import UserTracker
+from modules.discord_bot import DiscordBot
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    print("Starting Discord bot...")
+    DiscordBot.start()
+    print("Discord bot started successfully")
+    
+    print("Sending test message...")
+    DiscordLogger.send_startup_test("system")
+    
+    yield
+    
+    # Shutdown
+    print("Shutting down, cleaning up resources...")
+    DiscordBot.shutdown()
+
+app = FastAPI(lifespan=lifespan)
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 app.include_router(router, prefix="/api/auth", tags=["users"])
 app.add_middleware(
     CORSMiddleware,
@@ -61,6 +102,33 @@ def format_graph_for_log(graph: Dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+<<<<<<< HEAD
+=======
+def get_ollama_chat_stream(history: List[Any], model: str):
+    hosts = get_ollama_client_hosts()
+    if not hosts:
+        raise ValueError("No Ollama client hosts configured")
+    primary_host = get_next_ollama_client_host()
+    ordered_hosts = [primary_host] + [host for host in hosts if host != primary_host]
+    last_error = None
+    for host in ordered_hosts:
+        try:
+            client = Client(host=host)
+            stream = client.chat(
+                model=model,
+                messages=history,
+                stream=True
+            )
+            first_chunk = next(stream)
+            return stream, first_chunk
+        except Exception as e:
+            last_error = e
+    if last_error:
+        raise last_error
+    raise RuntimeError("No Ollama client hosts configured")
+
+
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 @app.post("/run-graph", response_model=GraphResponse)
 async def run_graph(request: GraphRequest, authorization: str | None = Header(default=None)):
     username = get_username_from_header(authorization)
@@ -156,6 +224,7 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
             else:
                 user_message = str(last_msg)[:1000]
         try:
+<<<<<<< HEAD
             stream = client.chat(
                 model="gemma3:4b-it-qat",
                 messages=data.history,
@@ -166,6 +235,13 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
             error_message = f"**Error:**\n```\n{str(e)}\n```"
             DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
             return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It’ll work again... sometime maybe :3"})
+=======
+            stream, first_chunk = get_ollama_chat_stream(data.history, "gemma3:4b-it-qat")
+        except Exception as e:
+            error_message = f"**Error:**\n```\n{str(e)}\n```"
+            DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
+            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It'll work again... sometime maybe :3"})
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 
         def gen():
             full = []
@@ -198,15 +274,57 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
         if status_code and status_code not in (200, 401):
             error_message = f"**Error:**\n```\n{str(e)}\n```"
             DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
+<<<<<<< HEAD
             return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It’ll work again... sometime maybe :3"})
+=======
+            return JSONResponse(status_code=503, content={"message": "Oopsie woopsie, our AI is taking a lil nap :3 It'll work again... sometime maybe :3"})
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
         error_message = f"**Error:**\n```\n{str(e)}\n```"
         DiscordLogger.send("ai", f"AI Chat Error for '{username}'", error_message, "error")
         raise
 
+<<<<<<< HEAD
 if __name__ == "__main__":
     print("Discord webhook starting")
     DiscordLogger.send_startup_tests()
     print("Discord webhook started sucessfully")
+=======
+@app.post("/api/theme")
+async def change_theme(data: ThemeChangeRequest):
+    """Log theme changes to Discord"""
+    DiscordLogger.log_theme_change(data.username, data.theme)
+    UserTracker.update_user(data.username, theme=data.theme)
+    return {"success": True, "message": "Theme change logged"}
+
+@app.post("/api/logout")
+async def logout(data: LogoutRequest):
+    """Log user logout to Discord"""
+    DiscordLogger.send("login", "User Logout", f"User logged out successfully", "general", data.username)
+    UserTracker.update_user(data.username, logged_in=False)
+    return {"success": True, "message": "Logout logged"}
+
+@app.post("/api/user/status")
+async def update_user_status(data: UserStatusUpdate):
+    """Update user status in the Discord chart"""
+    UserTracker.update_user(
+        username=data.username,
+        logged_in=data.logged_in,
+        points=data.points,
+        theme=data.theme
+    )
+    return {"success": True, "message": "User status updated"}
+
+def signal_handler(sig, frame):
+    """Handle SIGINT and SIGTERM signals"""
+    print("\nReceived shutdown signal, cleaning up...")
+    DiscordBot.shutdown()
+    sys.exit(0)
+
+if __name__ == "__main__":
+    # Register signal handlers
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
     
     uvicorn.run(
         "main:app",

@@ -92,6 +92,37 @@
       "We is cooking you code, pls wait"
     ]
   },
+<<<<<<< HEAD
+=======
+  "finish": {
+    "title": "Legendary Finish",
+    "subtitle": "You rewrote the rules.",
+    "typewriterLines": [
+      "Mission complete. Systems stable.",
+      "Final report compiled. Victory confirmed.",
+      "Signal verified. The lab is safe.",
+      "All checkpoints cleared. The path is yours."
+    ],
+    "congrats": "Congrats, {{name}}!",
+    "recap": "Mission Recap",
+    "scoreLabel": "Final Score",
+    "thanks": "Thanks for playing. Your next challenge awaits.",
+    "stats": {
+      "time": "Time",
+      "lessons": "Lessons",
+      "nodes": "Nodes",
+      "connections": "Connections"
+    },
+    "units": {
+      "hours": "h",
+      "minutes": "m",
+      "seconds": "s"
+    },
+    "close": "Close",
+    "finishButton": "Finish",
+    "player": "Coder"
+  },
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   "stupidAI": {
     "title": "Dumb AI",
     "subtitle": "(this AI is probably dumber than you)",

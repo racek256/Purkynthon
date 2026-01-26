@@ -76,7 +76,11 @@
       "targetPosition": "left",
       "measured": {
         "width": 150,
+<<<<<<< HEAD
         "height": 58
+=======
+        "height": 40
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
       },
       "selected": false,
       "dragging": false
@@ -85,6 +89,7 @@
       "id": "node-1769367576397",
       "type": "default",
       "position": {
+<<<<<<< HEAD
         "x": 580.8076072119957,
         "y": 196.4323939430957
       },
@@ -92,13 +97,28 @@
         "label": "Vytvářeč listu zaměstnanců"
       },
       "code": "pocet_celkovych_zamestnancu = input_value\nlist_zamestnancu = []\n\n# range by měl být celkový počet zaměstnanců, teďka to nefunguje\n# vyřešte to někdo, já jdu spinkat\nfor i in range(zamestnanci):\n  list_zamestnancu.append(f\"zamestnance_{i}\")\n\nreturn list_zamestnancu",
+=======
+        "x": 583.8076072119957,
+        "y": 128.4323939430957
+      },
+      "data": {
+        "label": "New Node"
+      },
+      "code": "pocet_celkovych_zamestnancu = input_value\nlist_zamestnancu = []\n\n# toto by mělo být podle \nfor i in range(zamestnanci):\n  list_zamestnancu.append(f\"zamestnance_{i}\")\n\nreturn list_zamestnancu",
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
       "sourcePosition": "right",
       "targetPosition": "left",
       "measured": {
         "width": 150,
+<<<<<<< HEAD
         "height": 58
       },
       "selected": false,
+=======
+        "height": 40
+      },
+      "selected": true,
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
       "dragging": false
     }
   ],
@@ -118,6 +138,10 @@
   ],
   "tags": [
     "creator-mode",
+<<<<<<< HEAD
     "2026-01-26T18:03:05.963Z"
+=======
+    "2026-01-25T19:05:49.273Z"
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   ]
 }

@@ -14,6 +14,10 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import StupidAI from "../components/StupidAI.jsx";
+<<<<<<< HEAD
+=======
+import Finish from "../components/Finish.jsx"
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
 import CustomEdge from "../components/CustomEdge.jsx";
 import CustomNode from "../components/CustomNode.jsx";
 import InputNode from "../components/InputNode.jsx";
@@ -41,6 +45,10 @@ function Home() {
   const [theme, setTheme] = useState(cookies?.theme?.currTheme || "fire");
 
   const [nextScreen, setNextScren] = useState(false);
+<<<<<<< HEAD
+=======
+  const [showFinish, setShowFinish] = useState(false);
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
   const [showTerm, setShowTerm] = useState(false);
 
   const [input, setInput] = useState(0);
@@ -328,6 +336,20 @@ function Home() {
     <div
       className={`${theme} h-dvh overflow-x-clip overflow-y-hidden w-full max-w-full`}
     >
+<<<<<<< HEAD
+=======
+      <Finish
+        active={showFinish}
+        onClose={() => setShowFinish(false)}
+        userName={userName}
+        startTime={startTime}
+        lessonNumber={currentLessonNumber}
+        totalLessons={TOTAL_LESSONS}
+        nodes={nodes}
+        edges={edges}
+        token={cookies?.session?.token}
+      />
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
       <div className="bg-bg h-dvh w-full max-w-full overflow-hidden">
         <div className="flex w-full max-w-full">
           <Sidebar 
@@ -503,6 +525,13 @@ function Home() {
 		  time={startTime}
 		  token={cookies.session.token}
           lessonNumber={currentLessonNumber}
+<<<<<<< HEAD
+=======
+          isFinalLesson={currentLessonNumber >= TOTAL_LESSONS}
+          onFinalComplete={() => {
+            setShowFinish(true);
+          }}
+>>>>>>> 43072df61d06398cf7ad1d230c1dc407caca5d84
           onLessonComplete={async () => {
             // Load the next lesson after completion
             if (currentLessonNumber < TOTAL_LESSONS) {
