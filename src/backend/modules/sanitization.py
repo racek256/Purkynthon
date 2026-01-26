@@ -46,7 +46,7 @@ def check_code_validity(input: str) -> Tuple[str, bool, int]:
         if len(parts) > 1 and parts[1] not in get_allowed_modules():        
             for word in parts:
                 if not start_and_ends_with_quotes(word) and word.strip() == "import":
-                    return ("import (importing libraries is not allowed)", False, line_num)
+                    return ("import (importing this library isn't allowed)", False, line_num)
     return ("", True, 0)
 
 

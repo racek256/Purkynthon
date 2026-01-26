@@ -1,41 +1,69 @@
 {
-  "name": "Level 5: BMI Kalkulátor",
-  "levelDescription": "Spočítej BMI (Body Mass Index). Vstupem je váha v kilogramech. Výška je fixní 1.75 metrů. Vzorec: váha / (výška * výška). Výsledek zaokrouhli na celé číslo.",
+  "name": "Level 5: Skladník",
+  "levelDescription": "Začínáte mít bordel v databázi a ty máš tu \"poctu\" tento bordel uklidit. Pospojuj bloky a oprav kód tak, aby tvůj kód roztřídil data na kategorie, spojil je do jednoho listu a poslal je do outputu.",
   "nodes": [
     {
       "id": "n1",
       "type": "input",
-      "position": { "x": 100, "y": 200 },
+      "position": {
+        "x": 100,
+        "y": 200
+      },
       "data": {
         "label": "Váha (kg)",
         "input": 70
       },
-      "code": "vaha = {original_input}\nprint(f\"Tvá váha je {vaha} kg\")\nreturn vaha",
+      "code": "list_veci = [\"RTX 3050\", \"Drahé ramky\", \"Protokoly Nexusu\", \"Zelený mimozemšťan\",\n            \"Smluvní listiny\", \"SSD\", \"3D tiskárna\"]\nprint(f\"List věcí: {list_veci[0:2]}...{list_veci[-2:]}\")\nreturn list_veci",
       "sourcePosition": "right",
       "targetPosition": "left",
-      "input": 70
+      "input": 70,
+      "measured": {
+        "width": 150,
+        "height": 50
+      },
+      "selected": false
     },
     {
       "id": "n2",
-      "position": { "x": 400, "y": 200 },
-      "data": { "label": "BMI Kalkulátor" },
-      "code": "# Proměnná 'vaha' obsahuje váhu v kg\nvaha = input_value\n\n# Výška: 1.75 metrů (fixní)\n# Vzorec: váha / (výška * výška)\n# Nezapomeň zaokrouhlit na celé číslo pomocí round()\n\n# TODO: Oprav výpočet BMI\nvyska = 1.75\nbmi = 0\n\nreturn bmi",
+      "position": {
+        "x": 311,
+        "y": 381
+      },
+      "data": {
+        "label": "Třídíč: PC komponenty"
+      },
+      "code": "pc_komponenty = [\"RTX 3050\", \"RTX 4060\", \"Drahé ramky\", \"PSU 650W\", \"SSD\", \"HDD\",\n                \"Kabely\"]\nlist_veci = input_value\n\nroztrideny_list_soucastek = []\n\n# Projdi každou věcí z listu věcí\nfor vec in list_veci:\n  # Pokud je tato věc v pc komponentech\n  if vec in pc_komponenty:\n    # Zařaď ji do roztříděného listu\n    roztrideny_list_soucastek.append(vec)\n\nreturn roztrideny_list_soucastek",
       "sourcePosition": "right",
-      "targetPosition": "left"
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 58
+      },
+      "selected": true,
+      "dragging": false
     },
     {
       "id": "output",
       "type": "output",
-      "position": { "x": 700, "y": 200 },
-      "data": { "label": "Tvé BMI" },
+      "position": {
+        "x": 700,
+        "y": 200
+      },
+      "data": {
+        "label": "Tvé BMI"
+      },
       "code": "# Verifikace: váha / (výška * výška), zaokrouhleno\nbmi = input_value\nvyska = 1.75\nexpected = round(original_input_value / (vyska * vyska))\nprint(f\"Tvůj výsledek: {bmi}\")\nprint(f\"Očekávaná hodnota: {expected}\")\nif expected == bmi:\n    print(1)\nelse:\n    print(0)",
       "sourcePosition": "right",
-      "targetPosition": "left"
+      "targetPosition": "left",
+      "measured": {
+        "width": 150,
+        "height": 40
+      }
     }
   ],
-  "edges": [
-    { "id": "e1-2", "source": "n1", "target": "n2", "animated": true },
-    { "id": "e2-3", "source": "n2", "target": "output", "animated": true }
-  ],
-  "tags": ["zdravi", "bmi", "deleni"]
+  "edges": [],
+  "tags": [
+    "creator-mode",
+    "2026-01-26T20:54:12.094Z"
+  ]
 }
