@@ -49,4 +49,17 @@ class LessonData(BaseModel):
     time: int 
     lesson_id: int
 
+class ThemeChangeRequest(BaseModel):
+    username: str
+    theme: str
+
+class LogoutRequest(BaseModel):
+    username: str
+
+class UserStatusUpdate(BaseModel):
+    username: str
+    logged_in: bool = None
+    points: int = None
+    theme: str = None
+
 
