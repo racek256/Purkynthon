@@ -137,10 +137,15 @@ async def run_graph(request: GraphRequest, authorization: str | None = Header(de
     except Exception as e:
         error_logs = log_capture.getvalue()
         error_message = f"**Error:**\n```\n{str(e)}\n```\n**Logs:**\n```\n{error_logs}\n```"
-        DiscordLogger.send("running", "Code Execution Failed", error_message, "error", request.username)
+        DiscordLogger.send("running", "Code Execution Failed", error_message, "error", username)
+        combined_logs = error_logs
+        if combined_logs:
+            combined_logs = f"{combined_logs}\nError: {str(e)}"
+        else:
+            combined_logs = f"Error: {str(e)}"
         return GraphResponse(
             success=False,
-            logs=log_capture.getvalue(),
+            logs=combined_logs,
             returnValue=str(e)
         )
 
@@ -164,7 +169,7 @@ async def exec_one(request: ExecOnceRequest):
         
         log_message = f"**Code:**\n```python\n{code_str}\n```\n**Logs:**\n```\n{logs_str}\n```\n**Outcome:**\n```\n{outcome_str}\n```"
         
-        DiscordLogger.send("running", "Single Block Execution Completed", log_message, "success", request.username)
+        DiscordLogger.send("running", "Single Block Execution Completed", log_message, "success")
         
         return GraphResponse(
             success=True,
@@ -175,10 +180,15 @@ async def exec_one(request: ExecOnceRequest):
         error_logs = log_capt.getvalue()
         code_str = request.code if request.code else "No code"
         error_message = f"**Code:**\n```python\n{code_str}\n```\n**Error:**\n```\n{str(e)}\n```\n**Logs:**\n```\n{error_logs}\n```"
-        DiscordLogger.send("running", "Single Block Execution Failed", error_message, "error", request.username)
+        DiscordLogger.send("running", "Single Block Execution Failed", error_message, "error")
+        combined_logs = error_logs
+        if combined_logs:
+            combined_logs = f"{combined_logs}\nError: {str(e)}"
+        else:
+            combined_logs = f"Error: {str(e)}"
         return GraphResponse(
             success = False,
-            logs = log_capt.getvalue(),
+            logs = combined_logs,
             returnValue = str(e)
         )
 @app.post("/api/chat")

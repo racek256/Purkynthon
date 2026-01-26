@@ -1,13 +1,13 @@
 {
-  "name": "Level 3: Vláček",
-  "levelDescription": "Tvůj šéf je fanatik na vlaky a nutně potřebuje, abys poskládal následujcí kód za sebe, aby vypadal jako vagóny ve vlaku. Dávej pozor, aby byly bloky kódu spojené ve správném pořadí.",
+  "name": "",
+  "levelDescription": "Tvůj šéf je fanatik na vlaky a nutně potřebuje, abys poskládal následujcí bloky za sebe, jako vagóny ve vlaku. Dávej pozor, aby byly bloky kódu spojené ve správném pořadí.",
   "nodes": [
     {
       "id": "n1",
       "type": "input",
       "position": {
-        "x": -330.4426417509301,
-        "y": 95.60800590623722
+        "x": 315.5414926632505,
+        "y": 447.43865054253206
       },
       "data": {
         "label": "Věta",
@@ -28,8 +28,8 @@
       "id": "output",
       "type": "output",
       "position": {
-        "x": 55.341402115196445,
-        "y": 101.38962396151915
+        "x": 775.3414021151964,
+        "y": 451.38962396151913
       },
       "data": {
         "label": "Output"
@@ -48,8 +48,8 @@
       "id": "node-reason",
       "type": "default",
       "position": {
-        "x": -137.6551994238303,
-        "y": -112.32500235833518
+        "x": 462.18721110362304,
+        "y": 245.2733577638005
       },
       "data": {
         "label": "Důvodovač 6000"
@@ -61,15 +61,15 @@
         "width": 150,
         "height": 40
       },
-      "selected": false,
+      "selected": true,
       "dragging": false
     },
     {
       "id": "node-ender1",
       "type": "default",
       "position": {
-        "x": -142.68348668051487,
-        "y": 17.126484613066637
+        "x": 464.36856820423964,
+        "y": 367.5152003779012
       },
       "data": {
         "label": "Ukončovač vět"
@@ -88,8 +88,8 @@
       "id": "node-ender2",
       "type": "default",
       "position": {
-        "x": -140.1362909212291,
-        "y": -68.56634127252637
+        "x": 462.5899773491447,
+        "y": 286.14816110668886
       },
       "data": {
         "label": "Ukončovač vět"
@@ -108,8 +108,8 @@
       "id": "node-capslock",
       "type": "default",
       "position": {
-        "x": -141.03088804457587,
-        "y": -24.71265252035849
+        "x": 463.13730909725825,
+        "y": 325.67606324447604
       },
       "data": {
         "label": "CapsLockovač VĚT"
@@ -130,11 +130,11 @@
       "source": "n1",
       "target": "output",
       "animated": true,
-      "id": "xy-edge__n1-output"
+      "id": "xy-edge__n1-output",
+      "selected": false
     }
   ],
   "tags": [
-    "creator-mode",
-    "2026-01-25T13:51:20.234Z"
+    "lesson-mode"
   ]
 }
