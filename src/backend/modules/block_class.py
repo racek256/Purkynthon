@@ -25,7 +25,6 @@ class Block:
         self.name = name
         self.id = id
         self.output_memory = output_memory
-        self.executed: bool = False
         code_safety = check_code_validity(code)
         if not code_safety[1]:
             raise self.exception_maker(f"Your code contains code that isn't allowed to be executed: '{code_safety[0]}' on line {code_safety[2]}",
@@ -35,28 +34,26 @@ class Block:
         #     self.code = self.code + "\nreturn 'gg'"
     
     def execute(self) -> Any:
-        if not self.executed:
-            input_safety = self.eval_input_value_safety()
-            if not input_safety[1]:
-                raise self.exception_maker(input_safety[0], "evaluating input safety")
-            
-            output_values = {} 
-            try: 
-                if self.id != "output":
-                    exec(self.code, {"input_value": self.input_values}, output_values)
-                else:
-                    exec(self.code, {"original_input_value": self.output_memory["n1"], "input_value": self.input_values, "full_output_memory": self.output_memory}, output_values)
-            except Exception as e:
-                raise self.exception_maker(f"Your code ran into an error: {e}", "executing")
-            
-            try:
-                out = output_values[get_return_statement_sub_name()]
-            except KeyError:
-                out = None
-            
-            self.output_memory[self.id] = out
-            self.executed = True
-            return out
+        input_safety = self.eval_input_value_safety()
+        if not input_safety[1]:
+            raise self.exception_maker(input_safety[0], "evaluating input safety")
+        
+        output_values = {} 
+        try: 
+            if self.id != "output":
+                exec(self.code, {"input_value": self.input_values}, output_values)
+            else:
+                exec(self.code, {"original_input_value": self.output_memory["n1"], "input_value": self.input_values, "full_output_memory": self.output_memory}, output_values)
+        except Exception as e:
+            raise self.exception_maker(f"Your code ran into an error: {e}", "executing")
+        
+        try:
+            out = output_values[get_return_statement_sub_name()]
+        except KeyError:
+            out = None
+        
+        self.output_memory[self.id] = out
+        return out
 
     def get_output_nodes(self) -> Optional[List[Self]]:
         return self.output_nodes
@@ -115,12 +112,14 @@ def execute_graph(block, global_output_memory: Dict[str, Any]):
     result = block.execute()
     for nxt in block.output_nodes:
         if len(nxt.input_nodes) > 1:
+            print(f"More than one input value for node {nxt.name}")
             input_keys = {node.id for node in nxt.input_nodes}
             for node in nxt.input_nodes:
                 if node.id not in global_output_memory.keys():
                     execute_graph(node, global_output_memory)
             nxt.input_values = {k: v for k, v in global_output_memory.items() if k in input_keys}
         else:
+            print(f"{result} for node {nxt.name}")
             nxt.input_values = result
 
         execute_graph(nxt, global_output_memory)
