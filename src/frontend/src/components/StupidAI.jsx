@@ -20,11 +20,13 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     },
   ]);
   const [currentText, updateText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [cookies] = useCookies(["session"]);
   const token = cookies?.session?.token;
   async function askAI(question) {
     const newChat = [...history, { role: "user", content: question }];
     updateText("");
+    setIsLoading(true);
 
     updateHistory([...newChat, { role: "assistant", content: "" }]);
 
@@ -44,6 +46,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       const msg = err.message || err.detail || "Request failed";
+      setIsLoading(false);
       updateHistory((prev) => {
         const next = [...prev];
         next[next.length - 1] = { role: "assistant", content: msg };
@@ -56,6 +59,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
 
     if (!ct.includes("text/event-stream")) {
       const data = await res.json();
+      setIsLoading(false);
       updateHistory((prev) => {
         const next = [...prev];
         next[next.length - 1] = {
@@ -68,12 +72,14 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
     }
 
     if (!res.body) {
+      setIsLoading(false);
       return;
     }
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
+    let streamingStarted = false;
 
     while (true) {
       const { value, done } = await reader.read();
@@ -87,6 +93,10 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
         if (part.startsWith("data: ")) {
           const payload = JSON.parse(part.slice(6));
           const chunk = payload.message || "";
+          if (!streamingStarted) {
+            setIsLoading(false);
+            streamingStarted = true;
+          }
 
           updateHistory((prev) => {
             const next = [...prev];
@@ -100,6 +110,7 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
         }
       }
     }
+    setIsLoading(false);
   }
   return (
     <div className="flex h-full flex-col items-center overflow-hidden">
@@ -138,6 +149,17 @@ export default function StupidAI({ expanded, setExpanded, isEditor }) {
                   <div key={index}></div>
                 ),
               )}
+              {isLoading ? (
+                <div className="w-full mb-4">
+                  <div className="p-4 rounded-xl text-lg max-w-[80%] bg-ai-assistant-message">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block h-2 w-2 rounded-full bg-text-light animate-pulse" />
+                      <span className="inline-block h-2 w-2 rounded-full bg-text-light animate-pulse" />
+                      <span className="inline-block h-2 w-2 rounded-full bg-text-light animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
 
