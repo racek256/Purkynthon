@@ -2,6 +2,7 @@ from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Any, Dict, List, cast
+from contextlib import asynccontextmanager
 from ollama import ChatResponse, Client
 from modules.block_class import Block, load_blocks_from_json, execute_graph
 from modules.standard_stuff import get_ollama_client_ip, GraphRequest, GraphResponse, ExecOnceRequest, ChatRequest, ChatResponseModel, ThemeChangeRequest, LogoutRequest, UserStatusUpdate
@@ -10,6 +11,8 @@ import io
 import contextlib
 import json
 import jwt
+import signal
+import sys
 from modules.db import router, SECRET_KEY, ALGORITHM
 from modules.discord_logger import DiscordLogger
 from modules.user_tracker import UserTracker
@@ -17,7 +20,23 @@ from modules.discord_bot import DiscordBot
 
 client = Client(host=get_ollama_client_ip())
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    print("Starting Discord bot...")
+    DiscordBot.start()
+    print("Discord bot started successfully")
+    
+    print("Sending test message...")
+    DiscordLogger.send_startup_test("system")
+    
+    yield
+    
+    # Shutdown
+    print("Shutting down, cleaning up resources...")
+    DiscordBot.shutdown()
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(router, prefix="/api/auth", tags=["users"])
 app.add_middleware(
     CORSMiddleware,
@@ -227,13 +246,16 @@ async def update_user_status(data: UserStatusUpdate):
     )
     return {"success": True, "message": "User status updated"}
 
+def signal_handler(sig, frame):
+    """Handle SIGINT and SIGTERM signals"""
+    print("\nReceived shutdown signal, cleaning up...")
+    DiscordBot.shutdown()
+    sys.exit(0)
+
 if __name__ == "__main__":
-    print("Starting Discord bot...")
-    DiscordBot.start()
-    print("Discord bot started successfully")
-    
-    print("Sending test message...")
-    DiscordLogger.send_startup_test("system")
+    # Register signal handlers
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
     
     uvicorn.run(
         "main:app",

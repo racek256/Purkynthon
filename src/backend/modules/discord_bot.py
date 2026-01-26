@@ -3,6 +3,7 @@ from discord.ext import commands
 import json
 import os
 import asyncio
+import sqlite3
 from typing import Dict, Optional
 from datetime import datetime
 import threading
@@ -42,12 +43,23 @@ class DiscordBot:
         @DiscordBot.bot.event
         async def on_ready():
             print(f"Discord bot logged in as {DiscordBot.bot.user}")
+            
+            # List all available guilds
+            print(f"Bot is in {len(DiscordBot.bot.guilds)} guild(s):")
+            for guild in DiscordBot.bot.guilds:
+                print(f"  - {guild.name} (ID: {guild.id})")
+            
             DiscordBot.guild = DiscordBot.bot.get_guild(DiscordBot.guild_id)
             if DiscordBot.guild:
                 print(f"Connected to guild: {DiscordBot.guild.name}")
                 await DiscordBot._load_user_channels()
             else:
                 print(f"Could not find guild with ID {DiscordBot.guild_id}")
+                # Try to use the first available guild
+                if DiscordBot.bot.guilds:
+                    DiscordBot.guild = DiscordBot.bot.guilds[0]
+                    print(f"Using first available guild: {DiscordBot.guild.name} (ID: {DiscordBot.guild.id})")
+                    await DiscordBot._load_user_channels()
             DiscordBot._ready = True
         
         try:
@@ -57,15 +69,42 @@ class DiscordBot:
     
     @staticmethod
     async def _load_user_channels():
-        """Load existing user channels from the guild"""
+        """Load existing user channels from the guild and create missing ones"""
         if not DiscordBot.guild:
             return
         
+        # Load existing channels
         for channel in DiscordBot.guild.text_channels:
             if channel.name.startswith("user-"):
                 username = channel.name[5:]  # Remove "user-" prefix
                 DiscordBot.user_channels[username] = channel
                 print(f"Found existing channel for user: {username}")
+        
+        # Get all users from the database
+        db_path = os.path.join(os.path.dirname(__file__), "..", "db.db")
+        if not os.path.exists(db_path):
+            print("Database file not found, skipping user channel creation")
+            return
+        
+        try:
+            conn = sqlite3.connect(db_path)
+            cur = conn.cursor()
+            cur.execute("SELECT username FROM users")
+            users = cur.fetchall()
+            conn.close()
+            
+            print(f"Found {len(users)} users in database")
+            
+            # Create channels for users that don't have one
+            for user_row in users:
+                username = user_row[0]
+                if username not in DiscordBot.user_channels:
+                    print(f"Creating channel for user: {username}")
+                    await DiscordBot._get_or_create_channel(username)
+            
+            print(f"Channel setup complete. Total channels: {len(DiscordBot.user_channels)}")
+        except Exception as e:
+            print(f"Failed to load users from database: {e}")
     
     @staticmethod
     def _run_bot():
@@ -88,6 +127,21 @@ class DiscordBot:
                 break
             import time
             time.sleep(1)
+    
+    @staticmethod
+    async def _shutdown():
+        """Properly shutdown the bot and close connections"""
+        if DiscordBot.bot:
+            await DiscordBot.bot.close()
+    
+    @staticmethod
+    def shutdown():
+        """Shutdown the Discord bot gracefully"""
+        if DiscordBot._loop and DiscordBot.bot:
+            asyncio.run_coroutine_threadsafe(
+                DiscordBot._shutdown(),
+                DiscordBot._loop
+            ).result(timeout=5)
     
     @staticmethod
     async def _get_or_create_channel(username: str) -> Optional[discord.TextChannel]:
