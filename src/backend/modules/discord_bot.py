@@ -31,12 +31,31 @@ class DiscordBot:
     @staticmethod
     def _load_config():
         """Load bot configuration from JSON file"""
+        from dotenv import load_dotenv
+
+        load_dotenv()
+        env_token = os.getenv("DISCORD_BOT_TOKEN", "").strip()
+        env_guild_id = os.getenv("DISCORD_GUILD_ID", "").strip()
+
+        if env_token:
+            DiscordBot.token = env_token
+        if env_guild_id:
+            try:
+                DiscordBot.guild_id = int(env_guild_id)
+            except ValueError:
+                print(f"Invalid DISCORD_GUILD_ID: {env_guild_id}")
+
+        if DiscordBot.token and DiscordBot.guild_id:
+            return
+
         config_path = os.path.join(os.path.dirname(__file__), "..", "discord_bot_config.json")
         try:
             with open(config_path, "r") as f:
                 config = json.load(f)
-                DiscordBot.token = config.get("bot_token", "")
-                DiscordBot.guild_id = int(config.get("guild_id", "0"))
+                if not DiscordBot.token:
+                    DiscordBot.token = config.get("bot_token", "")
+                if not DiscordBot.guild_id:
+                    DiscordBot.guild_id = int(config.get("guild_id", "0"))
         except Exception as e:
             print(f"Failed to load bot config: {e}")
     
