@@ -6,6 +6,15 @@
     "language": "Jazyk",
     "logout": "Odhlásit se",
     "close": "Zavřít",
+    "endDrive": "Skoncit drive",
+    "endDriveConfirm": {
+      "title": "Ukončit hru předčasně?",
+      "message": "Toto okamžitě ukončí hru a zobrazí ti závěrečnou obrazovku. Pro potvrzení napiš:",
+      "placeholder": "Napiš zde...",
+      "cancel": "Zrušit",
+      "confirm": "Ukončit hru",
+      "errorMessage": "Nesprávný text. Prosím napiš přesně:"
+    },
     "languages": {
       "en": "Angličtina",
       "cs": "Čeština"
