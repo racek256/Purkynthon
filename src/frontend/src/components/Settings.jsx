@@ -35,6 +35,8 @@ export default function Settings({ hide, theme, selectTheme, logout, onEndGame }
     setTimeout(() => setDisplayed(true), 10);
     setTimeout(() => setClosing(true), 150);
     
+    console.log("Settings component mounted - End Drive button should be visible");
+    
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
@@ -129,8 +131,9 @@ export default function Settings({ hide, theme, selectTheme, logout, onEndGame }
           </button>
           
           <button
-            className="absolute bottom-4 left-28 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors"
+            className="absolute bottom-4 left-36 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-md transition-colors font-bold shadow-lg border border-orange-400"
             onClick={handleEndDrive}
+            title="End the game prematurely"
           >
             {t('settings.endDrive')}
           </button>
