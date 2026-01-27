@@ -10,13 +10,13 @@
                 "y": 209.724609375
             },
             "data": {
-                "label": "Váha (kg)",
-                "input": 70
+                "label": "List",
+                "input": "List"
             },
             "code": "list_veci = [\"RTX 3050\", \"Drahé ramky\", \"Protokoly Nexusu\", \"Zelený mimozemšťan\",\n            \"Smluvní listiny\", \"SSD\", \"3D tiskárna\"]\nprint(f\"List věcí: {list_veci[0:2]}...{list_veci[-2:]}\")\nreturn list_veci",
             "sourcePosition": "right",
             "targetPosition": "left",
-            "input": 70,
+            "input": "List",
             "measured": {
                 "width": 150,
                 "height": 50

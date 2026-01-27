@@ -1,0 +1,119 @@
+{
+    "name": "Level 6: AI",
+    "levelDescription": "Tvého šéfa už nebaví poslouchat jeho umělou inteligenci Nexus, jak je na něj pořád naštvaná. Požádal tě tedy o to, abys mu vytvořil generátor hlášek na zlepšení dne. Do outputu zapoj list hlášek i hlášku, kterou vybral náhodný generátor.",
+    "nodes": [
+        {
+            "id": "n1",
+            "type": "input",
+            "position": {
+                "x": 9.875,
+                "y": 117.72460937499997
+            },
+            "data": {
+                "label": "Váha (kg)",
+                "input": 70
+            },
+            "code": "\nreturn 0",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "input": 70,
+            "measured": {
+                "width": 150,
+                "height": 50
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "n2",
+            "position": {
+                "x": 548,
+                "y": 382.00000000000006
+            },
+            "data": {
+                "label": "Vyběrač hlášek"
+            },
+            "code": "hlasky = input_value['node-1769462346079'] # Blok hlášky\ncislo = input_value['node-1769463155063'] # Blok generátoru náhodných čísel\n\n# Z listu hlášek můžeš vybrat jednotlivou hlášku pomocí této syntaxe:\n# hlasky[číslo hlášky (tj. náhodné číslo)]\n\nvybrana_hlaska = \n\nreturn vybrana_hlaska",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "output",
+            "type": "output",
+            "position": {
+                "x": 801,
+                "y": 194
+            },
+            "data": {
+                "label": "Output"
+            },
+            "code": "# Honestly toto se verifikuje vazne na nic, takze proste verime userovi\ntry:\n  hlasky = input_value['node-1769462346079']\n  vybrana_hlaska = input_value[\"n2\"]\nexcept:\n  print(\"Nebyly zapojeny správné bloky\")\n\nprint(f\"Vzkaz tvému šéfovi: {vybrana_hlaska}\")\n\n\nif len(full_output_memory.keys()) >=4:\n  if len(hlasky) > 4:\n    if vybrana_hlaska in hlasky:\n      print(1)\n    else:\n      print(\"Hláška není v listu hlášek.\")\n      print(0)\n  else:\n    print('Musíš mít alespoň 4 hlášky.')\n    print(0)\nelse:\n  print(\"Musiš využít všehny bloky.\")\n  print(0)\n",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769462346079",
+            "type": "default",
+            "position": {
+                "x": 443.70521089155926,
+                "y": 137.73450973473845
+            },
+            "data": {
+                "label": "Hlášky"
+            },
+            "code": "hlasky = []  # Doplň sem hlášky, které bys chtěl, aby tvůj šéf slyšel\n\nreturn ",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769463155063",
+            "type": "default",
+            "position": {
+                "x": 201.52223133608408,
+                "y": 254.26754781085424
+            },
+            "data": {
+                "label": "Generátor náhodných čísel"
+            },
+            "code": "import random  # Importování knihovny na generování náhodných čísel\n\n# Pomocí random.randint(mincislo, maxcislo) vygeneruj náhodné číslo a zapoj ho do bloku výběru hlášek.\n# Pozor ať není maximalní hodnota náhodného čísla vyšší než počet hlášek v listu.\ncislo = \n\nreturn cislo",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 58
+            },
+            "selected": false,
+            "dragging": false
+        }
+    ],
+    "edges": [
+        {
+            "source": "n1",
+            "target": "node-1769462346079",
+            "animated": true,
+            "id": "xy-edge__n1-node-1769462346079"
+        }
+    ],
+    "tags": [
+        "creator-mode",
+        "2026-01-26T23:59:20.496Z"
+    ]
+}
