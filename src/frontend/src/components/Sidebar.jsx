@@ -5,7 +5,7 @@ import Settings from "./Settings.jsx";
 import { useTranslation } from "react-i18next";
 import { calculateProgressScore, normalizeScore } from "../utils/score.js";
 
-export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, userName = "User", isAdmin = false, onPrevLesson, onNextLesson, totalLessons = 1, score, onEndGame }) {
+export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, userName = "User", isAdmin = false, onPrevLesson, onNextLesson, totalLessons = 1, score }) {
   const { t } = useTranslation();
   const [showSettings, setShowSettings] = useState(false);
   const displayScore = typeof score === "number"
@@ -74,7 +74,6 @@ export default function Sidebar({ selectTheme, theme, logout, lessonNumber = 1, 
           hide={() => setShowSettings(false)} 
           theme={theme}
           selectTheme={selectTheme}
-          onEndGame={onEndGame}
         />
       )}
     </div>
