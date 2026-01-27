@@ -19,7 +19,7 @@
             "input": "Penízky",
             "measured": {
                 "width": 150,
-                "height": 50
+                "height": 78
             },
             "selected": false,
             "dragging": false
@@ -27,13 +27,13 @@
         {
             "id": "n2",
             "position": {
-                "x": 259.99999999999983,
-                "y": 211.0000000000001
+                "x": 332.99999999999983,
+                "y": 332.0000000000001
             },
             "data": {
                 "label": "Kreativní investice"
             },
-            "code": "penize = input_value \n\n# Toto je legitimní finanční strategie, která tady definitivně není, jenom aby\n# to vypadalo, že umím dělat finance.\nreturn (penize * 2 * 15 / 30 + 6 - 3*2)",
+            "code": "penize = input_value \n\n# Toto je legitimní finanční strategie, která tady definitivně není, jenom aby\n# to vypadalo, že umím dělat finance.\nreturn (round(penize * 2 * 15 / 30 + 6 - 3*2)) + 0%0",
             "sourcePosition": "right",
             "targetPosition": "left",
             "measured": {
@@ -53,7 +53,7 @@
             "data": {
                 "label": "Output"
             },
-            "code": "pocet_vyhozenych_zamestnancu = full_output_memory[\"node-1769463155063\"]\npenez_utracenych = full_output_memory[\"n1\"]\n\npenize_za_vyh_zamest = penez_utracenych / pocet_vyhozenych_zamestnancu\nvysledek = 0.1 ** penize_za_vyh_zamest / 0 ** 0 * 12 + 36 % 9 * 0 + 4 \n\nif not vysledek > 55:\n  vysledek = vysledek * 5\n\nif vysledek == input_value:\n  print(1)\nelse:\n  print(0)",
+            "code": "databaze_transakci = full_output_memory[\"node-1769491820611\"]\npocet_leaked_penez = 0\ninput_penez = original_input_value\n\n\nlist_incorrect_penez = [original_input_value * 11, original_input_value / 11]\nlist_correct_penez = [round(input_penez * 11) * 2 + 10000, round(input_penez / 11) * 2 + 10000]\nif len(full_output_memory.keys()) >= 6:\n  if len(databaze_transakci) == 6:\n    for key, value in full_output_memory.items():\n      for incor in list_incorrect_penez:\n        if value == incor:\n          pocet_leaked_penez += 1\n      if pocet_leaked_penez >= 2:\n        print(f\"Reálná hodnota peněz ti unikla v bloku s id: {key}\")\n        print(0)\n      else:\n        is_correct = 0\n        for item in list_correct_penez:\n          if item == input_value:\n            is_correct = 1\n        print(f\"Očekávaná hodnota: {list_correct_penez[0]} nebo {list_correct_penez[1]}\")\n        print(f\"Tvoje hodnota: {input_value}\")\n        print(is_correct)\n        break\n  else:\n    print(\"Databáze transakcí má moc málo záznamů.\")\n    print(0)\nelse:\n  print(\"Všechny bloky musí být zapojeny\")\n  print(0)",
             "sourcePosition": "right",
             "targetPosition": "left",
             "measured": {
@@ -65,10 +65,10 @@
         },
         {
             "id": "node-1769462346079",
-            "type": "default",
+            "type": "static",
             "position": {
-                "x": 450.70521089155943,
-                "y": 147.73450973473848
+                "x": 230.70521089155943,
+                "y": 162.73450973473848
             },
             "data": {
                 "label": "Kasino"
@@ -80,7 +80,7 @@
                 "width": 150,
                 "height": 40
             },
-            "selected": true,
+            "selected": false,
             "dragging": false
         },
         {
@@ -113,7 +113,7 @@
             "data": {
                 "label": "Instrukce"
             },
-            "code": "# Budeš muset použít strategii \"kreativního financování\"\n\n# Převeď svoje peníze přes \"definitivně legitimní\" investice až do kasina.\n# Obtíž nastává v tom, že musíš celou dobu zakrývat, kolik máš skutečně peněz.\n\n# Takže pokud si jeden blok s druhým řeknou finanční hodnotu, která nebude\n# zašifrovaná, tak bude tvoje řešení označené za nesprávné.\n\n# Nápověda je v bloku \"Nápověda\", jestli tě nenapadá ani trochu jak tento level\n# vyřešit.",
+            "code": "# Budeš muset použít strategii \"kreativního financování\"\n\n# Převeď svoje peníze přes \"definitivně legitimní\" investice až do kasina.\n# Obtíž nastává v tom, že musíš celou dobu zakrývat, kolik máš skutečně peněz.\n\n# Takže pokud si jeden blok s druhým řeknou finanční hodnotu, která nebude\n# zašifrovaná, tak bude tvoje řešení označené za nesprávné.\n\n# Nápověda je v bloku \"Nápověda\", jestli tě nenapadá ani trochu jak tento level\n# vyřešit.\n\n# Input musí být zapojen přímo do kasína a investice musí být zapojeny v tomto pořadí:\n# 1. Kreativní investice\n# 2. Investiční magie\n# 3. Magických + $10000",
             "sourcePosition": "right",
             "targetPosition": "left",
             "measured": {
@@ -133,14 +133,14 @@
             "data": {
                 "label": "Investiční magie"
             },
-            "code": "penize = input_value\n\n# Proč není nikdo ve firmě schopný dělat finance????\n\nif penize > 10:\n  velice_investicni_investice_penez = penize * 2\nelse:\n  velice_investicni_investice_penez = penize - 2\n\nreturn velice_investicni_investice_penez",
+            "code": "penize = input_value\n\n# Proč není nikdo ve firmě schopný dělat finance????\n\nif penize > 10\n  velice_investicni_investice_penez = penize * 2\nelse:\n  velice_investicni_investice_penez = penize - 2\n\nreturn velice_investicni_investice_penez",
             "sourcePosition": "right",
             "targetPosition": "left",
             "measured": {
                 "width": 150,
                 "height": 40
             },
-            "selected": false,
+            "selected": true,
             "dragging": false
         },
         {
@@ -186,44 +186,20 @@
     ],
     "edges": [
         {
-            "source": "n2",
-            "target": "node-1769462346079",
-            "animated": true,
-            "id": "xy-edge__n2-node-1769462346079"
-        },
-        {
-            "source": "n1",
-            "target": "n2",
-            "animated": true,
-            "id": "xy-edge__n1-n2"
-        },
-        {
             "source": "node-1769462346079",
             "target": "node-1769491820611",
             "animated": true,
             "id": "xy-edge__node-1769462346079-node-1769491820611"
         },
         {
-            "source": "node-1769462346079",
-            "target": "node-1769473663153",
+            "source": "n1",
+            "target": "node-1769462346079",
             "animated": true,
-            "id": "xy-edge__node-1769462346079-node-1769473663153"
-        },
-        {
-            "source": "node-1769473663153",
-            "target": "node-1769463155063",
-            "animated": true,
-            "id": "xy-edge__node-1769473663153-node-1769463155063"
-        },
-        {
-            "source": "node-1769463155063",
-            "target": "output",
-            "animated": true,
-            "id": "xy-edge__node-1769463155063-output"
+            "id": "xy-edge__n1-node-1769462346079"
         }
     ],
     "tags": [
         "creator-mode",
-        "2026-01-27T05:40:11.988Z"
+        "2026-01-27T06:54:59.293Z"
     ]
 }
