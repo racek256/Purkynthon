@@ -97,7 +97,7 @@ async def get_user(user: LoginData):
         if password_verified:
             print("generating JWT")
             jwt_token = create_access_token(user_data[0], user_data[1])
-            DiscordLogger.send("login", "User Login Success", f"User '{user.username}' logged in successfully", "success")
+            DiscordLogger.send("login", "User Login Success", f"User '{user.username}' logged in successfully", "success", user.username)
             
             # Get user score for tracker
             conn = sqlite3.connect(DB_FILE)
