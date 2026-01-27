@@ -1,10 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
-export default function Settings({ hide, theme, selectTheme, logout }) {
+export default function Settings({ hide, theme, selectTheme, logout, onEndGame }) {
   const { t, i18n } = useTranslation();
   const [displayed, setDisplayed] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [confirmError, setConfirmError] = useState(false);
 
   // Get current language from i18n
   const [language, setLanguage] = useState(i18n.language);
@@ -32,14 +35,40 @@ export default function Settings({ hide, theme, selectTheme, logout }) {
     setTimeout(() => setDisplayed(true), 10);
     setTimeout(() => setClosing(true), 150);
     
+    console.log("Settings component mounted - End Drive button should be visible");
+    
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
   const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && !showConfirmDialog) {
       hideScreen();
     }
+  };
+
+  const handleEndDrive = () => {
+    setShowConfirmDialog(true);
+    setConfirmText("");
+    setConfirmError(false);
+  };
+
+  const handleConfirmEndGame = () => {
+    if (confirmText === "Purkiáda") {
+      setShowConfirmDialog(false);
+      hideScreen();
+      if (onEndGame) {
+        onEndGame();
+      }
+    } else {
+      setConfirmError(true);
+    }
+  };
+
+  const handleCancelEndGame = () => {
+    setShowConfirmDialog(false);
+    setConfirmText("");
+    setConfirmError(false);
   };
 
   return (
@@ -102,12 +131,69 @@ export default function Settings({ hide, theme, selectTheme, logout }) {
           </button>
           
           <button
+            className="absolute bottom-4 left-36 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-md transition-colors font-bold shadow-lg border border-orange-400"
+            onClick={handleEndDrive}
+            title="End the game prematurely"
+          >
+            {t('settings.endDrive')}
+          </button>
+          
+          <button
             className="absolute bottom-4 right-4 bg-button px-6 py-2 rounded-md hover:bg-button-hover"
             onClick={hideScreen}
           >
             {t('settings.close')}
           </button>
         </div>
+
+        {/* Confirmation Dialog */}
+        {showConfirmDialog && (
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] bg-bg border-2 border-orange-500 rounded-xl p-6 shadow-2xl z-10">
+            <h3 className="text-xl font-bold mb-4 text-white">{t('settings.endDriveConfirm.title')}</h3>
+            <p className="text-white mb-2">{t('settings.endDriveConfirm.message')}</p>
+            <p className="text-orange-400 font-bold text-lg mb-4">Purkiáda</p>
+            
+            <input
+              type="text"
+              value={confirmText}
+              onChange={(e) => {
+                setConfirmText(e.target.value);
+                setConfirmError(false);
+              }}
+              placeholder={t('settings.endDriveConfirm.placeholder')}
+              className="w-full bg-sidebar-theme-selector text-white p-3 rounded-lg mb-2 border border-gray-600 focus:border-orange-500 focus:outline-none"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleConfirmEndGame();
+                } else if (e.key === "Escape") {
+                  handleCancelEndGame();
+                }
+              }}
+            />
+            
+            {confirmError && (
+              <p className="text-red-500 text-sm mb-4">
+                {t('settings.endDriveConfirm.errorMessage')} <span className="font-bold">Purkiáda</span>
+              </p>
+            )}
+            
+            <div className="flex gap-3 mt-4">
+              <button
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors"
+                onClick={handleCancelEndGame}
+              >
+                {t('settings.endDriveConfirm.cancel')}
+              </button>
+              <button
+                className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition-colors"
+                onClick={handleConfirmEndGame}
+              >
+                {t('settings.endDriveConfirm.confirm')}
+              </button>
+            </div>
+          </div>
+        )}
     </div>
   );
 }

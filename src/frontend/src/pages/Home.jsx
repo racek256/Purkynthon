@@ -67,6 +67,11 @@ function Home() {
     navigate("/login");
   }
 
+  const handleEndGame = useCallback(() => {
+    console.log("Ending game prematurely");
+    setShowFinish(true);
+  }, []);
+
   // verify login
   const refreshUserScore = useCallback(async () => {
     if (!cookies?.session?.token) return;
@@ -382,6 +387,7 @@ function Home() {
             onNextLesson={goToNextLesson}
             totalLessons={totalLessons}
             score={userScore}
+            onEndGame={handleEndGame}
           />
           <div className="flex flex-col h-dvh w-full min-w-0">
             <Navbar

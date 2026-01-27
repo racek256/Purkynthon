@@ -6,6 +6,15 @@
     "language": "Language",
     "logout": "Logout",
     "close": "Close",
+    "endDrive": "End Drive",
+    "endDriveConfirm": {
+      "title": "End Game Prematurely?",
+      "message": "This will finish the game immediately and show you the end screen. To confirm, please type:",
+      "placeholder": "Type here...",
+      "cancel": "Cancel",
+      "confirm": "End Game",
+      "errorMessage": "Incorrect text. Please type exactly:"
+    },
     "languages": {
       "en": "English",
       "cs": "Czech"

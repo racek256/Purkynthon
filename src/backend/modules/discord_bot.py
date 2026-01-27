@@ -306,10 +306,11 @@ class DiscordBot:
     @staticmethod
     async def _update_channel_description(username: str):
         """Update channel topic/description with user stats"""
-        if username not in DiscordBot.user_channels:
+        slug = DiscordBot._username_to_channel(username)
+        if slug not in DiscordBot.user_channels:
             return
         
-        channel = DiscordBot.user_channels[username]
+        channel = DiscordBot.user_channels[slug]
         
         # Get user stats
         stats = DiscordBot._get_user_stats_from_db(username)
@@ -317,18 +318,18 @@ class DiscordBot:
             return
         
         # Check if user is logged in (from user_stats cache)
-        logged_in_status = "🟢 Online" if DiscordBot.user_stats.get(username, {}).get("logged_in", False) else "🔴 Offline"
+        logged_in_status = "Online" if DiscordBot.user_stats.get(username, {}).get("logged_in", False) else "Offline"
         theme = DiscordBot.user_stats.get(username, {}).get("theme", "Unknown")
         
         # Build description
         description = (
-            f"📊 Activity logs for {username}\n"
-            f"{logged_in_status}\n"
-            f"🎯 Points: {stats['score']}\n"
-            f"📚 Level: {stats['level']}\n"
-            f"✅ Lessons Finished: {stats['lessons_finished']}\n"
-            f"🎨 Theme: {theme}\n"
-            f"⏰ Updated: {stats['last_updated']}"
+            f"Activity logs for {username} | "
+            f"Status: {logged_in_status} | "
+            f"Points: {stats['score']} | "
+            f"Level: {stats['level']} | "
+            f"Lessons Finished: {stats['lessons_finished']} | "
+            f"Theme: {theme} | "
+            f"Updated: {stats['last_updated']}"
         )
         
         try:
