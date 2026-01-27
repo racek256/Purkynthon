@@ -1,0 +1,171 @@
+{
+    "name": "Level 7: Porcelán",
+    "levelDescription": "V kódu lidí, kteří už byli nahrazeni umělou inteligencí se vyskytují errory. Kvůli těmto errorů, ztrácí tvůj šéf hromadu peněz. Vyslal tě z jeho kanceláře se slovy \"Oprav to, nebo tady KONČÍŠ!\". Tvým úkolem je opravit chyby v kódu, aniž by jsi ovlivnil výsledky výpočtu. (Odebírání operací, jako je dělení nulou je povolené)",
+    "nodes": [
+        {
+            "id": "n1",
+            "type": "input",
+            "position": {
+                "x": 9.875,
+                "y": 117.72460937499997
+            },
+            "data": {
+                "label": "Váha (kg)",
+                "input": 70
+            },
+            "code": "import random\nmoney = random.randint(25506, 466465045)\nprint(f\"Počet peněz utracených na Nexus AI: ${money}\")\nreturn money",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "input": 70,
+            "measured": {
+                "width": 150,
+                "height": 50
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "n2",
+            "position": {
+                "x": 595,
+                "y": 57.99999999999993
+            },
+            "data": {
+                "label": "Magický vzoreček"
+            },
+            "code": "penize_za_vyh_zamest = input_value # Peníze na AI za vyhozeného zaměstnance\n\n# Magický vzoreček, který vždy defintivně funguje\nreturn 0.1 ** penize_za_vyh_zamest / 0 ** 0 / 0 * 12 + 36 % 9 * 0 + 4",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": true,
+            "dragging": false
+        },
+        {
+            "id": "output",
+            "type": "output",
+            "position": {
+                "x": 894,
+                "y": 218
+            },
+            "data": {
+                "label": "Output"
+            },
+            "code": "pocet_vyhozenych_zamestnancu = full_output_memory[\"node-1769463155063\"]\npenez_utracenych = full_output_memory[\"n1\"]\n\npenize_za_vyh_zamest = penez_utracenych / pocet_vyhozenych_zamestnancu\nvysledek = 0.1 ** penize_za_vyh_zamest / 0 ** 0 * 12 + 36 % 9 * 0 + 4 \n\nif not vysledek > 55:\n  vysledek = vysledek * 5\n\nif vysledek == input_value:\n  print(1)\nelse:\n  print(0)",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769462346079",
+            "type": "default",
+            "position": {
+                "x": 345.70521089155926,
+                "y": 156.73450973473848
+            },
+            "data": {
+                "label": "Peníze na AI za vyhozeného zaměstnance"
+            },
+            "code": "# Vypočítá utracené peníze za AI pro každého vyhozeného zaměstnance\npocet_vyhozenych_zamestnancu = input_value[\"node-1769463155063\"]\npenez_utracenych = input_value[\"n1\"]\n\nreturn penez_utracenych / pocetvyhozenychzamestnancu",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 76
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769463155063",
+            "type": "default",
+            "position": {
+                "x": 26.522231336084047,
+                "y": 282.26754781085424
+            },
+            "data": {
+                "label": "Počet vyhozených zaměstnanců"
+            },
+            "code": "return 259 # Počet zaměstnanců, co zde kvůli Nexus AI už nepracují",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 58
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769473430857",
+            "type": "default",
+            "position": {
+                "x": 26.863198223004034,
+                "y": 457.88297858981235
+            },
+            "data": {
+                "label": "Nápověda"
+            },
+            "code": "# Při odstraňování dělení nulou vždy odstraň pouze \"/ 0\"\n\n# Dělení se může schovávat i pod jinými symboly než je \"/\"",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769473663153",
+            "type": "default",
+            "position": {
+                "x": 771.9933887086889,
+                "y": 417.5272761546925
+            },
+            "data": {
+                "label": "Bagetová magie"
+            },
+            "code": "vysledek_magic_vzorecku = input_value\n\n# Porovnáme magií s cenou baget na Purkyňce\n\nif vysledek_magic_vzorecku > 55 Kč:\n  finalni_vysledek = vysledek_magic_vzorecku + 0%0\nelse:\n  finalni_vysledek = vysledek_magic_vzorecku * 5\n\n\nreturn finalni_vysledek",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        }
+    ],
+    "edges": [
+        {
+            "source": "n1",
+            "target": "node-1769462346079",
+            "animated": true,
+            "id": "xy-edge__n1-node-1769462346079"
+        },
+        {
+            "source": "node-1769463155063",
+            "target": "node-1769462346079",
+            "animated": true,
+            "id": "xy-edge__node-1769463155063-node-1769462346079"
+        },
+        {
+            "source": "node-1769473663153",
+            "target": "output",
+            "animated": true,
+            "id": "xy-edge__node-1769473663153-output"
+        }
+    ],
+    "tags": [
+        "creator-mode",
+        "2026-01-27T00:40:28.035Z"
+    ]
+}

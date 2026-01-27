@@ -1,109 +1,136 @@
 {
-  "name": "Level 5: Skladník",
-  "levelDescription": "Začínáte mít bordel v databázi a ty máš tu \"poctu\" tento bordel uklidit. Pospojuj bloky a oprav kód tak, aby tvůj kód roztřídil data na kategorie, spojil je do jednoho listu a poslal je do outputu.",
-  "nodes": [
-    {
-      "id": "n1",
-      "type": "input",
-      "position": {
-        "x": 100,
-        "y": 200
-      },
-      "data": {
-        "label": "Váha (kg)",
-        "input": 70
-      },
-      "code": "list_veci = [\"RTX 3050\", \"Drahé ramky\", \"Protokoly Nexusu\", \"Zelený mimozemšťan\",\n            \"Smluvní listiny\", \"SSD\", \"3D tiskárna\"]\nprint(f\"List věcí: {list_veci[0:2]}...{list_veci[-2:]}\")\nreturn list_veci",
-      "sourcePosition": "right",
-      "targetPosition": "left",
-      "input": 70,
-      "measured": {
-        "width": 150,
-        "height": 50
-      },
-      "selected": false
-    },
-    {
-      "id": "n2",
-      "position": {
-        "x": 295,
-        "y": 255
-      },
-      "data": {
-        "label": "Třídíč: PC komponenty"
-      },
-      "code": "pc_komponenty = [\"RTX 3050\", \"RTX 4060\", \"Drahé ramky\", \"PSU 650W\", \"SSD\", \"HDD\",\n                \"Kabely\"]\nlist_veci = input_value\n\nroztrideny_list_soucastek = []\n\n# Projdi každou věcí z listu věcí\nfor vec in list_veci:\n  # Pokud je tato věc v pc komponentech\n  if vec in pc_komponenty:\n    # Zařaď ji do roztříděného listu\n    roztrideny_list_soucastek.append(vec)\n\nreturn roztrideny_list_soucastek",
-      "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 58
-      },
-      "selected": false,
-      "dragging": false
-    },
-    {
-      "id": "output",
-      "type": "output",
-      "position": {
-        "x": 700,
-        "y": 200
-      },
-      "data": {
-        "label": "Tvé BMI"
-      },
-      "code": "# Verifikace: váha / (výška * výška), zaokrouhleno\nbmi = input_value\nvyska = 1.75\nexpected = round(original_input_value / (vyska * vyska))\nprint(f\"Tvůj výsledek: {bmi}\")\nprint(f\"Očekávaná hodnota: {expected}\")\nif expected == bmi:\n    print(1)\nelse:\n    print(0)",
-      "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      }
-    },
-    {
-      "id": "node-1769462346079",
-      "type": "default",
-      "position": {
-        "x": 296.7052108915592,
-        "y": 166.73450973473845
-      },
-      "data": {
-        "label": "Třídič: Dokumenty"
-      },
-      "code": "dokumenty = [\"Protokoly Nexusu\", \"Listina vyhozených zaměstnanců\",\n             \"Smluvní listiny\", \"Účtenky z McDonalds\"]\nlist_veci = input_value\n\nroztrideny_list_dokumentu = []\n\n# Projdi každou věcí z listu věcí\nfor vec in list_veci:\n  # Pokud je tato věc v pc komponentech\n  if vec in pc_komponenty:\n    # Zařaď ji do roztříděného listu\n    roztrideny_list_dokumentu.append(vec)\n\nreturn roztrideny_list_dokumentu",
-      "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      },
-      "selected": false,
-      "dragging": false
-    },
-    {
-      "id": "node-1769463155063",
-      "type": "default",
-      "position": {
-        "x": 475.52223133608413,
-        "y": 211.26754781085424
-      },
-      "data": {
-        "label": "Třídíč: zbytek"
-      },
-      "code": "# Write your code here\n\nreturn None",
-      "sourcePosition": "right",
-      "targetPosition": "left",
-      "measured": {
-        "width": 150,
-        "height": 40
-      },
-      "selected": true,
-      "dragging": false
-    }
-  ],
-  "edges": [],
-  "tags": [
-    "creator-mode",
-    "2026-01-26T21:43:29.987Z"
-  ]
+    "name": "Level 5: Skladník",
+    "levelDescription": "Začínáte mít bordel v databázi a ty máš tu \"poctu\" tento bordel uklidit. Pospojuj bloky a oprav kód tak, aby tvůj kód roztřídil data na kategorie, spojil je do jednoho listu a poslal je do outputu.",
+    "nodes": [
+        {
+            "id": "n1",
+            "type": "input",
+            "position": {
+                "x": 81.875,
+                "y": 209.724609375
+            },
+            "data": {
+                "label": "List",
+                "input": "List"
+            },
+            "code": "list_veci = [\"RTX 3050\", \"Drahé ramky\", \"Protokoly Nexusu\", \"Zelený mimozemšťan\",\n            \"Smluvní listiny\", \"SSD\", \"3D tiskárna\"]\nprint(f\"List věcí: {list_veci[0:2]}...{list_veci[-2:]}\")\nreturn list_veci",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "input": "List",
+            "measured": {
+                "width": 150,
+                "height": 50
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "n2",
+            "position": {
+                "x": 312,
+                "y": 268
+            },
+            "data": {
+                "label": "Třídíč: PC komponenty"
+            },
+            "code": "\npc_komponenty = [\"RTX 3050\", \"RTX 4060\", \"Drahé ramky\", \"PSU 650W\", \"SSD\", \"HDD\",\n                \"Kabely\"]\nlist_veci = input_value\n\nroztrideny_list_soucastek = []\n\n# Projdi každou věcí z listu věcí\nfor vec in list_veci:\n  # Pokud je tato věc v pc komponentech\n  if vec in pc_komponenty:\n    # Zařaď ji do roztříděného listu\n    roztrideny_list_soucastek.append(vec)\n\nreturn roztrideny_list_soucastek",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 58
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "output",
+            "type": "output",
+            "position": {
+                "x": 700,
+                "y": 200
+            },
+            "data": {
+                "label": "Output"
+            },
+            "code": "# Static, protoze uz je moc pozde xd\n\ndict_correct = {'listiny': ['Protokoly Nexusu', 'Smluvní listiny'], 'soucastky': ['RTX 3050', 'Drahé ramky', 'SSD'], 'zbytky': ['Zelený mimozemšťan', '3D tiskárna']}\n\nprint(f\"Očekávaná hodnota: [listiny: {dict_correct['listiny'][1]}..., soucastky: {dict_correct['soucastky'][1]}..., zbytky: {dict_correct['zbytky'][1]}...]\")\nprint(f\"Tvůj výsledek: [listiny: {input_value['listiny'][1]}..., soucastky: {input_value['soucastky'][1]}..., zbytky: {input_value['zbytky'][1]}...]\")\nif len(full_output_memory.keys()) >= 4:\n    if input_value == dict_correct:\n        print(1)\n    else:\n        print(0)\nelse:\n    print(\"Všechny bloky musí být zapojeny\")\n    print(0)\n",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false
+        },
+        {
+            "id": "node-1769462346079",
+            "type": "default",
+            "position": {
+                "x": 282.7052108915592,
+                "y": 129.73450973473845
+            },
+            "data": {
+                "label": "Třídič: Dokumenty"
+            },
+            "code": "\ndokumenty = [\"Protokoly Nexusu\", \"Listina vyhozených zaměstnanců\",\n             \"Smluvní listiny\", \"Účtenky z McDonalds\"]\nlist_veci = input_value[\"n1\"]\n\nroztrideny_list_dokumentu = []\n\n# Projdi každou věcí z listu věcí\nfor vec in list_veci:\n  # Pokud je tato věc v pc komponentech\n  if not vec in dokumenty:\n    # Zařaď ji do roztříděného listu\n    roztrideny_list_dokumentu.append(vec)\n\nreturn roztrideny_list_dokumentu",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769463155063",
+            "type": "default",
+            "position": {
+                "x": 475.52223133608413,
+                "y": 211.26754781085424
+            },
+            "data": {
+                "label": "Třídíč: zbytek"
+            },
+            "code": "listiny = input_value[\"node-1769462346079\"]\nsoucastky = input_value[\"n2\"]\ncelkovy_list = input_value[\"n1\"]\n\n# Odečteme od listu se všemi věcmi listy, které už jsme protřídili.\n# Takže nám zbydou jenom nevytříděné věci\nzbytky = list(set(celkovy_list) - set(listiny) - set(soucastky))\n\nreturn {\"listiny\": listiny, \"soucastky\": soucastky, \"zbytky\": zbytky}",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        }
+    ],
+    "edges": [
+        {
+            "source": "n2",
+            "target": "node-1769463155063",
+            "animated": true,
+            "id": "xy-edge__n2-node-1769463155063"
+        },
+        {
+            "source": "n1",
+            "target": "node-1769463155063",
+            "animated": true,
+            "id": "xy-edge__n1-node-1769463155063"
+        },
+        {
+            "source": "n1",
+            "target": "node-1769462346079",
+            "animated": true,
+            "id": "xy-edge__n1-node-1769462346079"
+        },
+        {
+            "source": "node-1769463155063",
+            "target": "output",
+            "animated": true,
+            "id": "xy-edge__node-1769463155063-output"
+        }
+    ],
+    "tags": [
+        "creator-mode",
+        "2026-01-26T23:21:31.430Z"
+    ]
 }
