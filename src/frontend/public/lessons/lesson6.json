@@ -11,12 +11,12 @@
             },
             "data": {
                 "label": "Váha (kg)",
-                "input": 70
+                "input": "Start"
             },
             "code": "\nreturn 0",
             "sourcePosition": "right",
             "targetPosition": "left",
-            "input": 70,
+            "input": "Start",
             "measured": {
                 "width": 150,
                 "height": 50
