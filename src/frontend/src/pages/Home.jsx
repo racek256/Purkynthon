@@ -290,11 +290,13 @@ function Home() {
   const nodeTypes = creatorMode
     ? {
         default: EditableNode,
+        staticNode: CustomNode,
         input: InputNode,
         output: EditableNode,
       }
     : {
         default: CustomNode,
+        staticNode: CustomNode,
         input: InputNode,
         output: CustomNode,
       };
@@ -309,11 +311,17 @@ function Home() {
         ...node,
         data: { ...node.data, onLabelChange: updateNodeLabel },
       }))
-    : filteredNodesForDisplay.map((node) => ({
-        ...node,
-        // Make input/output nodes non-selectable for normal users
-        selectable: node.type !== "input" && node.type !== "output",
-      }));
+    : filteredNodesForDisplay.map((node) => {
+        const normalizedType = node.type?.toLowerCase();
+        return {
+          ...node,
+          // Make input/output/static nodes non-selectable for normal users
+          selectable:
+            normalizedType !== "input" &&
+            normalizedType !== "output" &&
+            normalizedType !== "staticnode",
+        };
+      });
 
   const addBlankNode = () => {
     const newNode = {
@@ -503,8 +511,10 @@ function Home() {
                   className={`transition-all duration-300 ease-in-out ${expanded ? "flex-[0.5]" : "flex-1"} overflow-hidden`}
                 >
                   {selectedNode &&
-                  selectedNode.type != "input" | creatorMode &&
-                  selectedNode.type != "output"  | creatorMode ? (
+                  (creatorMode ||
+                    !["input", "staticnode", "output"].includes(
+                      selectedNode.type?.toLowerCase(),
+                    )) ? (
                     <CodeEditor
                       value={selectedNode.code || ""}
                       title={selectedNode.data?.label || "Code Editor"}

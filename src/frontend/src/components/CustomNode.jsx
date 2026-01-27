@@ -1,10 +1,13 @@
 import { Position, Handle } from "@xyflow/react";
 
-export default function CustomNode(data) {
+export default function CustomNode({ data, type }) {
+  const normalizedType = type?.toLowerCase();
   return (
     <div className="custom-node">
-      <div>{data.data.label}</div>
-      {(data.type == "default") | (data.type == "input") ? (
+      <div>{data.label}</div>
+      {normalizedType == "default" ||
+      normalizedType == "staticnode" ||
+      normalizedType == "input" ? (
         <Handle
           style={{
             width: "1em",
@@ -16,8 +19,9 @@ export default function CustomNode(data) {
       ) : (
         <div />
       )}
-
-      {(data.type == "default") | (data.type == "output") ? (
+      {normalizedType == "default" ||
+      normalizedType == "staticnode" ||
+      normalizedType == "output" ? (
         <Handle
           style={{
             width: "1em",
