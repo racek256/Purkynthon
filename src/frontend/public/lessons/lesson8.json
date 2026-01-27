@@ -1,0 +1,229 @@
+{
+    "name": "Level 8: Finanční poradce za všechny peníze",
+    "levelDescription": "Tvůj šéf nahradil finanční managment jeho firmy za AI. Po tom, co AI koupila 8562 mikrovlnek z důvodu \"kdyby nějaká přestala fungovat\", si tvůj šéf uvědomil, že takto to nepůjde. Nyní spravuješ finance firmy ty, ovšem začínáš mít tušení, že jsi na tom hůř jak ta AI. Instrukce ti zanechal poslední člověk, co zde byl před tebou, ve bloku \"Instrukce\"",
+    "nodes": [
+        {
+            "id": "n1",
+            "type": "input",
+            "position": {
+                "x": 9.875,
+                "y": 117.72460937499997
+            },
+            "data": {
+                "label": "Váha (kg)",
+                "input": "Penízky"
+            },
+            "code": "import random\nmoney = random.randint(82502, 46646504655)\nprint(f\"Bylo ti dáno na starosti ${money} dollarů.\")\nreturn money",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "input": "Penízky",
+            "measured": {
+                "width": 150,
+                "height": 50
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "n2",
+            "position": {
+                "x": 259.99999999999983,
+                "y": 211.0000000000001
+            },
+            "data": {
+                "label": "Kreativní investice"
+            },
+            "code": "penize = input_value \n\n# Toto je legitimní finanční strategie, která tady definitivně není, jenom aby\n# to vypadalo, že umím dělat finance.\nreturn (penize * 2 * 15 / 30 + 6 - 3*2)",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 58
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "output",
+            "type": "output",
+            "position": {
+                "x": 968,
+                "y": 208
+            },
+            "data": {
+                "label": "Output"
+            },
+            "code": "pocet_vyhozenych_zamestnancu = full_output_memory[\"node-1769463155063\"]\npenez_utracenych = full_output_memory[\"n1\"]\n\npenize_za_vyh_zamest = penez_utracenych / pocet_vyhozenych_zamestnancu\nvysledek = 0.1 ** penize_za_vyh_zamest / 0 ** 0 * 12 + 36 % 9 * 0 + 4 \n\nif not vysledek > 55:\n  vysledek = vysledek * 5\n\nif vysledek == input_value:\n  print(1)\nelse:\n  print(0)",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769462346079",
+            "type": "default",
+            "position": {
+                "x": 450.70521089155943,
+                "y": 147.73450973473848
+            },
+            "data": {
+                "label": "Kasino"
+            },
+            "code": "import random\n\nif bool(random.getrandbits(1)):\n  money = round(input_value * 11)\n  print(\"Výsledek kasina: Vyhrál jsi\")\n  print(f\"Tvoje výhra je: ${money}\")\nelse:\n  print(\"Výsledek kasina: Prohrál jsi většinu svých peněz\")\n  money = round(input_value / 11)\n  print(f\"Zbývá ti: ${money}\")\n\nreturn money\n  ",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": true,
+            "dragging": false
+        },
+        {
+            "id": "node-1769463155063",
+            "type": "default",
+            "position": {
+                "x": 790.522231336084,
+                "y": 301.26754781085424
+            },
+            "data": {
+                "label": "Magické objevení +$10000"
+            },
+            "code": "# Magie investic, co jiného k tomu dodat\nreturn input_value + 10000",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 58
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769473430857",
+            "type": "default",
+            "position": {
+                "x": 81.86319822300406,
+                "y": 498.88297858981235
+            },
+            "data": {
+                "label": "Instrukce"
+            },
+            "code": "# Budeš muset použít strategii \"kreativního financování\"\n\n# Převeď svoje peníze přes \"definitivně legitimní\" investice až do kasina.\n# Obtíž nastává v tom, že musíš celou dobu zakrývat, kolik máš skutečně peněz.\n\n# Takže pokud si jeden blok s druhým řeknou finanční hodnotu, která nebude\n# zašifrovaná, tak bude tvoje řešení označené za nesprávné.\n\n# Nápověda je v bloku \"Nápověda\", jestli tě nenapadá ani trochu jak tento level\n# vyřešit.",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769473663153",
+            "type": "default",
+            "position": {
+                "x": 601.9933887086889,
+                "y": 216.52727615469252
+            },
+            "data": {
+                "label": "Investiční magie"
+            },
+            "code": "penize = input_value\n\n# Proč není nikdo ve firmě schopný dělat finance????\n\nif penize > 10:\n  velice_investicni_investice_penez = penize * 2\nelse:\n  velice_investicni_investice_penez = penize - 2\n\nreturn velice_investicni_investice_penez",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769489596499",
+            "type": "default",
+            "position": {
+                "x": 81.5132283259274,
+                "y": 558.1179900005858
+            },
+            "data": {
+                "label": "Nápověda"
+            },
+            "code": "# Použij matematické operace u každého bloku, když vracíš jeho hodnotu.\n# Např. return money * 12\n# Ale tyto operace musíš před outputem zase navrátit, aby se do outputu dostala\n# reálná finanční hodnota.",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 40
+            },
+            "selected": false,
+            "dragging": false
+        },
+        {
+            "id": "node-1769491820611",
+            "type": "default",
+            "position": {
+                "x": 707.9119950337134,
+                "y": 8.530616974808481
+            },
+            "data": {
+                "label": "Databáze transakcí"
+            },
+            "code": "# Zapíše náš velice legitimní počet peněz do databáze\n# K tomuto bloku nech připojený jenom jeden input\n\ndatabaze_transakci = [1653245, 135586, 133557, 1238798, 8006912]\n\n# Použij .append(), abys přidal výsledky svojí investice do databáze\n\n\nreturn databaze_transakci",
+            "sourcePosition": "right",
+            "targetPosition": "left",
+            "measured": {
+                "width": 150,
+                "height": 58
+            },
+            "selected": false,
+            "dragging": false
+        }
+    ],
+    "edges": [
+        {
+            "source": "n2",
+            "target": "node-1769462346079",
+            "animated": true,
+            "id": "xy-edge__n2-node-1769462346079"
+        },
+        {
+            "source": "n1",
+            "target": "n2",
+            "animated": true,
+            "id": "xy-edge__n1-n2"
+        },
+        {
+            "source": "node-1769462346079",
+            "target": "node-1769491820611",
+            "animated": true,
+            "id": "xy-edge__node-1769462346079-node-1769491820611"
+        },
+        {
+            "source": "node-1769462346079",
+            "target": "node-1769473663153",
+            "animated": true,
+            "id": "xy-edge__node-1769462346079-node-1769473663153"
+        },
+        {
+            "source": "node-1769473663153",
+            "target": "node-1769463155063",
+            "animated": true,
+            "id": "xy-edge__node-1769473663153-node-1769463155063"
+        },
+        {
+            "source": "node-1769463155063",
+            "target": "output",
+            "animated": true,
+            "id": "xy-edge__node-1769463155063-output"
+        }
+    ],
+    "tags": [
+        "creator-mode",
+        "2026-01-27T05:40:11.988Z"
+    ]
+}

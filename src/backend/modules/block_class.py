@@ -53,7 +53,6 @@ class Block:
             out = None
         
         self.output_memory[self.id] = out
-
         return out
 
     def get_output_nodes(self) -> Optional[List[Self]]:
@@ -108,19 +107,33 @@ def load_blocks_from_json(data: Dict[str, Any], global_output_memory: Dict[str, 
 
     return block_map
 
-
 def execute_graph(block, global_output_memory: Dict[str, Any]):
-    result = block.execute()
-    for nxt in block.output_nodes:
-        if len(nxt.input_nodes) > 1:
-            input_keys = {node.id for node in nxt.input_nodes}
-            for node in nxt.input_nodes:
-                if node.id not in global_output_memory:
-                    execute_graph(node, global_output_memory)
-            nxt.input_values = {k: v for k, v in global_output_memory.items() if k in input_keys}
-        else:
-            nxt.input_values = result
+    # If already executed, do nothing
+    if block.id in global_output_memory:
+        return global_output_memory[block.id]
 
+    # First: make sure all input nodes are executed
+    if block.input_nodes:
+        if len(block.input_nodes) == 1:
+            # Single input: pass through raw value
+            node = block.input_nodes[0]
+            value = execute_graph(node, global_output_memory)
+            block.input_values = value
+        else:
+            # Multiple inputs: build dict
+            input_values = {}
+            for node in block.input_nodes:
+                value = execute_graph(node, global_output_memory)
+                input_values[node.id] = value
+            block.input_values = input_values
+
+    # Now execute this block exactly once
+    result = block.execute()
+    global_output_memory[block.id] = result
+
+    # Then propagate forward
+    for nxt in block.output_nodes:
         execute_graph(nxt, global_output_memory)
+
     return result
 
