@@ -224,7 +224,7 @@ async def chatwithAI(data: ChatRequest, authorization: str | None = Header(defau
                     yield f"data: {json.dumps(payload)}\n\n"
             ai_response = "".join(full)[:4000]
             log_message = f"**User '{username}' Message:**\n```\n{user_message}\n```\n**AI Response:**\n```\n{ai_response}\n```"
-            DiscordLogger.send("ai", "AI Chat Completed", log_message, "success")
+            DiscordLogger.send("ai", "AI Chat Completed", log_message, "success", username)
         return StreamingResponse(
             gen(),
             media_type="text/event-stream",
@@ -257,7 +257,7 @@ async def change_theme(data: ThemeChangeRequest):
 @app.post("/api/logout")
 async def logout(data: LogoutRequest):
     """Log user logout to Discord"""
-    DiscordLogger.send("login", "User Logout", f"User logged out successfully", "general", data.username)
+    DiscordLogger.send("login", "User Logout", f"User '{data.username}' logged out successfully", "general", data.username)
     UserTracker.update_user(data.username, logged_in=False)
     return {"success": True, "message": "Logout logged"}
 
