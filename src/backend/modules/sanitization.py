@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 from modules.standard_stuff import get_return_statement_sub, get_allowed_modules
 
 
@@ -21,6 +21,17 @@ def replace_final_return(text: str, replacement: str) -> str:
         lines[last_idx] = replacement + rest
 
     return "\n".join(lines)
+
+def replace_all_returns(text: str, replacement: str) -> str:
+    lines = text.split("\n")
+    replaced_lines: List[str] = []
+    for line in lines:
+        if line.strip().startswith("return"):
+            replaced_lines.append(line.replace("return", replacement))
+        else:
+            replaced_lines.append(line)
+
+    return "\n".join(replaced_lines)
 
 
 def start_and_ends_with_quotes(text: str) -> bool:
